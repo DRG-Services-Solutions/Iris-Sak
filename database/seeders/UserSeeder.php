@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
 
         $admin = User::create([
             'name' => 'Administrador DRG',
-            'email' => 'admin@drg.com.mx',
+            'email' => 'admin@drg.mx',
             'password' => 'admin123', 
         ]);
         $admin->assignRole($adminRole);

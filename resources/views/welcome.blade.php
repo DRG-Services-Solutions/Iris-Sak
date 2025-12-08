@@ -24,7 +24,7 @@
 
     {{-- Contenido de tu tarjeta (logo, textos, enlaces) --}}
     <div class="text-center">
-        <img src="{{ asset('images/kone-logo.png') }}" alt="Logo Kone" class="mx-auto h-24 w-auto"> 
+        <img src="{{ asset('images/drg-logo.webp') }}" alt="Logo Kone" class="mx-auto h-24 w-auto"> 
         <h1 class="mt-4 text-lg font-semibold text-gray-900 dark:text-white">Bienvenido a Kone</h1>
         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Inicia sesión para continuar.</p>
 
