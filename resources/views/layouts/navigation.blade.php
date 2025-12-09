@@ -15,8 +15,24 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    
-                 
+
+                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
+                        {{ __('Productos') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('work_orders.index')" :active="request()->routeIs('work_orders.*')">
+                        {{ __('Órdenes de Trabajo') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('inventory.index')" :active="request()->routeIs('inventory.*')">
+                        {{ __('Inventario RFID') }}
+                    </x-nav-link>
+
+                    @if(Auth::user()->isAdmin())
+                        <x-nav-link :href="route('audit.work_orders.list')" :active="request()->routeIs('audit.*')">
+                            {{ __('Auditorías') }}
+                        </x-nav-link>
+                    @endif
                 </div>
 
                 
@@ -75,6 +91,24 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
+                {{ __('Productos') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('work_orders.index')" :active="request()->routeIs('work_orders.*')">
+                {{ __('Órdenes de Trabajo') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('inventory.index')" :active="request()->routeIs('inventory.*')">
+                {{ __('Inventario RFID') }}
+            </x-responsive-nav-link>
+
+            @if(Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('audit.work_orders.list')" :active="request()->routeIs('audit.*')">
+                    {{ __('Auditorías') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
@@ -87,9 +121,6 @@
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('products.index')">
-                    {{ __('Productos') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->

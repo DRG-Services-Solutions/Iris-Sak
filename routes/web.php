@@ -45,6 +45,31 @@ Route::middleware('auth')->group(function () {
     Route::post('/work-orders/{workOrder}/verify-rfid', [WorkOrderController::class, 'verifyRfidItems'])->name('work_orders.verify_rfid');
     Route::get('/inventory/work-order/{workOrder}/start', [InventoryController::class, 'startWorkOrderInventory'])->name('inventory.work_order.start');
 
+    // --- NUEVO: Grupo de Rutas para Conteos de Inventario RFID ---
+    Route::prefix('inventory')->name('inventory.')->group(function () {
+        // Listado de conteos de inventario
+        Route::get('/', [InventoryController::class, 'index'])->name('index');
+
+        // Crear nuevo conteo
+        Route::get('/create', [InventoryController::class, 'create'])->name('create');
+        Route::post('/', [InventoryController::class, 'store'])->name('store');
+
+        // Ver detalles de un conteo
+        Route::get('/{inventoryCount}', [InventoryController::class, 'show'])->name('show');
+
+        // Pantalla de escaneo RFID para el conteo
+        Route::get('/{inventoryCount}/rfid-scan', [InventoryController::class, 'showRfidScan'])->name('rfid-scan');
+
+        // Verificar items escaneados vía AJAX
+        Route::post('/{inventoryCount}/verify-rfid', [InventoryController::class, 'verifyRfidItems'])->name('verify-rfid');
+
+        // Completar el conteo
+        Route::post('/{inventoryCount}/complete', [InventoryController::class, 'complete'])->name('complete');
+
+        // Cancelar el conteo
+        Route::post('/{inventoryCount}/cancel', [InventoryController::class, 'cancel'])->name('cancel');
+    });
+
     // --- NUEVO: Grupo de Rutas para Auditoría RFID de Órdenes Enviadas ---
     Route::prefix('audit')->name('audit.')->group(function () {
 
