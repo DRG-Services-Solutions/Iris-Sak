@@ -24,7 +24,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::latest()->get();
+        $products = Product::latest()->paginate(10);
         return view('products.index', compact('products'));
     }
 
@@ -44,7 +44,7 @@ class ProductController extends Controller
             // 1. Validar los datos del request
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
-                'description' => 'required|string|max255',
+                'description' => 'required|string|max:255',
                 'barcode' => 'required|string|max:255|unique:products,barcode', 
             ]);
 
