@@ -1,4 +1,5 @@
-<nav x-data="{ open: false }" class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-0 z-50">    <!-- Primary Navigation Menu -->
+<nav x-data="{ open: false }" class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-0 z-50">
+    <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-20">
             <div class="flex">
@@ -6,7 +7,7 @@
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 group">
                         <div class="bg-gradient-to-br from-slate-700 to-slate-900 p-2.5 rounded-xl shadow-lg group-hover:shadow-xl transform group-hover:-translate-y-0.5 transition-all duration-200">
-                            <x-application-logo/>
+                            <x-application-logo class="w-8 h-8 text-white" />
                         </div>
                         <div class="hidden lg:block">
                             <div class="text-lg font-bold text-gray-900 dark:text-white">DRG - Iris</div>
@@ -26,42 +27,43 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
-                        {{ __('Productos') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('work_orders.index')" :active="request()->routeIs('work_orders.*')">
-                        {{ __('Órdenes de Trabajo') }}
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('inventory.index')" :active="request()->routeIs('inventory.*')">
-                        {{ __('Inventario RFID') }}
-                    </x-nav-link>
-
-                    @if(Auth::user()->isAdmin())
-                        <x-nav-link :href="route('audit.work_orders.list')" :active="request()->routeIs('audit.*')">
-                            {{ __('Auditorías') }}
-                        </x-nav-link>
-                    @endif
-                </div>
-
                     {{-- Órdenes de Trabajo --}}
                     <x-nav-link :href="route('work_orders.index')" :active="request()->routeIs('work_orders.*')"
                                 class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                         </svg>
-                        {{ __('Órdenes') }}
+                        {{ __('Procesos') }}
                     </x-nav-link>
 
-                    {{-- Productos --}}
+                    {{-- Productos/Catálogo --}}
                     <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')"
                                 class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                         </svg>
+                        {{ __('Catálogo') }}
+                    </x-nav-link>
+
+                    {{-- Inventario RFID --}}
+                    <x-nav-link :href="route('inventory.index')" :active="request()->routeIs('inventory.*')"
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                        </svg>
                         {{ __('Inventario') }}
                     </x-nav-link>
+
+                    {{-- Auditorías (Solo Admin) --}}
+                    @if(Auth::user()->isAdmin())
+                        <x-nav-link :href="route('audit.work_orders.list')" :active="request()->routeIs('audit.*')"
+                                    class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            {{ __('Auditorías') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -154,23 +156,6 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
-                {{ __('Productos') }}
-            </x-responsive-nav-link>
-
-            <x-responsive-nav-link :href="route('work_orders.index')" :active="request()->routeIs('work_orders.*')">
-                {{ __('Órdenes de Trabajo') }}
-            </x-responsive-nav-link>
-
-            <x-responsive-nav-link :href="route('inventory.index')" :active="request()->routeIs('inventory.*')">
-                {{ __('Inventario RFID') }}
-            </x-responsive-nav-link>
-
-            @if(Auth::user()->isAdmin())
-                <x-responsive-nav-link :href="route('audit.work_orders.list')" :active="request()->routeIs('audit.*')">
-                    {{ __('Auditorías') }}
-                </x-responsive-nav-link>
-            @endif
             {{-- Órdenes --}}
             <x-responsive-nav-link :href="route('work_orders.index')" :active="request()->routeIs('work_orders.*')"
                                    class="flex items-center">
@@ -180,14 +165,34 @@
                 {{ __('Órdenes de Trabajo') }}
             </x-responsive-nav-link>
 
-            {{-- Inventario --}}
+            {{-- Catálogo --}}
             <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')"
                                    class="flex items-center">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
-                {{ __('Inventario') }}
+                {{ __('Catálogo') }}
             </x-responsive-nav-link>
+
+            {{-- Inventario RFID --}}
+            <x-responsive-nav-link :href="route('inventory.index')" :active="request()->routeIs('inventory.*')"
+                                   class="flex items-center">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                </svg>
+                {{ __('Inventario RFID') }}
+            </x-responsive-nav-link>
+
+            {{-- Auditorías (Solo Admin) --}}
+            @if(Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('audit.work_orders.list')" :active="request()->routeIs('audit.*')"
+                                       class="flex items-center">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    {{ __('Auditorías') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

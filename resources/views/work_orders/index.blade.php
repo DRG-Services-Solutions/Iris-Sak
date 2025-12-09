@@ -10,9 +10,9 @@
                 </div>
                 <div>
                     <h2 class="font-bold text-2xl text-gray-800 dark:text-gray-100 leading-tight">
-                        {{ __('Órdenes de Trabajo') }}
+                        {{ __('Trabajos') }}
                     </h2>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Gestión y seguimiento de procesos de manufactura</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Gestión y seguimiento</p>
                 </div>
             </div>
             <div class="hidden md:flex items-center space-x-4">

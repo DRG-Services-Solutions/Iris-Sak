@@ -18,3 +18,8 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
