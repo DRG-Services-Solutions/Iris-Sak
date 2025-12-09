@@ -124,7 +124,7 @@ class WorkOrderController extends Controller
         // Intenta obtener el último ID de forma segura o usa 0 si no hay órdenes.
         $lastOrder = WorkOrder::latest('id')->first();
         $nextId = $lastOrder ? $lastOrder->id + 1 : 1;
-        $folio = 'WO-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+        $folio = 'SCAN-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
         $userId = Auth::id(); // ID del usuario logueado
         $startTime = now(); // Fecha y hora actual
         $initialStatus = 'Pendiente Escaneo'; // Estado inicial
@@ -133,7 +133,7 @@ class WorkOrderController extends Controller
         $newOrder = WorkOrder::create([
             'folio' => $folio,
             'user_id' => $userId,
-            'process' => 'Seleccion/Picking',
+            'process' => 'Impresion/Escaneo',
             'station' => '01',
             'status' => $initialStatus,
             'started_at' => $startTime,
