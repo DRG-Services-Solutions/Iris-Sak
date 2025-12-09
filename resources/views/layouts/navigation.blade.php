@@ -6,9 +6,7 @@
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 group">
                         <div class="bg-gradient-to-br from-slate-700 to-slate-900 p-2.5 rounded-xl shadow-lg group-hover:shadow-xl transform group-hover:-translate-y-0.5 transition-all duration-200">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
+                            <x-application-logo/>
                         </div>
                         <div class="hidden lg:block">
                             <div class="text-lg font-bold text-gray-900 dark:text-white">DRG - Iris</div>

@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-slate-100 to-gray-200 dark:from-gray-900 dark:via-slate-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-slate-100 to-gray-200 dark:from-gray-900 dark:via-slate-900 dark:to-gray-800 py-2 px-4 sm:px-6 lg:px-8">
         
         {{-- Elementos decorativos de fondo --}}
         <div class="fixed inset-0 overflow-hidden pointer-events-none">
@@ -13,7 +13,7 @@
             <div class="text-center">
                 <div class="flex items-center justify-center mb-6">
                     <div class="bg-gradient-to-br from-slate-700 to-slate-900 p-4 rounded-2xl shadow-2xl">
-                                            <x-application-logo class="w-auto h-24 fill-current text-gray-500" />
+                        <x-application-logo class="w-auto h-24 fill-current text-gray-500" />
 
                     </div>
                 </div>
@@ -27,7 +27,7 @@
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
                 
                 {{-- Header del formulario --}}
-                <div class="bg-gradient-to-r from-slate-700 to-slate-800 px-6 py-4">
+                <div class="bg-gradient-to-r from-slate-700 to-slate-800 px-6 py-2">
                     <div class="flex items-center">
                         <svg class="w-5 h-5 text-white mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />

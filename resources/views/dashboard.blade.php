@@ -294,8 +294,7 @@
 
             </div>
 
-           <x-industrial-footer />
-y
+
 
         </div>
     </div>

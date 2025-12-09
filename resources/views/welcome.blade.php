@@ -63,9 +63,9 @@
                         {{-- Logo --}}
                         <div class="flex items-center space-x-3">
                             <div class="bg-gradient-to-br from-slate-700 to-slate-900 p-2 rounded-lg shadow-lg">
-                                <img src="{{ asset('images/drg-white.webp') }}" 
-                                     alt="Logo Kone" 
-                                     class="w-20 h-auto mx-auto">
+                                
+                                <x-application-logo/>
+                                
                             </div>
                             <div>
                                 <!--
@@ -124,12 +124,12 @@
                         <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 animate-fade-in-up animate-delay-100">
                             Control Total de tu 
                             <span class="bg-gradient-to-r from-blue-600 to-slate-600 bg-clip-text text-transparent">
-                                Manufactura
+                                Almacen
                             </span>
                         </h1>
 
                         <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed animate-fade-in-up animate-delay-200">
-                            Gestiona de impresion de etiquetas, inventarios RFID y trazabilidad de herramientas con la mejor tecnología.
+                            Gestiona productos, inventarios con RFID y trazabilidad de productos con la mejor tecnología.
                         </p>
 
                         @if (Route::has('login'))
