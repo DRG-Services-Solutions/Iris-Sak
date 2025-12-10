@@ -9,12 +9,14 @@ export default defineConfig({
         }),
         
     ],
+    /*
         server: {
         host: '0.0.0.0', // Escucha en todas las interfaces de red
         cors: true,
         hmr: {
-            host: '10.20.1.157' // Reemplaza con la IP de tu PC
+            host: 'localhost' // Reemplaza con la IP de tu PC
         }
     }
 
+    */
 });
