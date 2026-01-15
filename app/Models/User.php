@@ -12,7 +12,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
-    // Helpers opcionales (solo nombres)
     const ROLE_ADMIN = 'admin';
     const ROLE_USER = 'user';
 

@@ -49,8 +49,6 @@ class ProductController extends Controller
             ]);
 
 
-            // 2. Crear la nueva herramienta usando los datos validados
-            // Como configuramos $fillable en el modelo Tool, podemos hacer esto:
             Product::create($validated);
 
             // 3. Redirigir a alguna parte (usualmente al index) con un mensaje de éxito
