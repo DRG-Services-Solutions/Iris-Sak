@@ -10,7 +10,7 @@
                 </div>
                 <div>
                     <h2 class="font-bold text-2xl text-gray-800 dark:text-gray-100 leading-tight">
-                        {{ __('Inventario') }}
+                      Catalogo de Productos
                     </h2>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Gestión de Activos y Componentes</p>
                 </div>
@@ -18,7 +18,7 @@
             <div class="hidden md:flex items-center space-x-4">
                 <div class="text-center px-4 py-2 bg-slate-700 rounded-lg">
                     <p class="text-2xl font-bold text-white">{{ $products->total() ?? count($products) }}</p>
-                    <p class="text-xs text-gray-300">Total Items</p>
+                    <p class="text-xs text-gray-300">Total de Articulos</p>
                 </div>
             </div>
         </div>
@@ -47,11 +47,14 @@
                     
                     {{-- Botones de acción --}}
                     <div class="flex items-center space-x-3">
+                        {{-- Boton para exportar (comentado por ahora) --}}
+                         {{--
                         <button class="inline-flex items-center px-4 py-2.5 bg-slate-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg font-medium text-sm text-gray-700 dark:text-gray-200 hover:bg-slate-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all duration-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                             Exportar
+                             --}}
                         </button>
                         <a href="{{ route('products.create') }}" 
                            class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-slate-700 to-slate-900 border border-transparent rounded-lg font-semibold text-sm text-white hover:from-slate-600 hover:to-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
@@ -75,7 +78,7 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                             </svg>
-                            <span>Nombre del Item</span>
+                            <span>Articulo</span>
                         </div>
                     </th>
                     <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-100 uppercase tracking-wider">
