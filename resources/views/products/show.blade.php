@@ -28,19 +28,15 @@
                         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ $product->barcode }}</p>
                     </div>
 
-                    <div>
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">EPC</h3>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ $product->epc ?: 'N/A' }}</p> {{-- Muestra N/A si el EPC es nulo (para registros antiguos) --}}
-                    </div>
 
                     <div>
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Fecha de Creación</h3>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ $product->created_at->format('d/m/Y H:i:s') }}</p> {{-- Formateamos la fecha --}}
+                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ $product->created_at->format('d/m/Y H:i') }}</p> {{-- Formateamos la fecha --}}
                     </div>
 
                     <div>
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Última Actualización</h3>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ $product->updated_at->format('d/m/Y H:i:s') }}</p> {{-- Formateamos la fecha --}}
+                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ $product->updated_at->format('d/m/Y H:i') }}</p> {{-- Formateamos la fecha --}}
                     </div>
 
                     {{-- Botones de Acción/Navegación --}}
