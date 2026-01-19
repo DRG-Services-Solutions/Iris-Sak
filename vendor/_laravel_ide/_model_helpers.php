@@ -658,16 +658,20 @@ namespace App\Models {
 	 *
 	 * @property \Illuminate\Support\Carbon|null $updated_at
 	 * @property \Illuminate\Support\Carbon|null $created_at
-	 * @property bool $is_individually_tracked
+	 * @property string|null $epc
 	 * @property string $barcode
+	 * @property string $status
+	 * @property string|null $current_station
 	 * @property string $description
 	 * @property string $name
 	 * @property int $id
 	 * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereId($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereName($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereDescription($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereCurrentStation($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereStatus($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereBarcode($value)
-	 * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereIsIndividuallyTracked($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereEpc($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereCreatedAt($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereUpdatedAt($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product newModelQuery()
@@ -970,12 +974,12 @@ namespace App\Models {
 	 *
 	 * @property \Illuminate\Support\Carbon|null $updated_at
 	 * @property \Illuminate\Support\Carbon|null $created_at
+	 * @property mixed $work_order_id
 	 * @property mixed $user_id
 	 * @property string|null $notes
 	 * @property string $current_station
 	 * @property string $status
 	 * @property string $epc
-	 * @property mixed $work_order_id
 	 * @property mixed $product_id
 	 * @property int $id
 	 * @property-read \App\Models\Product $product
@@ -983,12 +987,12 @@ namespace App\Models {
 	 * @property-read \App\Models\WorkOrder $workOrder
 	 * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereId($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereProductId($value)
-	 * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereWorkOrderId($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereEpc($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereStatus($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereCurrentStation($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereNotes($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereUserId($value)
+	 * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereWorkOrderId($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereCreatedAt($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereUpdatedAt($value)
 	 * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance newModelQuery()

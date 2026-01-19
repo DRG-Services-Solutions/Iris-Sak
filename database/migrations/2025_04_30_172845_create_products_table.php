@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description');
-            $table->string('current_station')->nullable();
+            $table->string('current_station')->nullable(); //Estacion de trabajo del proceso
             $table->string('status')->default('available');
             $table->string('barcode')->unique();
+            $table->string('epc', 24)->unique()->nullable(); //Numero autogenerado del tag de radiofrecuencia a codificar en cada producto
             $table->timestamps();
         });
     }
