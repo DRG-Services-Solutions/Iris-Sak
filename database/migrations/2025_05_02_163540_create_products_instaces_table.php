@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products_instaces', function (Blueprint $table) {
+        Schema::create('product_instances', function (Blueprint $table) {
             $table->id();
 
             // Clave Foránea a la tabla 'products' (el catálogo)
@@ -31,9 +31,14 @@ return new class extends Migration
 
             //Usuario asociado (¿último que la usó? ¿responsable?)
             $table->foreignId('user_id')
-            ->nullable() // Permite que no siempre haya un usuario asociado
-            ->constrained('users') // Asegura que el user_id exista en la tabla users
-            ->nullOnDelete(); // Si se borra el usuario, este campo se pone a NULL
+                  ->nullable() // Permite que no siempre haya un usuario asociado
+                  ->constrained('users') // Asegura que el user_id exista en la tabla users
+                  ->nullOnDelete(); // Si se borra el usuario, este campo se pone a NULL
+
+             $table->foreignId('work_order_id')
+                  ->nullable() // ¿Puede una instancia existir sin orden? Si no, quita nullable()
+                  ->constrained('work_orders') // Vincula a la tabla work_orders
+                  ->nullOnDelete(); // Si se borra la orden, pone este campo a NULL (o usa cascade/restrict)
 
             // Fechas de creación y actualización
             $table->timestamps();
