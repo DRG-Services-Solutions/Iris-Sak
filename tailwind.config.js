@@ -8,6 +8,13 @@ export default {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
     ],
+    server: {
+        host: '0.0.0.0', 
+        cors: true,
+        hmr: {
+            host: '10.20.1.157' 
+        }
+    },
 
     theme: {
         extend: {
@@ -16,6 +23,7 @@ export default {
             },
         },
     },
+    
 
     plugins: [forms],
 };

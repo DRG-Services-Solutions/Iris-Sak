@@ -359,8 +359,8 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount query()
-     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount status(string $status)
-     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount type(string $type)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount status(string $status) {@see App\Models\InventoryCount::scopeStatus()}
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount type(string $type) {@see App\Models\InventoryCount::scopeType()}
      * @method static mixed select($columns)
      * @method static mixed selectSub($query, $as)
      * @method static mixed selectRaw($expression, array $bindings)
@@ -1318,10 +1318,10 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User query()
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User role(mixed $roles, mixed $guard = null, mixed $without = false)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User withoutRole(mixed $roles, mixed $guard = null)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User permission(mixed $permissions, mixed $without = false)
-     * @method static \Illuminate\Database\Eloquent\Builder<User>|User withoutPermission(mixed $permissions)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User role(mixed $roles, mixed $guard = null, mixed $without = false) {@see App\Models\User::scopeRole()}
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User withoutRole(mixed $roles, mixed $guard = null) {@see App\Models\User::scopeWithoutRole()}
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User permission(mixed $permissions, mixed $without = false) {@see App\Models\User::scopePermission()}
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User withoutPermission(mixed $permissions) {@see App\Models\User::scopeWithoutPermission()}
      * @method static mixed select($columns)
      * @method static mixed selectSub($query, $as)
      * @method static mixed selectRaw($expression, array $bindings)
