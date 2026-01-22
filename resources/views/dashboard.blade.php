@@ -54,6 +54,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
                 {{-- Tarjeta 1: Órdenes de Trabajo --}}
+                <!--
                 @can('manage-products')
                     <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
                         <div class="relative">
@@ -93,6 +94,7 @@
                         </div>
                     </div>
                 @endcan
+                -->
                 
                 {{-- Tarjeta 2: Catálogo de Productos --}}
                 @can('manage-products')
@@ -136,6 +138,7 @@
                 @endcan
 
                 {{-- Tarjeta 3: Auditoría de Embarque --}}
+            <!--
                 <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
                     <div class="relative">
                         {{-- Banner superior con gradiente --}}
@@ -173,6 +176,7 @@
                         </div>
                     </div>
                 </div>
+            -->
 
                 {{-- Tarjeta 4: Inventario (Próximamente) --}}
                 <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden opacity-75">

@@ -28,13 +28,13 @@ class ProductInstance extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'product_id',       // Necesitamos poder asignar a qué producto pertenece
-        'work_order_id', // <-- AÑADIR ESTA LÍNEA
-        'status',           // El estado inicial o asignado
-        'current_station',  // La estación inicial o asignada
-        'notes',            // Notas opcionales
-        'user_id',          // Usuario asociado opcional
-        // 'epc' NO va aquí porque se autogenera y no queremos asignarlo masivamente
+        'product_id',       
+        'work_order_id', 
+        'status',           
+        'current_station',  
+        'notes',            
+        'user_id',          
+        
     ];
 
     /**
@@ -70,7 +70,6 @@ class ProductInstance extends Model
      */
     public function product(): BelongsTo
     {
-        // Una instancia pertenece a un producto del catálogo.
         return $this->belongsTo(Product::class);
     }
 
@@ -79,8 +78,7 @@ class ProductInstance extends Model
      */
     public function user(): BelongsTo
     {
-        // Una instancia puede pertenecer opcionalmente a un usuario.
-        return $this->belongsTo(User::class); // Asegúrate de importar App\Models\User si no lo hace automáticamente tu IDE
+        return $this->belongsTo(User::class); 
     }
     /**
      * Obtiene la orden de trabajo a la que pertenece esta instancia.

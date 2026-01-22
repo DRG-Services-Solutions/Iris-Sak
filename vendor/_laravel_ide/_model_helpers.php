@@ -5,10 +5,26 @@ namespace App\Models {
     /**
      * App\Models\ActivityLog
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property array|null $details
+     * @property string $action
+     * @property mixed $work_order_id
+     * @property mixed $product_instance_id
+     * @property mixed $user_id
+     * @property int $id
      * @property-read mixed $readable_action
      * @property-read \App\Models\User $user
      * @property-read \App\Models\ProductInstance $productInstance
      * @property-read \App\Models\WorkOrder $workOrder
+     * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog whereUserId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog whereProductInstanceId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog whereWorkOrderId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog whereAction($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog whereDetails($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog query()
@@ -307,6 +323,12 @@ namespace App\Models {
     /**
      * App\Models\Branch
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property int $id
+     * @method static \Illuminate\Database\Eloquent\Builder<Branch>|Branch whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Branch>|Branch whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Branch>|Branch whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Branch>|Branch newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Branch>|Branch newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Branch>|Branch query()
@@ -605,6 +627,12 @@ namespace App\Models {
     /**
      * App\Models\Department
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property int $id
+     * @method static \Illuminate\Database\Eloquent\Builder<Department>|Department whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Department>|Department whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Department>|Department whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Department>|Department newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Department>|Department newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Department>|Department query()
@@ -903,9 +931,39 @@ namespace App\Models {
     /**
      * App\Models\InventoryCount
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property \Illuminate\Support\Carbon|null $completed_at
+     * @property \Illuminate\Support\Carbon|null $started_at
+     * @property string|null $notes
+     * @property array|null $detected_epcs
+     * @property integer $discrepancy_count
+     * @property integer $found_count
+     * @property integer|null $expected_count
+     * @property string $status
+     * @property string|null $station
+     * @property string $type
+     * @property string $folio
+     * @property mixed $user_id
+     * @property int $id
      * @property-read mixed $readable_status
      * @property-read mixed $readable_type
      * @property-read \App\Models\User $user
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereUserId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereFolio($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereType($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereStation($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereStatus($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereExpectedCount($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereFoundCount($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereDiscrepancyCount($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereDetectedEpcs($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereNotes($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereStartedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereCompletedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<InventoryCount>|InventoryCount query()
@@ -1206,6 +1264,16 @@ namespace App\Models {
     /**
      * App\Models\Location
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property string $name
+     * @property string $code
+     * @property int $id
+     * @method static \Illuminate\Database\Eloquent\Builder<Location>|Location whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Location>|Location whereCode($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Location>|Location whereName($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Location>|Location whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Location>|Location whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Location>|Location newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Location>|Location newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Location>|Location query()
@@ -1822,9 +1890,29 @@ namespace App\Models {
     /**
      * App\Models\ProductInstance
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property mixed $work_order_id
+     * @property mixed $user_id
+     * @property string|null $notes
+     * @property string $current_station
+     * @property string $status
+     * @property string $epc
+     * @property mixed $product_id
+     * @property int $id
      * @property-read \App\Models\Product $product
      * @property-read \App\Models\User $user
      * @property-read \App\Models\WorkOrder $workOrder
+     * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereProductId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereEpc($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereStatus($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereCurrentStation($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereNotes($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereUserId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereWorkOrderId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<ProductInstance>|ProductInstance query()
@@ -2128,6 +2216,7 @@ namespace App\Models {
      * @property string|null $remember_token
      * @property string $password
      * @property \Illuminate\Support\Carbon|null $email_verified_at
+     * @property string $role
      * @property string $email
      * @property string $name
      * @property int $id
@@ -2142,6 +2231,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereName($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmail($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereRole($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereEmailVerifiedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePassword($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereRememberToken($value)
@@ -2449,9 +2539,31 @@ namespace App\Models {
     /**
      * App\Models\WorkOrder
      *
+     * @property \Illuminate\Support\Carbon|null $updated_at
+     * @property \Illuminate\Support\Carbon|null $created_at
+     * @property boolean $is_audited
+     * @property \Illuminate\Support\Carbon|null $completed_at
+     * @property \Illuminate\Support\Carbon|null $started_at
+     * @property string $status
+     * @property string $station
+     * @property string $process
+     * @property mixed $user_id
+     * @property string $folio
+     * @property int $id
      * @property-read \App\Models\User $user
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductInstance> $productInstances
      * @property-read int|null $productInstances_count
+     * @method static \Illuminate\Database\Eloquent\Builder<WorkOrder>|WorkOrder whereId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<WorkOrder>|WorkOrder whereFolio($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<WorkOrder>|WorkOrder whereUserId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<WorkOrder>|WorkOrder whereProcess($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<WorkOrder>|WorkOrder whereStation($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<WorkOrder>|WorkOrder whereStatus($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<WorkOrder>|WorkOrder whereStartedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<WorkOrder>|WorkOrder whereCompletedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<WorkOrder>|WorkOrder whereIsAudited($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<WorkOrder>|WorkOrder whereCreatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<WorkOrder>|WorkOrder whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<WorkOrder>|WorkOrder newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<WorkOrder>|WorkOrder newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<WorkOrder>|WorkOrder query()
