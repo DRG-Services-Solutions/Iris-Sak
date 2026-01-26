@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('type', ['in', 'out', 'adjustment']);
             $table->integer('quantity');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('product_instance_id')->nullable()->constrained('product_instances');
             $table->timestamps();
 
         });

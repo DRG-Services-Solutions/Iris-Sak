@@ -87,4 +87,9 @@ class ProductInstance extends Model
     {
         return $this->belongsTo(WorkOrder::class);
     }
+
+    public function movements()
+    {
+        return $this->hasMany(Movement::class);
+    }   
 }
