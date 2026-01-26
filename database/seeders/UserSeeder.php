@@ -19,6 +19,7 @@ class UserSeeder extends Seeder
         //Creacion de roles
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $userRole = Role::firstOrCreate(['name' => 'almacenista']);
+        $wharehouseAdminRole = Role::firstOrCreate(['name' => 'warehouse_manager']);
 
         $permissions = [
             'view-dashboard',
@@ -26,6 +27,7 @@ class UserSeeder extends Seeder
             'manage-products',
             'create-orders',
             'view-orders',
+            'manage-wharehouse',
         ];
 
         //Creamos todos los permisos con un ciclo foreach
@@ -36,12 +38,21 @@ class UserSeeder extends Seeder
 
         //Asignamos todos los permisos al administrador
         $adminRole->syncPermissions($permissions);
+        $wharehouseAdminRole->syncPermissions($permissions);
 
         $admin = User::create([
             'name' => 'Administrador DRG',
             'email' => 'admin@drg.mx',
             'password' => 'admin123', 
         ]);
+
+        $wharehouseAdmin = User::create([
+            'name' => 'Almacenista DRG',
+            'email' => 'warehouse@drg.mx',
+            'password' => 'warehouse123', 
+        ]);
+
         $admin->assignRole($adminRole);
+        $wharehouseAdmin->assignRole($wharehouseAdminRole);
     }
 }

@@ -9,14 +9,14 @@ use Illuminate\Auth\Access\Response;
 class WorkOrderPolicy
 {
 
-        /**
-         * Determine whether the user can audit the work order with RFID.
-         */
-        public function auditRfid(User $user, WorkOrder $workOrder): bool
-        {
-            // Solo admins pueden auditar, y solo si la orden está 'Enviado'
-            return $user->isAdmin() && $workOrder->status === 'Enviado';
-        }
+    /**
+     * Determine whether the user can audit the work order with RFID.
+     */
+    public function auditRfid(User $user, WorkOrder $workOrder): bool
+    {
+        // Solo admins pueden auditar, y solo si la orden está 'Enviado'
+        return $user->isAdmin() && $workOrder->status === 'Enviado';
+    }
     /**
      * Helper function to check if the order is considered shipped/completed.
      */

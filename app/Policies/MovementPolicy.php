@@ -9,11 +9,23 @@ use Illuminate\Auth\Access\Response;
 class MovementPolicy
 {
     /**
+     * Handle all abilities before checking specific methods.
+     */
+
+    public function before(User $user, string $ability): ?bool
+    {
+        if ($user->hasAnyRole(['admin', 'warehouse_manager'])) {
+            return true;
+        }
+
+        return null;
+    }
+    /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole('auditor');
     }
 
     /**
@@ -21,7 +33,7 @@ class MovementPolicy
      */
     public function view(User $user, Movement $movement): bool
     {
-        return false;
+        return $user->hasRole('auditor');
     }
 
     /**
@@ -37,7 +49,7 @@ class MovementPolicy
      */
     public function update(User $user, Movement $movement): bool
     {
-        return false;
+        return Response::deny('Sistema de Seguridad Integral, Actualización No Permitida.');
     }
 
     /**
@@ -45,7 +57,7 @@ class MovementPolicy
      */
     public function delete(User $user, Movement $movement): bool
     {
-        return false;
+        return Response::deny('Sistema de Seguridad Integral, Eliminacion No Permitida.');
     }
 
     /**

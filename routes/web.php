@@ -2,20 +2,11 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController; // <-- CORREGIDO: Se quitó el ; extra
+use App\Http\Controllers\ProductController; 
 use App\Http\Controllers\WorkOrderController;
-use App\Http\Controllers\InventoryController; // <-- AÑADIDO: Faltaba importar este controlador
+use App\Http\Controllers\InventoryController; 
+use App\Http\Controllers\MovementController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
 Route::get('/', function () {
     return view('welcome');
@@ -89,8 +80,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/work-orders/{workOrder}/complete', [WorkOrderController::class, 'completeAudit'])
             ->name('work_orders.complete'); // Nombre: audit.work_orders.complete
 
-    }); // <-- Cierre del grupo 'prefix'
+    }); 
 
-}); // <-- Cierre del grupo 'middleware' principal
+    Route::resource('movements', MovementController::class);
+    Route::get('/api/products/scan/{barcode}', function ($barcode) {
+        $product = \App\Models\Product::where('barcode', $barcode)->first();
+        return $product ? response()->json($product) : response()->json(['error' => 'No encontrado'], 404);
+        })->middleware('auth');
+
+}); 
 
 require __DIR__.'/auth.php';
