@@ -4,19 +4,24 @@ import laravel from 'laravel-vite-plugin';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.js',
+                'resources/js/pages/surgeries/picking-rfid.js', // 🆕 NUEVO
+            ],
             refresh: true,
         }),
-        
     ],
+    
     /*
-        server: {
-        host: '0.0.0.0', 
+    //  Descomenta esto para acceder de la red local
+    server: {
+        host: '0.0.0.0',  // Permite conexiones desde cualquier IP
+        port: 5173,        
         cors: true,
         hmr: {
-            host: 'localhost' 
+            host: 'localhost' // Cambia esto por tu IP local si usas el TC50 para configurarlo en el archivo de .config de enterprise browser
         }
     }
-
     */
 });
