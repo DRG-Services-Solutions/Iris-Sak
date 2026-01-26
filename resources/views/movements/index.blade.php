@@ -135,16 +135,10 @@
                                 --}}
                                 <td class="px-6 py-4 text-center">
                                     <a href="{{ route('movements.show', $movement) }}" 
-                                       class="inline-flex items-center justify-center w-8 h-8 text-blue-600 hover:text-blue-900 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                                       title="Ver detalles">
-                                        <i class="fas fa-eye"></i>
-                                        
+                                    class="inline-flex flex-col items-center justify-center gap-1 px-3 py-2 text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all group">
+                                        <i class="fas fa-eye text-xl group-hover:scale-110 transition-transform"></i>
+                                        <span class="text-xs font-semibold uppercase tracking-wider">Detalles</span>
                                     </a>
-                                    <p class="font-white">
-                                    Detalle
-                                    </p>
-
-                                    
                                 </td>
                                 
                             </tr>

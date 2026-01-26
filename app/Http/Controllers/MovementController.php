@@ -54,6 +54,7 @@ class MovementController extends Controller
                     'user_id' => auth()->id(),
                     'notes' => 'Procesamiento por lote'
                 ]);
+                
             }
         });
 

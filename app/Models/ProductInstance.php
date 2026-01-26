@@ -65,6 +65,8 @@ class ProductInstance extends Model
 
     // --- Definición de Relaciones Eloquent ---
 
+ 
+
     /**
      * Obtiene el tipo de producto (del catálogo) al que pertenece esta instancia.
      */

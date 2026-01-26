@@ -2203,6 +2203,11 @@ namespace App\Models {
      * @property string $description
      * @property string $name
      * @property int $id
+     * @property-read mixed $stock
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductInstance> $instances
+     * @property-read int|null $instances_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Movement> $movements
+     * @property-read int|null $movements_count
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereName($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereDescription($value)

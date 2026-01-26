@@ -20,6 +20,21 @@ class Product extends Model
         'is_individually_tracked',
     ];
 
+    public function instances()
+    {
+        return $this->hasMany(ProductInstance::class);
+    }
+
+    public function movements()
+    {
+        return $this->hasMany(Movement::class);
+    }   
+
+    public function getStockAttribute()
+    {
+        return $this->instances()->whereIn('status', ['En Stock',])->count();
+    }
+
     /**
      * The "booted" method of the model.
      * Se ejecuta cuando el modelo es inicializado.
