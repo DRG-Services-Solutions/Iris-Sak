@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Movement;
 use App\Models\Product;
+use App\Models\ProductInstance;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreMovementRequest;
 use App\Http\Requests\UpdateMovementRequest;
@@ -56,7 +57,33 @@ class MovementController extends Controller
                 ]);
                 
             }
+            if (Product::find($item['product_id'])->isRfidTracked())
+                {
+                    $stockUpdate = ProductInstance::create([
+                        'product_id' => $item['product_id'],
+                        'status' => $request->type === 'in' ? 'En Stock' : 'Salido',
+                        'current_station' => 'Almacén',
+                        'notes' => 'Actualización de stock por movimiento masivo',
+                        'user_id' => auth()->id(),
+                        'epc' => 'AUTO-' . uniqid()
+                    ]);
+                
+
+                }
+                elseif(Product::find($item['product_id'])->isBarcodeTracked())
+                {
+                    $product = Product::find($item['product_id']);
+                    if ($request->type === 'in') {
+                        $product->updateStock($item['quantity'], 'increment');
+                    } elseif ($request->type === 'out') {
+                        $product->updateStock($item['quantity'], 'decrement');
+                    }
+                }
+            
+
         });
+        
+        
 
         return redirect()->route('movements.index')->with('success', 'Lote procesado con éxito');
     }
@@ -66,6 +93,9 @@ class MovementController extends Controller
      */
     public function show(Movement $movement)
     {
+        
+        
+        $movement->load(['product']);
         return view('movements.show', compact('movement'));
     }
 

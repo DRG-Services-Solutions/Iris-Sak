@@ -17,7 +17,12 @@ class Product extends Model
         'name',
         'description',
         'barcode',
-        'is_individually_tracked',
+        'tracking_type',
+        'stock',
+        'current_station',
+        'branch_id',
+        'status',
+        'epc',
     ];
 
     public function instances()
@@ -25,15 +30,64 @@ class Product extends Model
         return $this->hasMany(ProductInstance::class);
     }
 
+  
+
     public function movements()
     {
         return $this->hasMany(Movement::class);
     }   
 
-    public function getStockAttribute()
+    public function branch()
     {
-        return $this->instances()->whereIn('status', ['En Stock',])->count();
+        return $this->belongsTo(Branch::class);
     }
+
+
+    //helpers para tipos de rastreos
+    public function isRfidTracked()
+    {
+        return $this->tracking_type === 'rfid';
+    }
+
+    public function isBarcodeTracked()
+    {
+        return $this->tracking_type === 'barcode';
+    }
+
+
+    //Accesor para stock de ambos tipos
+    public function getStockAttribute($value) 
+
+    {
+        if ($this->isRfidTracked()) {
+            return $this->instances()
+                ->whereIn('status', ['En Stock', 'available'])
+                ->count();
+        }
+        
+        return $value ?? 0;
+    }
+
+    public function updateStock($quantity, $operation = 'increment')
+    {
+        if ($this->isBarcodeTracked()) {
+            if ($operation === 'increment') {
+                $this->increment('stock', $quantity);
+            } elseif ($operation === 'decrement') {
+                $this->decrement('stock', $quantity);
+            } else {
+                $this->update(['stock' => $quantity]);
+            }
+        }
+    }
+
+    public function hasStock($quantity = 1)
+    {
+        return $this->stock >= $quantity;
+    }
+
+
+
 
     /**
      * The "booted" method of the model.

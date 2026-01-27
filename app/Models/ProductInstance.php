@@ -33,7 +33,8 @@ class ProductInstance extends Model
         'status',           
         'current_station',  
         'notes',            
-        'user_id',          
+        'user_id',        
+        'epc'  
         
     ];
 
@@ -58,7 +59,6 @@ class ProductInstance extends Model
     protected static function booted(): void
     {
         static::creating(function (ProductInstance $instance) {
-            // Generamos siempre un EPC único en mayúsculas al crear una nueva instancia
             $instance->epc = strtoupper(bin2hex(random_bytes(12)));
         });
     }

@@ -41,7 +41,6 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-            // 1. Validar los datos del request
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'description' => 'required|string|max:255',
@@ -51,7 +50,6 @@ class ProductController extends Controller
 
             Product::create($validated);
 
-            // 3. Redirigir a alguna parte (usualmente al index) con un mensaje de éxito
             return redirect()->route('products.index')
                              ->with('success', '¡Herramienta creada exitosamente!'); // 'success' es la clave del mensaje flash
     }

@@ -2196,7 +2196,8 @@ namespace App\Models {
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property string|null $epc
-     * @property string $barcode
+     * @property mixed $tracking_type
+     * @property string|null $barcode
      * @property string $status
      * @property mixed $branch_id
      * @property string|null $current_station
@@ -2208,6 +2209,7 @@ namespace App\Models {
      * @property-read int|null $instances_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Movement> $movements
      * @property-read int|null $movements_count
+     * @property-read \App\Models\Branch $branch
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereName($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereDescription($value)
@@ -2215,6 +2217,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereBranchId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereStatus($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereBarcode($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereTrackingType($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereEpc($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product whereUpdatedAt($value)

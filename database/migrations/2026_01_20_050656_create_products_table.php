@@ -18,7 +18,9 @@ return new class extends Migration
             $table->string('current_station')->nullable(); //Estacion de trabajo del proceso
             $table->foreignId('branch_id')->nullable()->constrained('branches')->onDelete('cascade'); //Llave foranea a sucursales   
             $table->string('status')->default('available');
-            $table->string('barcode')->unique();
+            $table->string('barcode')->unique()->nullable();
+            $table->enum('tracking_type',['rfid', 'barcode'])->default('barcode');
+            $table->integer('stock')->default(0);
             $table->string('epc', 24)->unique()->nullable(); //Numero autogenerado del tag de radiofrecuencia a codificar en cada producto
             $table->timestamps();
         });

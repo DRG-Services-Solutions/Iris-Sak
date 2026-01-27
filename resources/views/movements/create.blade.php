@@ -108,7 +108,7 @@
                     <div class="w-full lg:w-56">
                         <x-input-label class="text-slate-300 uppercase text-xs font-bold mb-2">Tipo de Movimiento</x-input-label>
                         <select x-model="type" 
-                                class="w-full bg-slate-900 border-slate-700 text-black rounded-lg h-14 font-bold focus:ring-blue-500 focus:border-blue-500">
+                                class="w-full bg-slate-900 border-slate-700 text-white rounded-lg h-14 font-bold focus:ring-blue-500 focus:border-blue-500">
                             <option value="in">ENTRADA (+)</option>
                             <option value="out">SALIDA (-)</option>
                             <option value="adjustment">AJUSTE</option>
