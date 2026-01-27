@@ -30,6 +30,12 @@ class Product extends Model
         return $this->hasMany(ProductInstance::class);
     }
 
+    //Accesor para contar instancias en stock
+    public function getStockCountAttribute()
+    {
+        return $this->instances()->count();
+    }
+
   
 
     public function movements()
@@ -85,6 +91,13 @@ class Product extends Model
     {
         return $this->stock >= $quantity;
     }
+    
+    public function scopeInStock($query)
+    {
+        return $query->where('stock', '>', 0);
+    }
+
+    
 
 
 

@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\InventoryCount;
+use App\Models\Product;
 use App\Models\WorkOrder;
 use App\Models\ProductInstance;
 use App\Models\ActivityLog;
@@ -20,12 +21,18 @@ class InventoryController extends Controller
     public function index()
     {
         $this->authorize('viewAny', InventoryCount::class);
+        $products = Product::withCount('instances')->paginate(10);
+        $uniqueProducts = Product::count();
+        $lowStockProducts = Product::where('stock', '<', 20)->count();
+        
+
+        $barcodeProducts = Product::where('tracking_type', 'barcode')->count();
 
         $inventoryCounts = InventoryCount::with('user')
             ->latest('created_at')
             ->paginate(15);
 
-        return view('inventory.index', compact('inventoryCounts'));
+        return view('inventory.index', compact('inventoryCounts', 'products', 'uniqueProducts', 'lowStockProducts', 'barcodeProducts'));
     }
 
     /**

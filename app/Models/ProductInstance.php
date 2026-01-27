@@ -65,7 +65,6 @@ class ProductInstance extends Model
 
     // --- Definición de Relaciones Eloquent ---
 
- 
 
     /**
      * Obtiene el tipo de producto (del catálogo) al que pertenece esta instancia.
@@ -93,5 +92,9 @@ class ProductInstance extends Model
     public function movements()
     {
         return $this->hasMany(Movement::class);
-    }   
+    }
+
+    
+    
+    
 }

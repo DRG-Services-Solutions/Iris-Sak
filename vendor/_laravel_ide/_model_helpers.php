@@ -2205,6 +2205,7 @@ namespace App\Models {
      * @property string $name
      * @property int $id
      * @property-read mixed $stock
+     * @property-read mixed $stock_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductInstance> $instances
      * @property-read int|null $instances_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Movement> $movements
@@ -2224,6 +2225,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product query()
+     * @method static \Illuminate\Database\Eloquent\Builder<Product>|Product inStock() {@see App\Models\Product::scopeInStock()}
      * @method static mixed select($columns)
      * @method static mixed selectSub($query, $as)
      * @method static mixed selectRaw($expression, array $bindings)
