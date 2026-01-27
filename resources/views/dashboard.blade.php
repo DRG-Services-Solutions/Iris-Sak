@@ -10,7 +10,7 @@
                 </div>
                 <div>
                     <h2 class="font-bold text-2xl text-gray-800 dark:text-gray-100 leading-tight">
-                        {{ __('Panel de Administración') }}
+                        Panel de Administración
                     </h2>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Sistema de Gestión</p>
                 </div>
@@ -178,23 +178,24 @@
                 </div>
             -->
 
-                {{-- Tarjeta 4: Inventario (Próximamente) --}}
-                <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden opacity-75">
+                {{-- Tarjeta 4: Inventario --}}
+                <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
                     <div class="relative">
                         {{-- Banner superior con gradiente --}}
-                        <div class="h-2 bg-gradient-to-r from-slate-400 via-slate-500 to-slate-600"></div>
+                        <div class="h-2 bg-gradient-to-r from-green-500 via-green-600 to-green-700"></div>
+                        
+                        {{-- Badge de estado (opcional) --}}
+                        <div class="absolute top-4 right-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5 animate-pulse"></span>
+                                Activo
+                            </span>
+                        </div>
                         
                         <div class="p-6">
-                            {{-- Icono --}}
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="bg-gradient-to-br from-slate-400 to-slate-600 p-4 rounded-xl shadow-lg">
-                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                                    </svg>
-                                </div>
-                                <span class="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs font-semibold px-3 py-1 rounded-full">
-                                    Próximamente
-                                </span>
+                            {{-- Icono principal --}}
+                            <div class="w-14 h-14 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900 dark:to-green-800 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-boxes text-green-600 dark:text-green-400 text-2xl"></i>
                             </div>
 
                             {{-- Contenido --}}
@@ -205,17 +206,17 @@
                                 Monitoreo en tiempo real de existencias, entradas y salidas de materiales.
                             </p>
 
-                            {{-- Botón deshabilitado --}}
-                            <button disabled 
-                                    class="inline-flex items-center justify-center w-full px-5 py-3 bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 font-semibold text-sm rounded-lg cursor-not-allowed">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                </svg>
-                                <span>En Desarrollo</span>
-                            </button>
+                            {{-- Botón habilitado --}}
+                            <a href="{{ route('inventory.index') }}" 
+                            class="inline-flex items-center justify-center w-full px-5 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold text-sm rounded-lg shadow-md hover:shadow-lg transition-all duration-200 group-hover:scale-105">
+                                <i class="fas fa-box-open mr-2"></i>
+                                <span>Ver Inventario</span>
+                            </a>
                         </div>
                     </div>
                 </div>
+
+                
 
                 {{-- Tarjeta 5: Reportes (Próximamente) --}}
                 <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden opacity-75">
