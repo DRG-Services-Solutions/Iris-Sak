@@ -13,15 +13,15 @@ export default defineConfig({
         }),
     ],
     
-    /*
+    
     //  Descomenta esto para acceder de la red local
     server: {
         host: '0.0.0.0',  // Permite conexiones desde cualquier IP
         port: 5173,        
         cors: true,
         hmr: {
-            host: 'localhost' // Cambia esto por tu IP local si usas el TC50 para configurarlo en el archivo de .config de enterprise browser
+            host: '10.20.1.157' // Cambia esto por tu IP local si usas el TC50 para configurarlo en el archivo de .config de enterprise browser
         }
     }
-    */
+    
 });

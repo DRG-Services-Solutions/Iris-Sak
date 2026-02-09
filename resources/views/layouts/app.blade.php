@@ -9,7 +9,7 @@
         <script src="/ebapi-modules.js" type="text/javascript" charset="utf-8"></script>
         <script src="/elements.js" type="text/javascript" charset="utf-8"></script>
         
-        <title>{{ config('app.name', 'Kone App') }}</title>
+        <title>{{ config('app.name', 'Iris') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

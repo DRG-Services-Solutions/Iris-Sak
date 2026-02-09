@@ -33,7 +33,7 @@
                     <div class="flex items-center justify-between">
                         <div class="flex-1">
                             <h3 class="text-2xl md:text-3xl font-bold text-white mb-2">
-                                ¡Bienvenido, {{ Auth::user()->name }}!
+                                ¡Bienvenido!
                             </h3>
                             <p class="text-gray-300 text-sm md:text-base">
                                 Gestiona tu Sistema desde aqui.
@@ -218,41 +218,40 @@
 
                 
 
-                {{-- Tarjeta 5: Reportes (Próximamente) --}}
-                <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden opacity-75">
+                {{-- Tarjeta 5: Reportes --}}
+                <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
                     <div class="relative">
                         {{-- Banner superior con gradiente --}}
-                        <div class="h-2 bg-gradient-to-r from-slate-400 via-slate-500 to-slate-600"></div>
+                        <div class="h-2 bg-gradient-to-r from-orange-500 via-amber-600 to-yellow-600"></div>
+                        
+                        {{-- Badge de estado --}}
+                        <div class="absolute top-4 right-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
+                                <span class="w-1.5 h-1.5 bg-orange-500 rounded-full mr-1.5 animate-pulse"></span>
+                                Activo
+                            </span>
+                        </div>
                         
                         <div class="p-6">
-                            {{-- Icono --}}
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="bg-gradient-to-br from-slate-400 to-slate-600 p-4 rounded-xl shadow-lg">
-                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                </div>
-                                <span class="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs font-semibold px-3 py-1 rounded-full">
-                                    Próximamente
-                                </span>
+                            {{-- Icono principal --}}
+                            <div class="w-14 h-14 bg-gradient-to-br from-orange-100 to-amber-200 dark:from-orange-900 dark:to-amber-800 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-chart-line text-orange-600 dark:text-orange-400 text-2xl"></i>
                             </div>
 
                             {{-- Contenido --}}
                             <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                                Reportes y Analítica
+                                Movimientos
                             </h3>
                             <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 min-h-[3rem]">
-                                Genera reportes detallados y visualiza métricas clave del sistema de manufactura.
+                                Gestiona Entradas, Salidas y Ajustes de Inventario en el Almacen.
                             </p>
 
-                            {{-- Botón deshabilitado --}}
-                            <button disabled 
-                                    class="inline-flex items-center justify-center w-full px-5 py-3 bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 font-semibold text-sm rounded-lg cursor-not-allowed">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                </svg>
-                                <span>En Desarrollo</span>
-                            </button>
+                            {{-- Botón habilitado --}}
+                            <a href="{{ route('movements.index') }}" 
+                            class="inline-flex items-center justify-center w-full px-5 py-3 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-semibold text-sm rounded-lg shadow-md hover:shadow-lg transition-all duration-200 group-hover:scale-105">
+                                <i class="fas fa-file-chart-line mr-2"></i>
+                                <span>Ver Reportes</span>
+                            </a>
                         </div>
                     </div>
                 </div>

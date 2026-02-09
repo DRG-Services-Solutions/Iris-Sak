@@ -97,15 +97,22 @@ class Product extends Model
         return $query->where('stock', '>', 0);
     }
 
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['category'] ?? null, function ($query, $categoryId) {
+            $query->where('category_id', $categoryId);
+        })->when($filters['search'] ?? null, function ($query, $search) {
+            $query->where('name', 'like', "%{$search}%")
+                ->orWhere('barcode', 'like', "%{$search}%");
+        });
+    }
+
     
 
 
 
 
-    /**
-     * The "booted" method of the model.
-     * Se ejecuta cuando el modelo es inicializado.
-     */
+  
    
 
     /**
