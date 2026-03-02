@@ -48,42 +48,35 @@ class MovementController extends Controller
         
         DB::transaction(function () use ($items, $request) {
             foreach ($items as $item) {
+                $product = Product::findOrFail($item['product_id']);
+                $quantity = $item['quantity'];
+
+                if ($request->type === 'in') {
+                    $product->increment('stock', $quantity);
+                } elseif ($request->type === 'out') {
+                    $product->decrement('stock', $quantity);
+                }
+
                 Movement::create([
-                    'product_id' => $item['product_id'],
+                    'product_id' => $product->id,
                     'type' => $request->type,
-                    'quantity' => $item['quantity'],
+                    'quantity' => $quantity,
+                    'stock_after' => $product->stock, 
                     'user_id' => auth()->id(),
                     'notes' => 'Procesamiento por lote'
                 ]);
-                
-            }
-            if (Product::find($item['product_id'])->isRfidTracked())
-                {
-                    $stockUpdate = ProductInstance::create([
-                        'product_id' => $item['product_id'],
+
+                if ($product->isRfidTracked()) {
+                    ProductInstance::create([
+                        'product_id' => $product->id,
                         'status' => $request->type === 'in' ? 'En Stock' : 'Salido',
                         'current_station' => 'Almacén',
-                        'notes' => 'Actualización de stock por movimiento masivo',
                         'user_id' => auth()->id(),
                         'epc' => 'AUTO-' . uniqid()
                     ]);
-                
-
                 }
-                elseif(Product::find($item['product_id'])->isBarcodeTracked())
-                {
-                    $product = Product::find($item['product_id']);
-                    if ($request->type === 'in') {
-                        $product->updateStock($item['quantity'], 'increment');
-                    } elseif ($request->type === 'out') {
-                        $product->updateStock($item['quantity'], 'decrement');
-                    }
-                }
-            
-
+            }
         });
-        
-        
 
         return redirect()->route('movements.index')->with('success', 'Lote procesado con éxito');
     }

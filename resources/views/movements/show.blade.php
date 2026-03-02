@@ -247,10 +247,15 @@
                         
                         <div class="p-6">
                             @php
-                                $stockBefore = $movement->product->stock - ($movement->type === 'in' ? $movement->quantity : ($movement->type === 'out' ? -$movement->quantity : 0));
-                                if ($movement->type === 'adjustment') {
-                                    $stockBefore = $movement->product->stock; // Para ajustes, mostramos el stock actual como referencia
-                                }
+                                $currentStock = $movement->product->stock;
+                                $qty = $movement->quantity;
+
+                                $stockBefore = match ($movement->type) {
+                                    'in'         => max(0, $currentStock - $qty),
+                                    'out'        => $currentStock + $qty,
+                                    'adjustment' => $currentStock,
+                                    default      => $currentStock,
+                                };
                             @endphp
                             
                             <div class="space-y-4">
@@ -274,7 +279,7 @@
                                 <div class="text-center p-4 bg-gradient-to-br {{ $movement->type === 'in' ? 'from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20' : ($movement->type === 'out' ? 'from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20' : 'from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20') }} rounded-lg border-2 {{ $movement->type === 'in' ? 'border-green-200 dark:border-green-800' : ($movement->type === 'out' ? 'border-red-200 dark:border-red-800' : 'border-amber-200 dark:border-amber-800') }}">
                                     <p class="text-xs {{ $movement->type === 'in' ? 'text-green-700 dark:text-green-400' : ($movement->type === 'out' ? 'text-red-700 dark:text-red-400' : 'text-amber-700 dark:text-amber-400') }} uppercase font-bold mb-1">Stock Resultante</p>
                                     <p class="text-4xl font-black {{ $movement->type === 'in' ? 'text-green-700 dark:text-green-400' : ($movement->type === 'out' ? 'text-red-700 dark:text-red-400' : 'text-amber-700 dark:text-amber-400') }}">
-                                        {{ $movement->product->stock }}
+                                        {{ $movement->stock_after }}
                                     </p>
                                 </div>
                             </div>

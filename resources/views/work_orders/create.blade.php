@@ -10,9 +10,9 @@
                 </div>
                 <div>
                     <h2 class="font-bold text-2xl text-gray-800 dark:text-gray-100 leading-tight">
-                        {{ __('Registrar nueva impresion de etiquetas') }}
+                        {{ __('Nuevo Etiquetado') }}
                     </h2>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Iniciar Proceso Etiqeutado RFID</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Etiqeutado RFID</p>
                 </div>
             </div>
             <a href="{{ route('work_orders.index') }}" 
@@ -45,8 +45,8 @@
                                 Proceso Inicial 
                             </h3>
                             <p class="text-sm text-blue-700 dark:text-blue-300">
-                                El proceso iniciara automáticamente en estacion de <strong>Impresión/Escaneo</strong>. 
-                                El folio se generará automáticamente al crear la orden.
+                                El proceso iniciara automáticamente en estacion de <strong>Escaneo/Verificacion</strong>. 
+                                El folio se generará automáticamente.
                             </p>
                         </div>
                     </div>
@@ -144,7 +144,7 @@
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
-                                {{ __('Cancelar') }}
+                                Cancelar
                             </a>
 
                             <button type="submit" 
@@ -152,7 +152,7 @@
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                 </svg>
-                                {{ __('Crear Orden de Trabajo') }}
+                                Nuevo Proceso de Etiquetado
                             </button>
                         </div>
                     </div>
@@ -173,7 +173,7 @@
                             ¿Necesitas ayuda?
                         </h4>
                         <p class="text-sm text-slate-600 dark:text-slate-400">
-                            Al crear la orden, se generará automáticamente un folio único y podrás proceder con el proceso de impresión y escaneo de etiquetas RFID para las herramientas.
+                            Al crear el siguiente proceso, se generará automáticamente un folio único y podrás proceder con el proceso de impresión y escaneo de etiquetas RFID para las herramientas.
                         </p>
                     </div>
                 </div>

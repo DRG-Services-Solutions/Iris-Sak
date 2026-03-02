@@ -27,6 +27,7 @@ class StoreMovementRequest extends FormRequest
             'type'                => ['required', 'in:in,out,adjustment'],
             'quantity'            => ['required', 'integer', 'min:1'],
             'notes'               => ['nullable', 'string', 'max:500'],
+            
         ];
     }
 }

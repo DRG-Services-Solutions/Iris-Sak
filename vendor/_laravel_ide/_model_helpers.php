@@ -1882,6 +1882,7 @@ namespace App\Models {
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property mixed $product_instance_id
      * @property mixed $user_id
+     * @property mixed $stock_after
      * @property mixed $quantity
      * @property mixed $type
      * @property mixed $product_id
@@ -1891,6 +1892,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereProductId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereType($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereQuantity($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereStockAfter($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereUserId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereProductInstanceId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereCreatedAt($value)

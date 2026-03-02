@@ -12,14 +12,14 @@
                     <h2 class="font-bold text-2xl text-gray-800 dark:text-gray-100 leading-tight">
                         Panel de Administración
                     </h2>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Sistema de Gestión</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Usuario: {{ Auth::user()->name }}</p>
                 </div>
             </div>
             <div class="hidden md:flex items-center space-x-2 px-4 py-2 bg-slate-700 rounded-lg">
                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span class="text-sm font-medium text-white">{{ now()->format('d/m/Y') }}</span>
+                <span class="text-sm font-medium text-white">{{ now()->format('d/m/Y H:i') }}</span>
             </div>
         </div>
     </x-slot>
@@ -27,7 +27,7 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
-            {{-- Bienvenida --}}
+            {{-- Bienvenida 
             <div class="mb-8 bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 rounded-xl shadow-xl overflow-hidden">
                 <div class="p-6 md:p-8">
                     <div class="flex items-center justify-between">
@@ -49,6 +49,7 @@
                     </div>
                 </div>
             </div>
+            --}}
 
             {{-- Grid de Módulos --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -250,7 +251,7 @@
                             <a href="{{ route('movements.index') }}" 
                             class="inline-flex items-center justify-center w-full px-5 py-3 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-semibold text-sm rounded-lg shadow-md hover:shadow-lg transition-all duration-200 group-hover:scale-105">
                                 <i class="fas fa-file-chart-line mr-2"></i>
-                                <span>Ver Reportes</span>
+                                <span>Ver Movimientos</span>
                             </a>
                         </div>
                     </div>
@@ -297,9 +298,6 @@
                 </div>
 
             </div>
-
-
-
         </div>
     </div>
 </x-app-layout>

@@ -13,26 +13,71 @@ use App\Models\ProductInstance;
 use App\Models\ActivityLog;
 use Carbon\Carbon;
 
+
 class InventoryController extends Controller
 {
     /**
      * Muestra el listado de conteos de inventario
      */
-    public function index()
+    
+    public function index(Request $request)
     {
+        // 1. Autorización (Spatie/Policies)
         $this->authorize('viewAny', InventoryCount::class);
-        $products = Product::withCount('instances')->paginate(10);
+
+        // 2. Query base para Productos con el conteo de instancias (RFID)
+        $productQuery = Product::withCount('instances');
+
+        // --- LÓGICA DE FILTROS ---
+        
+        // Búsqueda por nombre o barcode
+        if ($request->filled('search')) {
+            $productQuery->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('barcode', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Filtro por tipo de rastreo (RFID o Barcode)
+        if ($request->filled('type')) {
+            $productQuery->where('tracking_type', $request->type);
+        }
+
+        // Filtro por estado de Stock
+        if ($request->filled('stock_filter')) {
+            switch ($request->stock_filter) {
+                case 'available':
+                    $productQuery->where('stock', '>', 0);
+                    break;
+                case 'low':
+                    $productQuery->where('stock', '<', 20); // Tu umbral de stock bajo
+                    break;
+                case 'out':
+                    $productQuery->where('stock', '<=', 0);
+                    break;
+            }
+        }
+
+        // 3. Ejecutar paginación (withQueryString es vital para que los filtros persistan al cambiar de página)
+        $products = $productQuery->paginate(10)->withQueryString();
+
+        // 4. Estadísticas Globales (Totales de la tabla)
         $uniqueProducts = Product::count();
         $lowStockProducts = Product::where('stock', '<', 20)->count();
-        
-
         $barcodeProducts = Product::where('tracking_type', 'barcode')->count();
 
+        // 5. Historial de Conteos (Paginación independiente)
         $inventoryCounts = InventoryCount::with('user')
             ->latest('created_at')
-            ->paginate(15);
+            ->paginate(15, ['*'], 'counts_page'); 
 
-        return view('inventory.index', compact('inventoryCounts', 'products', 'uniqueProducts', 'lowStockProducts', 'barcodeProducts'));
+        return view('inventory.index', compact(
+            'inventoryCounts', 
+            'products', 
+            'uniqueProducts', 
+            'lowStockProducts', 
+            'barcodeProducts'
+        ));
     }
 
     /**

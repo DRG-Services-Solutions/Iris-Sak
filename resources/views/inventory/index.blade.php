@@ -120,14 +120,11 @@
                         </div>
 
                         {{-- Filtro por tipo --}}
-                        <div>
-                            <select name="type" 
-                                    class="block w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">Todos los tipos</option>
-                                <option value="rfid" {{ request('type') === 'rfid' ? 'selected' : '' }}>RFID</option>
-                                <option value="barcode" {{ request('type') === 'barcode' ? 'selected' : '' }}>Código de Barras</option>
-                            </select>
-                        </div>
+                        <select name="type" class="border p-2 rounded">
+                            <option value="">Todos los tipos</option>
+                            <option value="rfid" {{ request('type') == 'rfid' ? 'selected' : '' }}>RFID</option>
+                            <option value="barcode" {{ request('type') == 'barcode' ? 'selected' : '' }}>Barcode</option>
+                        </select>
 
                         {{-- Filtro por stock --}}
                         <div>
@@ -135,7 +132,7 @@
                                     class="block w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="">Todo el stock</option>
                                 <option value="available" {{ request('stock_filter') === 'available' ? 'selected' : '' }}>Con stock</option>
-                                <option value="low" {{ request('stock_filter') === 'low' ? 'selected' : '' }}>Stock bajo (&lt;10)</option>
+                                <option value="low" {{ request('stock_filter') === 'low' ? 'selected' : '' }}>Stock bajo (&lt;20)</option>
                                 <option value="out" {{ request('stock_filter') === 'out' ? 'selected' : '' }}>Sin stock</option>
                             </select>
                         </div>
@@ -335,8 +332,11 @@
                 {{-- Paginación --}}
                 <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
                     {{ $products->links() }}
+
                 </div>
             </div>
         </div>
+       
+
     </div>
 </x-app-layout>
