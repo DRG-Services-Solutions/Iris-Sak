@@ -12,7 +12,7 @@
                     <h2 class="font-bold text-2xl text-gray-800 dark:text-gray-100 leading-tight">
                         {{ __('Registrar Movimiento') }}
                     </h2>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Escaneo y gestión de inventario por lotes</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Escaneo</p>
                 </div>
             </div>
             <a href="{{ route('movements.index') }}" 
@@ -88,20 +88,18 @@
                             </svg>
                             Escaneo de Código de Barras
                         </x-input-label>
-                        <div class="relative">
+                        <form @submit.prevent="addItem()" class="relative">
                             <x-text-input 
                                 x-ref="barcodeInput"
                                 x-model="barcodeInput" 
-                                @keydown.enter.prevent="addItem()"
                                 autofocus
+                                enterkeyhint="go"
                                 placeholder="Escanee o escriba el código de barras..."
                                 class="w-full bg-slate-900 border-slate-700 text-white focus:ring-blue-500 focus:border-blue-500 h-14 text-xl font-mono pr-48"
                             />
                             <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                              
-                                
                             </div>
-                        </div>
+                        </form>
                     </div>
                     
                     {{-- Selector de Tipo Global --}}
