@@ -22,10 +22,8 @@ class InventoryController extends Controller
     
     public function index(Request $request)
     {
-        // 1. Autorización (Spatie/Policies)
         $this->authorize('viewAny', InventoryCount::class);
 
-        // 2. Query base para Productos con el conteo de instancias (RFID)
         $productQuery = Product::withCount('instances');
 
         // --- LÓGICA DE FILTROS ---
@@ -58,15 +56,12 @@ class InventoryController extends Controller
             }
         }
 
-        // 3. Ejecutar paginación (withQueryString es vital para que los filtros persistan al cambiar de página)
         $products = $productQuery->paginate(10)->withQueryString();
 
-        // 4. Estadísticas Globales (Totales de la tabla)
         $uniqueProducts = Product::count();
         $lowStockProducts = Product::where('stock', '<', 20)->count();
         $barcodeProducts = Product::where('tracking_type', 'barcode')->count();
 
-        // 5. Historial de Conteos (Paginación independiente)
         $inventoryCounts = InventoryCount::with('user')
             ->latest('created_at')
             ->paginate(15, ['*'], 'counts_page'); 

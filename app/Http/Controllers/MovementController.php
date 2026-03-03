@@ -15,7 +15,6 @@ class MovementController extends Controller
 
     public function __construct()
     {
-        // Esto hace todo el trabajo por ti
         $this->authorizeResource(Movement::class, 'movement');
     }
     /**
@@ -88,7 +87,8 @@ class MovementController extends Controller
     {
         
         
-        $movement->load(['product']);
+        $movement->load(['product', 'user']);
+       
         return view('movements.show', compact('movement'));
     }
 

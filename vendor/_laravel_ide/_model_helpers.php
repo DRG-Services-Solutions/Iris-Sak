@@ -323,14 +323,6 @@ namespace App\Models {
     /**
      * App\Models\Asset
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property string $name
-     * @property int $id
-     * @method static \Illuminate\Database\Eloquent\Builder<Asset>|Asset whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Asset>|Asset whereName($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Asset>|Asset whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Asset>|Asset whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Asset>|Asset newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Asset>|Asset newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Asset>|Asset query()
@@ -1878,25 +1870,8 @@ namespace App\Models {
     /**
      * App\Models\Movement
      *
-     * @property \Illuminate\Support\Carbon|null $updated_at
-     * @property \Illuminate\Support\Carbon|null $created_at
-     * @property mixed $product_instance_id
-     * @property mixed $user_id
-     * @property mixed $stock_after
-     * @property mixed $quantity
-     * @property mixed $type
-     * @property mixed $product_id
-     * @property int $id
      * @property-read \App\Models\Product $product
-     * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereProductId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereType($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereQuantity($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereStockAfter($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereUserId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereProductInstanceId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereCreatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement whereUpdatedAt($value)
+     * @property-read \App\Models\User $user
      * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Movement>|Movement query()

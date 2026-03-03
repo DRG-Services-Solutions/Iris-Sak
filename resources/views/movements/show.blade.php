@@ -300,8 +300,8 @@
                                 <div class="flex items-start">
                                     <i class="fas fa-clock text-gray-400 mr-2 mt-0.5"></i>
                                     <div class="flex-1">
-                                        <p class="text-gray-500 dark:text-gray-400">Creado</p>
-                                        <p class="font-mono text-gray-700 dark:text-gray-300">{{ $movement->created_at->format('Y-m-d H:i:s') }}</p>
+                                        <p class="text-gray-500 dark:text-gray-400">Creado por: {{ $movement->user->name}}</p>
+                                        <p class="font-mono text-gray-700 dark:text-gray-300">{{ $movement->created_at->format('d-m-Y H:i') }}</p>
                                         <p class="text-gray-400 text-xs mt-1">{{ $movement->created_at->diffForHumans() }}</p>
                                     </div>
                                 </div>
@@ -310,15 +310,13 @@
                                     <i class="fas fa-edit text-gray-400 mr-2 mt-0.5"></i>
                                     <div class="flex-1">
                                         <p class="text-gray-500 dark:text-gray-400">Última Actualización</p>
-                                        <p class="font-mono text-gray-700 dark:text-gray-300">{{ $movement->updated_at->format('Y-m-d H:i:s') }}</p>
+                                        <p class="font-mono text-gray-700 dark:text-gray-300">{{ $movement->updated_at->format('d-m-Y H:i:s') }}</p>
                                         <p class="text-gray-400 text-xs mt-1">{{ $movement->updated_at->diffForHumans() }}</p>
                                     </div>
                                 </div>
 
                                 <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
                                     <div class="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                                        <i class="fas fa-shield-alt text-blue-500 mr-2"></i>
-                                        <span class="font-semibold uppercase tracking-wider">Registro Inmutable</span>
                                     </div>
                                 </div>
                             </div>
