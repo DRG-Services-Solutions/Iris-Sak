@@ -16,31 +16,29 @@ return new class extends Migration
 
             // Clave Foránea a la tabla 'products' (el catálogo)
             $table->foreignId('product_id')
-            ->constrained('products') // Asegura que el product_id exista en la tabla products
-            ->onDelete('cascade'); // Opcional: Si se borra un producto del catálogo, se borran todas sus instancias. Alternativa: ->onDelete('restrict') para prevenirlo.
+            ->constrained('products') 
+            ->onDelete('cascade'); 
 
             // El EPC único de esta instancia física
             $table->string('epc', 24)->unique();
         
             // Estado y Ubicación Actual (Indexados para búsquedas rápidas)
-            $table->string('status')->default('En Stock')->index(); // Ej: 'En Stock', 'Check-In', 'Estación A', 'En Mantenimiento', etc.
-            $table->string('current_station')->default('Almacén')->index(); // Ej: 'Almacén', 'Estación A', 'Check-In', etc.
+            $table->string('status')->default('En Stock')->index(); 
+            $table->string('current_station')->default('Almacén')->index(); 
             
             // --- Columnas Opcionales / Adicionales ---
-            $table->text('notes')->nullable(); // Notas específicas sobre esta instancia
+            $table->text('notes')->nullable(); 
 
-            //Usuario asociado (¿último que la usó? ¿responsable?)
             $table->foreignId('user_id')
-                  ->nullable() // Permite que no siempre haya un usuario asociado
-                  ->constrained('users') // Asegura que el user_id exista en la tabla users
-                  ->nullOnDelete(); // Si se borra el usuario, este campo se pone a NULL
+                  ->nullable() 
+                  ->constrained('users') 
+                  ->nullOnDelete(); 
 
              $table->foreignId('work_order_id')
-                  ->nullable() // ¿Puede una instancia existir sin orden? Si no, quita nullable()
-                  ->constrained('work_orders') // Vincula a la tabla work_orders
-                  ->nullOnDelete(); // Si se borra la orden, pone este campo a NULL (o usa cascade/restrict)
+                  ->nullable() 
+                  ->constrained('work_orders') 
+                  ->nullOnDelete();
 
-            // Fechas de creación y actualización
             $table->timestamps();
         });
     }
