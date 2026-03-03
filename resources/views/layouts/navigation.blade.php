@@ -18,8 +18,9 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-2 sm:-my-px sm:ms-10 sm:flex items-center">
+
                     {{-- Dashboard --}}
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" 
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
                                 class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -27,27 +28,18 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    {{-- Órdenes de Trabajo --}}
-                    
-                    <x-nav-link :href="route('work_orders.index')" :active="request()->routeIs('work_orders.*')"
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                        {{ __('RFID') }}
-                    </x-nav-link>
-                     
+                    {{-- Catálogo de Productos (solo usuarios con permiso manage-products) --}}
+                    @can('manage-products')
+                        <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')"
+                                    class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                            {{ __('Catálogo') }}
+                        </x-nav-link>
+                    @endcan
 
-                    {{-- Productos/Catálogo --}}
-                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')"
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                        </svg>
-                        {{ __('Catálogo') }}
-                    </x-nav-link>
-
-                    {{-- Inventario RFID --}}
+                    {{-- Control de Inventario --}}
                     <x-nav-link :href="route('inventory.index')" :active="request()->routeIs('inventory.*')"
                                 class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,16 +48,15 @@
                         {{ __('Inventario') }}
                     </x-nav-link>
 
-                    {{-- Auditorías (Solo Admin) --}}
-                    @if(Auth::user()->isAdmin())
-                        <x-nav-link :href="route('movements.index')" :active="request()->routeIs('movements.*')"
-                                    class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            Movimientos
-                        </x-nav-link>
-                    @endif
+                    {{-- Movimientos --}}
+                    <x-nav-link :href="route('movements.index')" :active="request()->routeIs('movements.*')"
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        {{ __('Movimientos') }}
+                    </x-nav-link>
+
                 </div>
             </div>
 
@@ -114,7 +105,6 @@
                         </div>
 
                         <div class="border-t border-gray-100 dark:border-gray-700">
-                            <!-- Authentication -->
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <x-dropdown-link :href="route('logout')"
@@ -133,8 +123,8 @@
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
-                <button 
-                    @click="open = !open" 
+                <button
+                    @click="open = !open"
                     type="button"
                     class="inline-flex items-center justify-center p-2 rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -149,6 +139,7 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden border-t border-gray-200 dark:border-gray-700">
         <div class="pt-2 pb-3 space-y-1 bg-gray-50 dark:bg-gray-900">
+
             {{-- Dashboard --}}
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
                                    class="flex items-center">
@@ -158,43 +149,35 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            {{-- Órdenes --}}
-            <x-responsive-nav-link :href="route('work_orders.index')" :active="request()->routeIs('work_orders.*')"
-                                   class="flex items-center">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-                {{ __('Órdenes de Trabajo') }}
-            </x-responsive-nav-link>
+            {{-- Catálogo de Productos (solo usuarios con permiso manage-products) --}}
+            @can('manage-products')
+                <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')"
+                                       class="flex items-center">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                    {{ __('Catálogo') }}
+                </x-responsive-nav-link>
+            @endcan
 
-            {{-- Catálogo --}}
-            <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')"
-                                   class="flex items-center">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-                {{ __('Catálogo') }}
-            </x-responsive-nav-link>
-
-            {{-- Inventario RFID --}}
+            {{-- Control de Inventario --}}
             <x-responsive-nav-link :href="route('inventory.index')" :active="request()->routeIs('inventory.*')"
                                    class="flex items-center">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                 </svg>
-                {{ __('Inventario RFID') }}
+                {{ __('Inventario') }}
             </x-responsive-nav-link>
 
-            {{-- Auditorías (Solo Admin) --}}
-            @if(Auth::user()->isAdmin())
-                <x-responsive-nav-link :href="route('audit.work_orders.list')" :active="request()->routeIs('audit.*')"
-                                       class="flex items-center">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    {{ __('Auditorías') }}
-                </x-responsive-nav-link>
-            @endif
+            {{-- Movimientos --}}
+            <x-responsive-nav-link :href="route('movements.index')" :active="request()->routeIs('movements.*')"
+                                   class="flex items-center">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                {{ __('Movimientos') }}
+            </x-responsive-nav-link>
+
         </div>
 
         <!-- Responsive Settings Options -->
@@ -219,7 +202,6 @@
                     {{ __('Mi Perfil') }}
                 </x-responsive-nav-link>
 
-                <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <x-responsive-nav-link :href="route('logout')"
