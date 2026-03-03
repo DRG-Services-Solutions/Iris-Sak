@@ -218,7 +218,7 @@ public function processScan(Request $request, WorkOrder $workOrder): JsonRespons
         ^XZ
         ";
         
-        $printerIp = '192.168.0.199';
+        $printerIp = '10.20.1.227';
 
         // Guardar el trabajo en la cola de impresión de la base de datos
         PrintJob::create([
