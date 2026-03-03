@@ -168,6 +168,23 @@
                         </div>
                     </div>
 
+                    {{-- NUEVO: Indicador de Progreso del Producto Actual --}}
+                    <div id="scan-progress-container" class="mt-6 hidden animate-fade-in p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm">
+                        <div class="flex justify-between items-end mb-2">
+                            <div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Progreso del producto:</p>
+                                <p id="progress-product-name" class="font-bold text-gray-800 dark:text-gray-200 text-sm truncate max-w-[200px] md:max-w-xs"></p>
+                            </div>
+                            <div class="text-right">
+                                <span id="progress-text" class="text-lg font-bold text-emerald-600 dark:text-emerald-400">0 / 0</span>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Impresos</p>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                            <div id="progress-bar" class="bg-emerald-500 h-3 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+                        </div>
+                    </div>
+
                     {{-- Feedback del escaneo --}}
                     <div id="scan-feedback" class="mt-4"></div>
                 </div>
@@ -361,6 +378,10 @@
             const scanUrl = "{{ route('work_orders.scan', $workOrder) }}";
             const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
             const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : null;
+            const progressContainer = document.getElementById('scan-progress-container');
+            const progressProductName = document.getElementById('progress-product-name');
+            const progressText = document.getElementById('progress-text');
+            const progressBar = document.getElementById('progress-bar');
 
             if (!barcodeInput) {
                 console.error('ERROR: No se encontró el input de código de barras');
@@ -433,19 +454,18 @@
                         },
                         body: JSON.stringify({ barcode: barcode })
                     })
-                    .then(response => {
-                        if (!response.ok && response.status !== 422) {
-                            throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
+                    .then(async response => {
+                        const data = await response.json();
+                        // Manejo del error 422 (Límite alcanzado en el backend)
+                        if (!response.ok) {
+                            throw new Error(data.message || `Error HTTP ${response.status}: ${response.statusText}`);
                         }
-                        return response.json();
+                        return data;
                     })
-
-                    
                     .then(data => {
                         if (data.success) {
                             showFeedback('✓ Item registrado correctamente', 'success');
                             
-                            // Remover estados vacíos si existen
                             if (emptyStateRow) emptyStateRow.remove();
                             if (emptyStateMobile) emptyStateMobile.remove();
 
@@ -504,18 +524,58 @@
                             }
 
                             updateCounters();
+
+                            // === ACTUALIZAR BARRA DE PROGRESO ===
+                            progressContainer.classList.remove('hidden');
+                            progressProductName.textContent = productName;
+                            progressText.textContent = `${data.current_count} / ${data.stock_limit}`;
+                            
+                            // Calcular porcentaje para la barra
+                            let percentage = (data.current_count / data.stock_limit) * 100;
+                            if (percentage > 100) percentage = 100;
+                            progressBar.style.width = `${percentage}%`;
+
+                            // === LÓGICA DE BLOQUEO ===
+                            if (data.current_count >= data.stock_limit) {
+                                barcodeInput.disabled = true; 
+                                barcodeInput.value = '';
+                                barcodeInput.placeholder = "Límite de stock alcanzado";
+                                barcodeInput.classList.remove('border-emerald-300', 'focus:border-emerald-500');
+                                barcodeInput.classList.add('border-orange-500', 'bg-orange-50', 'cursor-not-allowed');
+
+                                // Cambiar color de la barra
+                                progressBar.classList.remove('bg-emerald-500');
+                                progressBar.classList.add('bg-orange-500');
+                                progressText.classList.remove('text-emerald-600', 'dark:text-emerald-400');
+                                progressText.classList.add('text-orange-500', 'dark:text-orange-400');
+                                
+                                showFeedback(`¡Límite alcanzado! Se completaron las ${data.stock_limit} piezas.`, 'success');
+                            } else {
+
+                                progressBar.classList.add('bg-emerald-500');
+                                progressBar.classList.remove('bg-orange-500');
+                                progressText.classList.add('text-emerald-600', 'dark:text-emerald-400');
+                                progressText.classList.remove('text-orange-500', 'dark:text-orange-400');
+                                barcodeInput.disabled = false;
+                                barcodeInput.value = '';
+                                barcodeInput.focus();
+                            }
+
                         } else {
                             showFeedback(data.message || 'Error al procesar el escaneo', 'error');
+                            barcodeInput.disabled = false;
+                            barcodeInput.value = '';
+                            barcodeInput.focus();
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        showFeedback('Error de conexión: ' + error.message, 'error');
-                    })
-                    .finally(() => {
+                        showFeedback(error.message, 'error');
+                        barcodeInput.disabled = false;
                         barcodeInput.value = '';
                         barcodeInput.focus();
                     });
+                    
                 }
             });
 

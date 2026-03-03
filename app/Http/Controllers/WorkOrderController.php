@@ -211,7 +211,7 @@ public function processScan(Request $request, WorkOrder $workOrder): JsonRespons
         ^PQ1,0,1,N
         ^XZ
         ";
-        $printerIp = '192.168.0.199';
+        $printerIp = '10.20.1.227';
         $printerPort = 9100;
         $printSuccess = $this->sendZplToPrinter($zplCommands, $printerIp, $printerPort);
 
@@ -222,7 +222,9 @@ public function processScan(Request $request, WorkOrder $workOrder): JsonRespons
         return response()->json([
             'success' => true,
             'message' => 'Instancia creada e impresión ZPL enviada.', 
-            'instance' => $instance->load('product') 
+            'instance' => $instance->load('product'),
+            'current_count' => $instancesInOrder + 1, 
+            'stock_limit' => $stockDisponible
         ]);
 
     } catch (\Exception $e) {
