@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\WorkOrder;
 use App\Models\Product;
+use App\Models\PrintJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
@@ -150,6 +151,7 @@ class WorkOrderController extends Controller
 public function processScan(Request $request, WorkOrder $workOrder): JsonResponse
 {
     $this->authorize('addInstance', $workOrder);
+    
     $validated = $request->validate([
         'barcode' => [
             'required',
@@ -166,6 +168,8 @@ public function processScan(Request $request, WorkOrder $workOrder): JsonRespons
             ->count();
 
         $stockDisponible = $product->getRawOriginal('stock');
+        
+        // Validación de barrera de seguridad
         if ($instancesInOrder >= $stockDisponible) {
             return response()->json([
                 'success' => false,
@@ -173,7 +177,7 @@ public function processScan(Request $request, WorkOrder $workOrder): JsonRespons
             ], 422);
         }
 
-
+        // Creación de la instancia
         $instance = ProductInstance::create([
             'product_id' => $product->id,
             'work_order_id' => $workOrder->id, 
@@ -182,6 +186,7 @@ public function processScan(Request $request, WorkOrder $workOrder): JsonRespons
             'user_id' => Auth::id(),
         ]);
 
+        // Registro de actividad
         ActivityLog::create([
             'user_id' => Auth::id(), 
             'product_instance_id' => $instance->id, 
@@ -196,6 +201,7 @@ public function processScan(Request $request, WorkOrder $workOrder): JsonRespons
             ]
         ]);
 
+        // Preparar ZPL
         $productname = $product->name; 
         $epc = $instance->epc;
         $zplCommands = "
@@ -211,24 +217,26 @@ public function processScan(Request $request, WorkOrder $workOrder): JsonRespons
         ^PQ1,0,1,N
         ^XZ
         ";
-        $printerIp = '10.20.1.227';
-        $printerPort = 9100;
-        $printSuccess = $this->sendZplToPrinter($zplCommands, $printerIp, $printerPort);
+        
+        $printerIp = '192.168.0.199';
 
-        if (!$printSuccess) {
-            Log::warning("Falló la impresión/codificación ZPL para EPC: {$epc} en orden {$workOrder->folio}");
-        }
+        // Guardar el trabajo en la cola de impresión de la base de datos
+        PrintJob::create([
+            'work_order_id' => $workOrder->id,
+            'printer_ip' => $printerIp,
+            'zpl_data' => trim($zplCommands), // Aplicamos trim para evitar saltos de línea basura al inicio
+            'status' => 'pending'
+        ]);
        
         return response()->json([
             'success' => true,
-            'message' => 'Instancia creada e impresión ZPL enviada.', 
+            'message' => 'Instancia creada. Etiqueta enviada a la cola de impresión.', 
             'instance' => $instance->load('product'),
-            'current_count' => $instancesInOrder + 1, 
+            'current_count' => $instancesInOrder + 1,
             'stock_limit' => $stockDisponible
         ]);
 
     } catch (\Exception $e) {
-        
         report($e); 
         return response()->json([
             'success' => false,
