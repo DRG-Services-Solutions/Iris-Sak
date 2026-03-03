@@ -161,6 +161,19 @@ public function processScan(Request $request, WorkOrder $workOrder): JsonRespons
     try {
         $product = Product::where('barcode', $validated['barcode'])->firstOrFail();
 
+        $instancesInOrder = $workOrder->productInstances()
+            ->where('product_id', $product->id)
+            ->count();
+
+        $stockDisponible = $product->getRawOriginal('stock');
+        if ($instancesInOrder >= $stockDisponible) {
+            return response()->json([
+                'success' => false,
+                'message' => "Límite alcanzado: el producto '{$product->name}' tiene {$stockDisponible} piezas disponibles y ya se escanearon {$instancesInOrder} en esta orden."
+            ], 422);
+        }
+
+
         $instance = ProductInstance::create([
             'product_id' => $product->id,
             'work_order_id' => $workOrder->id, 

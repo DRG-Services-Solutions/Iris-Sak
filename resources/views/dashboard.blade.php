@@ -54,48 +54,8 @@
             {{-- Grid de Módulos --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
-                {{-- Tarjeta 1: Órdenes de Trabajo --}}
-                <!--
-                @can('manage-products')
-                    <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
-                        <div class="relative">
-                            {{-- Banner superior con gradiente --}}
-                            <div class="h-2 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"></div>
-                            
-                            <div class="p-6">
-                                {{-- Icono --}}
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="bg-gradient-to-br from-blue-500 to-blue-700 p-4 rounded-xl shadow-lg">
-                                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                                        </svg>
-                                    </div>
-                                    <span class="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs font-semibold px-3 py-1 rounded-full">
-                                        Activo
-                                    </span>
-                                </div>
-
-                                {{-- Contenido --}}
-                                <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                                    Gestion RFID
-                                </h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 min-h-[3rem]">
-                                    Registro e Impresion de Etiquetas.
-                                </p>
-
-                                {{-- Botón --}}
-                                <a href="{{ route('work_orders.index') }}" 
-                                   class="inline-flex items-center justify-center w-full px-5 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-sm rounded-lg shadow-md hover:shadow-lg transition-all duration-200 group-hover:scale-105">
-                                    <span>RFID</span>
-                                    <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                @endcan
-                -->
+                
+                
                 
                 {{-- Tarjeta 2: Catálogo de Productos --}}
                 @can('manage-products')
@@ -129,6 +89,48 @@
                                 <a href="{{ route('products.index') }}" 
                                    class="inline-flex items-center justify-center w-full px-5 py-3 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-semibold text-sm rounded-lg shadow-md hover:shadow-lg transition-all duration-200 group-hover:scale-105">
                                     <span>Ver Catálogo</span>
+                                    <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endcan
+
+                {{-- Tarjeta 1: Órdenes de Trabajo --}}
+                
+                @can('manage-products')
+                    <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="relative">
+                            {{-- Banner superior con gradiente --}}
+                            <div class="h-2 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"></div>
+                            
+                            <div class="p-6">
+                                {{-- Icono --}}
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="bg-gradient-to-br from-blue-500 to-blue-700 p-4 rounded-xl shadow-lg">
+                                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                        </svg>
+                                    </div>
+                                    <span class="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs font-semibold px-3 py-1 rounded-full">
+                                        Activo
+                                    </span>
+                                </div>
+
+                                {{-- Contenido --}}
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                                    Gestion RFID
+                                </h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 min-h-[3rem]">
+                                    Registro e Impresion de Etiquetas.
+                                </p>
+
+                                {{-- Botón --}}
+                                <a href="{{ route('work_orders.index') }}" 
+                                   class="inline-flex items-center justify-center w-full px-5 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold text-sm rounded-lg shadow-md hover:shadow-lg transition-all duration-200 group-hover:scale-105">
+                                    <span>RFID</span>
                                     <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                     </svg>

@@ -45,8 +45,7 @@
                                 Proceso Inicial 
                             </h3>
                             <p class="text-sm text-blue-700 dark:text-blue-300">
-                                El proceso iniciara automáticamente en estacion de <strong>Escaneo/Verificacion</strong>. 
-                                El folio se generará automáticamente.
+                                El proceso iniciara automáticamente
                             </p>
                         </div>
                     </div>
@@ -62,7 +61,7 @@
                         <svg class="w-5 h-5 text-white mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                         </svg>
-                        <h3 class="text-lg font-semibold text-white">Configuración de Orden</h3>
+                        <h3 class="text-lg font-semibold text-white">Configuración</h3>
                     </div>
                     <p class="text-sm text-gray-300 mt-1">Complete la información para iniciar el proceso</p>
                 </div>
@@ -93,12 +92,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    Este proceso se asignará automáticamente a la orden de trabajo
-                                </p>
+                             
                             </div>
                         </div>
                     </div>
@@ -173,7 +167,7 @@
                             ¿Necesitas ayuda?
                         </h4>
                         <p class="text-sm text-slate-600 dark:text-slate-400">
-                            Al crear el siguiente proceso, se generará automáticamente un folio único y podrás proceder con el proceso de impresión y escaneo de etiquetas RFID para las herramientas.
+                            Al crear el siguiente proceso, se generará automáticamente un folio único y podrás proceder con el proceso de impresión y escaneo de etiquetas RFID.
                         </p>
                     </div>
                 </div>

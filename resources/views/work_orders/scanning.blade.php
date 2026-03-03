@@ -439,6 +439,8 @@
                         }
                         return response.json();
                     })
+
+                    
                     .then(data => {
                         if (data.success) {
                             showFeedback('✓ Item registrado correctamente', 'success');
