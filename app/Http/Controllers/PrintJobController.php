@@ -6,6 +6,7 @@ use App\Models\PrintJob;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\StorePrintJobRequest;
 use App\Http\Requests\UpdatePrintJobRequest;
+use Illuminate\Http\Request;
 
 class PrintJobController extends Controller
 {
