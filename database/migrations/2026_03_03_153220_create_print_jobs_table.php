@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('print_jobs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('work_order_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('printer_ip')->default('192.168.0.199');
+            $table->text('zpl_data'); 
+            $table->string('status')->default('pending'); 
+            $table->timestamp('printed_at')->nullable();
             $table->timestamps();
         });
     }
