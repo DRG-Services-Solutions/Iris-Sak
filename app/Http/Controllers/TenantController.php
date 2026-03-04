@@ -6,6 +6,7 @@ use App\Models\Tenant;
 use App\Http\Requests\StoreTenantRequest;
 use App\Http\Requests\UpdateTenantRequest;
 
+
 class TenantController extends Controller
 {
     /**
@@ -53,7 +54,7 @@ class TenantController extends Controller
      */
     public function edit(Tenant $tenant)
     {
-        //
+        return view('tenants.edit', compact('tenant'));    
     }
 
     /**
@@ -61,7 +62,13 @@ class TenantController extends Controller
      */
     public function update(UpdateTenantRequest $request, Tenant $tenant)
     {
-        //
+        $tenant->update([
+            'name' => $request->name,
+            'is_active' => $request->has('is_active'),
+        ]);
+
+        return redirect()->route('tenants.index')
+                         ->with('success', '¡Cliente actualizado exitosamente!');
     }
 
     /**
