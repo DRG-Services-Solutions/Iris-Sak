@@ -53,6 +53,47 @@
 
             {{-- Grid de Módulos --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {{-- Tarjeta 0: Gestión de Clientes / Tenants (EXCLUSIVO SUPER ADMIN) --}}
+                @role('Super Admin')
+                    <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
+                        <div class="relative">
+                            {{-- Banner superior con gradiente --}}
+                            <div class="h-2 bg-gradient-to-r from-indigo-500 via-purple-600 to-indigo-700"></div>
+                            
+                            <div class="p-6">
+                                {{-- Icono --}}
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="bg-gradient-to-br from-indigo-500 to-purple-700 p-4 rounded-xl shadow-lg">
+                                        {{-- Icono de Edificios / Empresas --}}
+                                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                        </svg>
+                                    </div>
+                                    <span class="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300 text-xs font-semibold px-3 py-1 rounded-full border border-indigo-200 dark:border-indigo-800">
+                                        Global
+                                    </span>
+                                </div>
+
+                                {{-- Contenido --}}
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                                    Clientes / Empresas
+                                </h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 min-h-[3rem]">
+                                    Administración global de inquilinos (tenants), cuentas de empresa y accesos al sistema.
+                                </p>
+
+                                {{-- Botón --}}
+                                <a href="{{ route('tenants.index') }}" 
+                                   class="inline-flex items-center justify-center w-full px-5 py-3 bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800 text-white font-semibold text-sm rounded-lg shadow-md hover:shadow-lg transition-all duration-200 group-hover:scale-105">
+                                    <span>Gestionar Clientes</span>
+                                    <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endrole
                 
                 
                 

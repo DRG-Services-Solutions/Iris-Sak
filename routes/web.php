@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\WorkOrderController;
 use App\Http\Controllers\InventoryController; 
 use App\Http\Controllers\MovementController;
+use App\Http\Controllers\TenantController;
 
 
 Route::middleware(['auth', 'role:Super Admin'])->group(function () {

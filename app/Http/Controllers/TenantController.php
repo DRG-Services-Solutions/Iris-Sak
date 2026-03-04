@@ -23,7 +23,7 @@ class TenantController extends Controller
      */
     public function create()
     {
-        //
+        return view('tenants.create');
     }
 
     /**
@@ -31,7 +31,13 @@ class TenantController extends Controller
      */
     public function store(StoreTenantRequest $request)
     {
-        //
+        Tenant::create([
+            'name' => $request->name,
+            'is_active' => $request->has('is_active'), 
+        ]);
+
+        return redirect()->route('tenants.index')
+                         ->with('success', '¡Cliente creado exitosamente!');
     }
 
     /**

@@ -11,7 +11,7 @@ class StoreTenantRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,17 @@ class StoreTenantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255|unique:tenants,name',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'El nombre de la empresa es requerido.',
+            'name.string' => 'El nombre de la empresa debe ser una cadena de texto.',
+            'name.max' => 'El nombre de la empresa no puede tener más de 255 caracteres.',
+            'name.unique' => 'El nombre de la empresa ya ha sido tomado.',
         ];
     }
 }
