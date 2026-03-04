@@ -53,6 +53,50 @@
 
             {{-- Grid de Módulos --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+
+                {{-- Tarjeta: Gestión de Usuarios (Accesible para Super Admin y Gerentes de Tenant) --}}
+                <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="relative">
+                        {{-- Banner superior con gradiente Fucsia/Violeta --}}
+                        <div class="h-2 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-violet-700"></div>
+                        
+                        <div class="p-6">
+                            {{-- Icono y Badge --}}
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="bg-gradient-to-br from-violet-500 to-fuchsia-600 p-4 rounded-xl shadow-lg">
+                                    {{-- Icono de Grupo de Usuarios --}}
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                </div>
+                                <span class="bg-violet-100 dark:bg-violet-900/30 text-violet-800 dark:text-violet-300 text-xs font-semibold px-3 py-1 rounded-full border border-violet-200 dark:border-violet-800">
+                                    Activo
+                                </span>
+                            </div>
+
+                            {{-- Contenido --}}
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                                Directorio de Usuarios
+                            </h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-6 min-h-[3rem]">
+                                Administra las cuentas de empleados, accesos y permisos dentro del sistema.
+                            </p>
+
+                            {{-- Botón --}}
+                            <a href="{{ route('users.index') }}" 
+                               class="inline-flex items-center justify-center w-full px-5 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white font-semibold text-sm rounded-lg shadow-md hover:shadow-lg transition-all duration-200 group-hover:scale-105">
+                                <span>Gestionar Usuarios</span>
+                                <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+
+
                 {{-- Tarjeta 0: Gestión de Clientes / Tenants (EXCLUSIVO SUPER ADMIN) --}}
                 @role('Super Admin')
                     <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
