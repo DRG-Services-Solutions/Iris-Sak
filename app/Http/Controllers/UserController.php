@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Tenant;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;    
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 
@@ -36,8 +39,8 @@ class UserController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password), // Encriptamos la contraseña
-            'tenant_id' => $request->tenant_id, // Asignamos la empresa (Coca Cola o Pepsi)
+            'password' => Hash::make($request->password),
+            'tenant_id' => $request->tenant_id, 
         ]);
 
         return redirect()->route('users.index')
