@@ -8,6 +8,12 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\MovementController;
 
 
+Route::middleware(['auth', 'role:Super Admin'])->group(function () {
+    
+    Route::resource('tenants', TenantController::class);
+    
+});
+
 Route::get('/', function () {
     return view('welcome');
 })->middleware('guest')->name('welcome');
