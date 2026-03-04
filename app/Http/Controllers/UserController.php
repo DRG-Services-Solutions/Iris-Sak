@@ -16,8 +16,13 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::with('tenant')->paginate(10);
-        
+        $user = auth()->user();
+        if ($user->hasRole('Super Admin')) {
+            $users = User::with('tenant')->paginate(10);
+        }
+        else {
+            $users = User::where('tenant_id', $user->tenant_id)->paginate(10);
+        }
         return view('users.index', compact('users'));
     }
 
@@ -26,7 +31,10 @@ class UserController extends Controller
      */
     public function create()
     {
-        $tenants = Tenant::where('is_active', true)->get();
+        $tenants = auth()->user()->hasRole('Super Admin') 
+                    ? Tenant::where('is_active', true)->get() 
+                    : []; 
+                    
         
         return view('users.create', compact('tenants'));
     }
@@ -36,11 +44,18 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
+
+        $currentUser = auth()->user();
+        $tenantId = $currentUser->hasRole('Super Admin') 
+                    ? $request->tenant_id 
+                    : $currentUser->tenant_id;
+
+
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'tenant_id' => $request->tenant_id, 
+            'tenant_id' => $tenantId,
         ]);
 
         return redirect()->route('users.index')

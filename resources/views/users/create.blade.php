@@ -43,19 +43,22 @@
                             </div>
 
                             {{-- Selección de Empresa (Tenant) --}}
-                            <div class="md:col-span-2">
-                                <label for="tenant_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Asignar a Empresa / Cliente</label>
-                                <select name="tenant_id" id="tenant_id" required
-                                        class="block w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent transition duration-200">
-                                    <option value="" disabled selected>Selecciona una empresa...</option>
-                                    @foreach($tenants as $tenant)
-                                        <option value="{{ $tenant->id }}" {{ old('tenant_id') == $tenant->id ? 'selected' : '' }}>
-                                            {{ $tenant->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('tenant_id') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
-                            </div>
+
+                            @role('Super Admin')
+                                <div class="md:col-span-2">
+                                    <label for="tenant_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Asignar a Empresa / Cliente</label>
+                                    <select name="tenant_id" id="tenant_id" required
+                                            class="block w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent transition duration-200">
+                                        <option value="" disabled selected>Selecciona una empresa...</option>
+                                        @foreach($tenants as $tenant)
+                                            <option value="{{ $tenant->id }}" {{ old('tenant_id') == $tenant->id ? 'selected' : '' }}>
+                                                {{ $tenant->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('tenant_id') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                                </div>
+                            @endrole
 
                             {{-- Contraseña --}}
                             <div>
