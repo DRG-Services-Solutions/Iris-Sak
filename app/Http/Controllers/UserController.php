@@ -18,10 +18,14 @@ class UserController extends Controller
     {
         $user = auth()->user();
         if ($user->hasRole('Super Admin')) {
-            $users = User::with('tenant')->paginate(10);
+            $users = User::with('tenant')
+                        ->where('id', '!=', $user->id)
+                        ->paginate(10);
         }
         else {
-            $users = User::where('tenant_id', $user->tenant_id)->paginate(10);
+            $users = User::where('tenant_id', $user->tenant_id)
+                        ->where('id', '!=', $user->id) 
+                        ->paginate(10);
         }
         return view('users.index', compact('users'));
     }
