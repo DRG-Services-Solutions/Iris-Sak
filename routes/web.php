@@ -7,11 +7,14 @@ use App\Http\Controllers\WorkOrderController;
 use App\Http\Controllers\InventoryController; 
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\TenantController;
+use App\Http\Controllers\UserController;
 
 
 Route::middleware(['auth', 'role:Super Admin'])->group(function () {
     
     Route::resource('tenants', TenantController::class);
+    Route::resource('users', UserController::class);
+ 
     
 });
 
