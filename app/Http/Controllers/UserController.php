@@ -60,7 +60,9 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        $tenants = Tenant::where('is_active', true)->get();
+        
+        return view('users.edit', compact('user', 'tenants'));
     }
 
     /**
@@ -68,7 +70,20 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        //
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'tenant_id' => $request->tenant_id,
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('users.index')
+                         ->with('success', '¡Usuario actualizado exitosamente!');
     }
 
     /**
@@ -76,6 +91,14 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        if (auth()->id() === $user->id) {
+            return redirect()->route('users.index')
+                             ->with('error', 'Por seguridad, no puedes eliminar tu propia cuenta.');
+        }
+
+        $user->delete();
+
+        return redirect()->route('users.index')
+                         ->with('success', '¡Usuario eliminado exitosamente!');
     }
 }
