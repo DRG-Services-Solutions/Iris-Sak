@@ -46,7 +46,9 @@ class TenantController extends Controller
      */
     public function show(Tenant $tenant)
     {
-        //
+        $tenant->load('users');
+        
+        return view('tenants.show', compact('tenant'));
     }
 
     /**
@@ -76,6 +78,10 @@ class TenantController extends Controller
      */
     public function destroy(Tenant $tenant)
     {
-        //
+        $tenant->delete();
+
+        // 2. Redirigimos con mensaje de éxito
+        return redirect()->route('tenants.index')
+                         ->with('success', '¡Cliente eliminado exitosamente!');
     }
 }
