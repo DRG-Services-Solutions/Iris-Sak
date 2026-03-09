@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Http\Requests\StoreRoleRequest;
+use App\Http\Requests\UpdateRoleRequest;
 
 class RoleController extends Controller
 {
@@ -63,24 +64,48 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Role $role)
     {
-        //
+        $this->authorizeTenant($role);
+        $permissions = Permission::all()->groupBy('module');
+        $rolePermissions = $role->permissions->pluck('name')->toArray();
+        return view('roles.edit', compact('role', 'permissions', 'rolePermissions'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateRoleRequest $request, Role $role)
     {
-        //
+        $this->authorizeTenant($role); 
+
+        $role->update(['name' => $request->name]);
+        $role->syncPermissions($request->permissions);
+
+        return redirect()->route('roles.index')
+                         ->with('success', '¡Rol actualizado exitosamente!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Role $role)
     {
-        //
+        $this->authorizeTenant($role); // Candado de seguridad
+
+        $role->delete();
+
+        return redirect()->route('roles.index')
+                         ->with('success', '¡Rol eliminado exitosamente!');
+    }
+
+    private function authorizeTenant(Role $role)
+    {
+        $user = auth()->user();
+        
+        // Si no es Super Admin Y el rol no pertenece a su empresa, ¡bloquear!
+        if (!$user->hasRole('Super Admin') && $role->tenant_id !== $user->tenant_id) {
+            abort(403, 'Acceso denegado: No tienes permiso para gestionar este rol.');
+        }
     }
 }
