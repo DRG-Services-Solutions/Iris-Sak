@@ -8,7 +8,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\RoleController;
 
 Route::middleware(['auth', 'role:Super Admin'])->group(function () {
     
@@ -30,6 +30,9 @@ Route::middleware('auth')->group(function () {
 
     //Ruta de resource de Usuarios
     Route::resource('users', UserController::class);
+
+    //Ruta de roles
+    Route::resource('roles', RoleController::class);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
