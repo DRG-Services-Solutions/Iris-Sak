@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;    
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -35,12 +36,14 @@ class UserController extends Controller
      */
     public function create()
     {
+        $user = auth()->user();
         $tenants = auth()->user()->hasRole('Super Admin') 
                     ? Tenant::where('is_active', true)->get() 
                     : []; 
+        $roles = Role::where('tenant_id', $user->tenant_id)->get();
                     
         
-        return view('users.create', compact('tenants'));
+        return view('users.create', compact('tenants', 'roles'));
     }
 
     /**
@@ -61,6 +64,10 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'tenant_id' => $tenantId,
         ]);
+
+        if ($request->filled('role')) {
+            $user->assignRole($request->role);
+        }
 
         return redirect()->route('users.index')
                          ->with('success', '¡Usuario creado exitosamente!');

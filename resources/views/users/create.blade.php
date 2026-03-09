@@ -60,6 +60,23 @@
                                 </div>
                             @endrole
 
+                                <div>
+                                    <label for="role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Asignar Rol de Acceso <span class="text-red-500">*</span></label>
+                                    <select name="role" id="role" required
+                                            class="block w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent transition duration-200">
+                                        <option value="" disabled selected>Selecciona un rol...</option>
+                                        @foreach($roles as $role)
+                                            <option value="{{ $role->name }}" {{ old('role') == $role->name ? 'selected' : '' }}>
+                                                {{ $role->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('role') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                                </div>
+
+
+
+
                             {{-- Contraseña --}}
                             <div>
                                 <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Contraseña</label>
