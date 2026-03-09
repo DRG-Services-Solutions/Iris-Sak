@@ -34,6 +34,17 @@ class PermissionSeeder extends Seeder
                 ['name' => 'view-reports', 'display_name' => 'Ver Reportes'],
                 ['name' => 'export-data', 'display_name' => 'Exportar datos a Excel/PDF'],
             ],
+            'Control de Almacen' => [
+                ['name' => 'view-inventory', 'display_name' => 'Ver Inventario'],
+                ['name' => 'update-inventory', 'display_name' => 'Actualizar Inventario'],
+                ['name' => 'manage-suppliers', 'display_name' => 'Gestionar Proveedores'],
+                ['name' => 'view-suppliers', 'display_name' => 'Ver Proveedores'],
+                ['name' => 'create-suppliers', 'display_name' => 'Agregar Proveedores'],
+                ['name' => 'edit-suppliers', 'display_name' => 'Editar Proveedores'],
+                ['name' => 'delete-suppliers', 'display_name' => 'Eliminar Proveedores'],
+                ['name' => 'manage-inbound-shipments', 'display_name' => 'Gestionar Entradas de Almacén'],
+                ['name' => 'manage-outbound-shipments', 'display_name' => 'Gestionar Salidas de Almacén'],
+            ],
         ];
 
         foreach ($modulos as $nombreModulo => $permisos) {

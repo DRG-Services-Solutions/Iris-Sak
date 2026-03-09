@@ -62,8 +62,9 @@
                         <thead class="bg-gradient-to-r from-slate-700 to-slate-800">
                             <tr>
                                 <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-100 uppercase tracking-wider">Usuario</th>
-                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-100 uppercase tracking-wider">Empresa / Tenant</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-100 uppercase tracking-wider">Empresa</th>
                                 <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-100 uppercase tracking-wider">Registro</th>
+                                <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-100 uppercase tracking-wider">Rol</th>
                                 <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-100 uppercase tracking-wider">Acciones</th>
                             </tr>
                         </thead>
@@ -101,9 +102,15 @@
                                         {{ $user->created_at->format('d/m/Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
+                                        @foreach($user->roles as $role)
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800">
+                                                {{ $role->name }}
+                                            </span>
+                                        @endforeach
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-center">
                                         <div class="flex items-center justify-center space-x-2">
                                             {{-- Botones de acción (Edit/Delete se implementarán después) --}}
-                                            <td class="px-6 py-4 whitespace-nowrap text-center">
                                             <div class="flex items-center justify-center space-x-2">
                                                 {{-- Botón Editar --}}
                                                 <a href="{{ route('users.edit', $user) }}" class="inline-flex items-center px-3 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded-md shadow-sm transition-all duration-200 transform hover:-translate-y-0.5" title="Editar">
@@ -119,7 +126,7 @@
                                                     </button>
                                                 </form>
                                             </div>
-                                        </td>
+                                     
                                         </div>
                                     </td>
                                 </tr>

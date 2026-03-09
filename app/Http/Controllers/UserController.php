@@ -51,7 +51,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-
+        $user = auth()->user();
         $currentUser = auth()->user();
         $tenantId = $currentUser->hasRole('Super Admin') 
                     ? $request->tenant_id 
