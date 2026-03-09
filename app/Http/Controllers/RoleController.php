@@ -14,7 +14,15 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::with('permissions')->paginate(10);
+        $user = auth()->user();
+        if ($user->hasRole('Super Admin')) {
+            $roles = Role::with('permissions')->paginate(10);
+        }
+        else {
+            $roles = Role::where('tenant_id', $user->tenant_id)
+                         ->with('permissions')
+                         ->paginate(10);
+        }
         
         return view('roles.index', compact('roles'));
     }
