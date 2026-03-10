@@ -204,16 +204,19 @@ public function processScan(Request $request, WorkOrder $workOrder): JsonRespons
         // Preparar ZPL
         $productname = $product->name; 
         $epc = $instance->epc;
+        $ean13 = $product->barcode;
         $zplCommands = "
         ^XA
         ^PW812
         ^LL0406
         ^LH0,0
         ^MMT
+        ^CI0
         ^RFW,H^FD{$epc}^FS
         ^FO50,50^A0N,35,35^FB712,2,0,C,0^FH\^FD{$productname}^FS
         ^FO50,130^A0N,28,28^FB712,1,0,C,0^FH\^FDEPC: {$epc}^FS
-        ^FO330,180^BQN,2,6^FH\^FDLA,{$epc}^FS
+        ^FO20,200^BQN,2,5^FH\^FDLA,{$epc}^FS
+        ^BY2,2,100^FT580,375^BEN,,Y,N^FD{$ean13}^FS
         ^PQ1,0,1,N
         ^XZ
         ";

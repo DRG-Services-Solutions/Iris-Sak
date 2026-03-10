@@ -13,6 +13,7 @@
                         Panel de Administración
                     </h2>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Usuario: {{ Auth::user()->name }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Rol: {{ Auth::user()->getRoleNames()->first() }}</p>
                 </div>
             </div>
             <div class="hidden md:flex items-center space-x-2 px-4 py-2 bg-slate-700 rounded-lg">

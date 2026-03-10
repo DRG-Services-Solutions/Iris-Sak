@@ -18,16 +18,17 @@ class UserController extends Controller
     public function index()
     {
         $user = auth()->user();
+
         if ($user->hasRole('Super Admin')) {
-            $users = User::with('tenant')
-                        ->where('id', '!=', $user->id)
-                        ->paginate(10);
-        }
-        else {
+            // ¡Asegúrate de tener ->with('roles') aquí!
+            $users = User::with('roles')->paginate(10); 
+        } else {
+            // ¡Y aquí también!
             $users = User::where('tenant_id', $user->tenant_id)
-                        ->where('id', '!=', $user->id) 
-                        ->paginate(10);
+                         ->with('roles')
+                         ->paginate(10);
         }
+
         return view('users.index', compact('users'));
     }
 
