@@ -10,7 +10,7 @@
                 </div>
                 <div>
                     <h2 class="font-bold text-2xl text-gray-800 dark:text-gray-100 leading-tight">
-                        Panel de Control
+                        @role('Super Admin') Panel de Control Global @else Resumen Operativo @endrole
                     </h2>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
                         Bienvenido, {{ Auth::user()->name }} 
@@ -20,9 +20,7 @@
                 </div>
             </div>
             <div class="hidden md:flex items-center space-x-2 px-4 py-2 bg-white dark:bg-slate-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
-                <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+                <i class="fas fa-calendar-alt text-gray-500 dark:text-gray-400"></i>
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ now()->format('d M, Y') }}</span>
             </div>
         </div>
@@ -31,152 +29,232 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            {{-- Fila 1: Tarjetas de Métricas (KPIs) --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                
-                {{-- KPI 1: Diferente según el rol --}}
-                @role('Super Admin')
+            @role('Super Admin')
+                {{-- ========================================================= --}}
+                {{-- 👑 UNIVERSO SUPER ADMIN: MÉTRICAS DE NEGOCIO (SaaS)       --}}
+                {{-- ========================================================= --}}
+
+                {{-- KPIs Globales --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {{-- KPI: Ingresos Mensuales (MRR) --}}
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
+                        <div class="p-3 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 rounded-lg">
+                            <i class="fas fa-dollar-sign text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Ingresos (MRR)</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">$12,450 <span class="text-xs font-normal text-emerald-500">+8%</span></p>
+                        </div>
+                    </div>
+
+                    {{-- KPI: Empresas Activas --}}
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
                         <div class="p-3 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-lg">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                            <i class="fas fa-building text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Clientes Activos</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalTenants }}</p> 
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Empresas (Tenants)</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalTenants ?? 34 }} <span class="text-xs font-normal text-gray-400">Registradas</span></p> 
                         </div>
                     </div>
-                @else
+
+                    {{-- KPI: Nuevas Suscripciones --}}
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
-                        <div class="p-3 bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400 rounded-lg">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                        <div class="p-3 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-lg">
+                            <i class="fas fa-user-plus text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Usuarios</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalUsers }}</p> 
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Nuevos Planes (Mes)</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">+5 <span class="text-xs font-normal text-gray-400">clientes</span></p>
                         </div>
                     </div>
-                @endrole
 
-                {{-- KPI 2: Entradas del Mes --}}
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
-                    <div class="p-3 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-lg">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Entradas (Este Mes)</p>
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white">+340</p>
+                    {{-- KPI: Salud del Sistema --}}
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
+                        <div class="p-3 bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 rounded-lg relative">
+                            <span class="absolute top-0 right-0 -mt-1 -mr-1 flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-purple-500"></span>
+                            </span>
+                            <i class="fas fa-server text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Usuarios Totales</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalUsers ?? 158 }} <span class="text-xs font-normal text-gray-400">activos</span></p>
+                        </div>
                     </div>
                 </div>
 
-                {{-- KPI 3: Salidas / Consumo --}}
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
-                    <div class="p-3 bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 rounded-lg">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>
+                {{-- Gráficos de Negocio (Placeholders) --}}
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {{-- Gráfico: Crecimiento de Ingresos --}}
+                    <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Crecimiento Mensual (MRR)</h3>
+                        <div class="w-full h-64 bg-gray-50 dark:bg-gray-900/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center">
+                            <i class="fas fa-chart-line text-4xl text-gray-300 dark:text-gray-600 mb-2"></i>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">Gráfico de líneas (Ene - Dic)</p>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Salidas (Este Mes)</p>
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white">-128</p>
-                    </div>
-                </div>
 
-                {{-- KPI 4: Alertas de Stock --}}
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
-                    <div class="p-3 bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 rounded-lg relative">
-                        <span class="absolute top-0 right-0 -mt-1 -mr-1 flex h-3 w-3">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                        </span>
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Stock Bajo</p>
-                        <p class="text-2xl font-bold text-gray-900 dark:text-white">5 <span class="text-sm font-normal text-red-500">ítems</span></p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Fila 2: Gráficos y Visualización --}}
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {{-- Gráfico Principal (Ancho de 2 columnas) --}}
-                <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Actividad de Movimientos (Últimos 7 días)</h3>
-                    {{-- Placeholder para el gráfico (aquí pondrás Chart.js o ApexCharts luego) --}}
-                    <div class="w-full h-64 bg-gray-50 dark:bg-gray-900/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center">
-                        <p class="text-gray-500 dark:text-gray-400">El gráfico se renderizará aquí</p>
-                    </div>
-                </div>
-
-                {{-- Tabla Pequeña Lateral --}}
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Productos con Stock Bajo</h3>
-                        <a href="#" class="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">Ver todos</a>
-                    </div>
-                    <div class="space-y-4">
-                        {{-- Mock de items --}}
-                        <div class="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/10 rounded-lg">
+                    {{-- Distribución de Paquetes --}}
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Planes Activos</h3>
+                        <div class="space-y-4">
+                            {{-- Plan Enterprise --}}
                             <div>
-                                <p class="text-sm font-bold text-gray-900 dark:text-white">Tornillo Hexagonal M8</p>
-                                <p class="text-xs text-gray-500">SKU: TX-8890</p>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="font-bold text-gray-700 dark:text-gray-300">Plan 3 (Enterprise)</span>
+                                    <span class="text-indigo-600 dark:text-indigo-400 font-bold">12%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                    <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 12%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">4 empresas</p>
                             </div>
-                            <span class="px-2 py-1 text-xs font-bold bg-red-200 dark:bg-red-800 text-red-800 dark:text-red-100 rounded">15 unds</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-orange-50 dark:bg-orange-900/10 rounded-lg">
+                            {{-- Plan Pro --}}
                             <div>
-                                <p class="text-sm font-bold text-gray-900 dark:text-white">Rodamiento 6204ZZ</p>
-                                <p class="text-xs text-gray-500">SKU: RD-6204</p>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="font-bold text-gray-700 dark:text-gray-300">Plan 2 (Pro)</span>
+                                    <span class="text-blue-600 dark:text-blue-400 font-bold">58%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: 58%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">20 empresas</p>
                             </div>
-                            <span class="px-2 py-1 text-xs font-bold bg-orange-200 dark:bg-orange-800 text-orange-800 dark:text-orange-100 rounded">8 unds</span>
+                            {{-- Plan Básico --}}
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="font-bold text-gray-700 dark:text-gray-300">Plan 1 (Básico)</span>
+                                    <span class="text-emerald-600 dark:text-emerald-400 font-bold">30%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                    <div class="bg-emerald-600 h-2.5 rounded-full" style="width: 30%"></div>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">10 empresas</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {{-- Fila 3: Tabla de Actividad Reciente --}}
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-                <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Últimos Movimientos Registrados</h3>
+                {{-- Tabla: Últimas Suscripciones / Actividad --}}
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Empresas Recientes</h3>
+                        <a href="{{ route('tenants.index') }}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">Ver todas</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-white dark:bg-gray-800">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Empresa</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Plan Asignado</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Estado</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Fecha Registro</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                {{-- Placeholder Row --}}
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-white">Coca Cola Femsa</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Plan 3 (Enterprise)</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Activa</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Hoy</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-white">Distribuidora Reyes G</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Plan 1 (Básico)</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Activa</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Ayer</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead class="bg-white dark:bg-gray-800">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tipo</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Producto</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cantidad</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Usuario</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Fecha</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                            {{-- Fila de Ejemplo 1 --}}
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">
-                                        Entrada
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-medium">Bomba Hidráulica P-12</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">+50</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Juan Pérez</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Hace 2 horas</td>
-                            </tr>
-                            {{-- Fila de Ejemplo 2 --}}
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400 border border-orange-200 dark:border-orange-800">
-                                        Salida
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-medium">Motor Eléctrico 5HP</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">-2</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">María Gómez</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Hace 5 horas</td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+            @else
+                {{-- ========================================================= --}}
+                {{-- 🏢 UNIVERSO CLIENTE: MÉTRICAS OPERATIVAS (INVENTARIO)     --}}
+                {{-- ========================================================= --}}
+
+                {{-- KPIs Operativos --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
+                        <div class="p-3 bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400 rounded-lg">
+                            <i class="fas fa-users text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Mis Empleados</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalUsers ?? 5 }}</p> 
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
+                        <div class="p-3 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-lg">
+                            <i class="fas fa-boxes text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Catálogo</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalProducts ?? '1,245' }}</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
+                        <div class="p-3 bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400 rounded-lg">
+                            <i class="fas fa-exchange-alt text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Movimientos (Mes)</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $movimientosMes ?? 468 }}</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
+                        <div class="p-3 bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 rounded-lg relative">
+                            <span class="absolute top-0 right-0 -mt-1 -mr-1 flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                            </span>
+                            <i class="fas fa-exclamation-triangle text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Stock Bajo</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $alertasStock ?? 5 }} <span class="text-sm font-normal text-red-500">ítems</span></p>
+                        </div>
+                    </div>
                 </div>
-            </div>
+
+                {{-- Resto de la información operativa (Gráficos y Tabla de movimientos) --}}
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Entradas vs Salidas (Últimos 7 días)</h3>
+                        <div class="w-full h-64 bg-gray-50 dark:bg-gray-900/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center">
+                            <i class="fas fa-chart-bar text-4xl text-gray-300 dark:text-gray-600 mb-2"></i>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">Gráfico de barras apiladas</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Alertas Críticas</h3>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/10 rounded-lg">
+                                <div>
+                                    <p class="text-sm font-bold text-gray-900 dark:text-white">Tornillo Hexagonal M8</p>
+                                    <p class="text-xs text-gray-500">SKU: TX-8890</p>
+                                </div>
+                                <span class="px-2 py-1 text-xs font-bold bg-red-200 dark:bg-red-800 text-red-800 dark:text-red-100 rounded">15 unds</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            @endrole
 
         </div>
     </div>
