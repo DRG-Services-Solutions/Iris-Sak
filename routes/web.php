@@ -9,6 +9,7 @@ use App\Http\Controllers\MovementController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\DashboardController;
 
 Route::middleware(['auth', 'role:Super Admin'])->group(function () {
     
@@ -21,9 +22,7 @@ Route::get('/', function () {
     return view('welcome');
 })->middleware('guest')->name('welcome');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 // --- Grupo principal que requiere autenticación ---
 Route::middleware('auth')->group(function () {

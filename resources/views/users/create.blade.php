@@ -60,19 +60,34 @@
                                 </div>
                             @endrole
 
-                                <div>
-                                    <label for="role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Asignar Rol de Acceso <span class="text-red-500">*</span></label>
-                                    <select name="role" id="role" required
-                                            class="block w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent transition duration-200">
-                                        <option value="" disabled selected>Selecciona un rol...</option>
-                                        @foreach($roles as $role)
-                                            <option value="{{ $role->name }}" {{ old('role') == $role->name ? 'selected' : '' }}>
-                                                {{ $role->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('role') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
-                                </div>
+                                @if(!auth()->user()->hasRole('Super Admin'))
+                                    <div>
+                                        <label for="role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Asignar Rol de Acceso <span class="text-red-500">*</span></label>
+                                        <select name="role" id="role" required class="block w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-violet-500">
+                                            <option value="" disabled selected>Selecciona un rol...</option>
+                                            @foreach($roles as $role)
+                                                <option value="{{ $role->name }}" {{ old('role') == $role->name ? 'selected' : '' }}>
+                                                    {{ $role->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('role') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                                    </div>
+                                @else
+                                    {{-- Si ES Super Admin, mostramos una alerta informativa en lugar del select --}}
+                                    <div class="col-span-1 md:col-span-2 mt-4 bg-indigo-50 dark:bg-indigo-900/30 border-l-4 border-indigo-500 p-4 rounded-r-lg">
+                                        <div class="flex">
+                                            <div class="flex-shrink-0">
+                                                <i class="fas fa-info-circle text-indigo-500"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <p class="text-sm text-indigo-700 dark:text-indigo-300">
+                                                    <strong>Asignación Automática:</strong> Al guardar, este usuario será configurado como el <strong>Administrador Principal</strong> de la empresa seleccionada y tendrá todos los permisos del sistema. A partir de aquí, él deberá crear a sus propios empleados.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
 
 
 

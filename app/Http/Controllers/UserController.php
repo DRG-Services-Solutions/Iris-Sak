@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class UserController extends Controller
 {
@@ -38,11 +39,18 @@ class UserController extends Controller
     public function create()
     {
         $user = auth()->user();
-        $tenants = auth()->user()->hasRole('Super Admin') 
-                    ? Tenant::where('is_active', true)->get() 
-                    : []; 
-        $roles = Role::where('tenant_id', $user->tenant_id)->get();
-                    
+
+        if ($user->hasRole('Super Admin')) {
+            $tenants = Tenant::where('is_active', true)
+                        ->doesntHave('users') 
+                        ->get();
+            
+            $roles = []; 
+        } 
+        else {
+            $tenants = [];
+            $roles = Role::where('tenant_id', $user->tenant_id)->get();
+        }
         
         return view('users.create', compact('tenants', 'roles'));
     }
@@ -52,26 +60,42 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        $user = auth()->user();
         $currentUser = auth()->user();
-        $tenantId = $currentUser->hasRole('Super Admin') 
-                    ? $request->tenant_id 
-                    : $currentUser->tenant_id;
 
+        if ($currentUser->hasRole('Super Admin')) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'tenant_id' => $request->tenant_id,
+            ]);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'tenant_id' => $tenantId,
-        ]);
+            setPermissionsTeamId($request->tenant_id);
 
-        if ($request->filled('role')) {
-            $user->assignRole($request->role);
+            $adminRole = Role::firstOrCreate([
+                'name' => 'Administrador',
+                'tenant_id' => $request->tenant_id
+            ]);
+
+            $adminRole->syncPermissions(Permission::all());
+
+            $user->assignRole($adminRole);
+        } 
+        else {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'tenant_id' => $currentUser->tenant_id,
+            ]);
+
+            // Le asigna el rol que el cliente eligió en la vista
+            if ($request->filled('role')) {
+                $user->assignRole($request->role);
+            }
         }
 
-        return redirect()->route('users.index')
-                         ->with('success', '¡Usuario creado exitosamente!');
+        return redirect()->route('users.index')->with('success', '¡Usuario creado exitosamente!');
     }
 
     /**

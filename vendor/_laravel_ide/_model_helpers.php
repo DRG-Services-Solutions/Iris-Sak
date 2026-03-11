@@ -3169,6 +3169,8 @@ namespace App\Models {
      * @property string $name
      * @property int $id
      * @property-read \App\Models\Tenant $tenant
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+     * @property-read int|null $users_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
      * @property-read int|null $tokens_count
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \Illuminate\Notifications\DatabaseNotification> $notifications

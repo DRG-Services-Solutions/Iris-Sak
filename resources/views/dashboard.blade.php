@@ -42,7 +42,7 @@
                         </div>
                         <div>
                             <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Clientes Activos</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">12</p> {{-- Valor estático por ahora --}}
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalTenants }}</p> 
                         </div>
                     </div>
                 @else
@@ -51,8 +51,8 @@
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Productos</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">1,245</p> 
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Usuarios</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalUsers }}</p> 
                         </div>
                     </div>
                 @endrole

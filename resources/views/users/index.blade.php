@@ -102,11 +102,23 @@
                                         {{ $user->created_at->format('d/m/Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        @foreach($user->roles as $role)
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800">
-                                                {{ $role->name }}
+                                        @php
+                                            $userRoles = \Illuminate\Support\Facades\DB::table('roles')
+                                                ->join('model_has_roles', 'roles.id', '=', 'model_has_roles.role_id')
+                                                ->where('model_has_roles.model_id', $user->id)
+                                                ->pluck('roles.name');
+                                        @endphp
+
+                                        @forelse($userRoles as $roleName)
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold 
+                                                {{ $roleName === 'Super Admin' 
+                                                    ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800' 
+                                                    : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' }}">
+                                                {{ $roleName }}
                                             </span>
-                                        @endforeach
+                                        @empty
+                                            <span class="text-xs text-gray-400 italic font-medium">Sin rol</span>
+                                        @endforelse
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
                                         <div class="flex items-center justify-center space-x-2">
