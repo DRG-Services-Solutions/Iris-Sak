@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
+
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
@@ -74,4 +75,6 @@ class DatabaseSeeder extends Seeder
         ]);
         $userB->assignRole($roleGerenteB);
     }
+
+    
 }

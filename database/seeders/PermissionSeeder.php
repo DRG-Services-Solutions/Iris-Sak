@@ -15,7 +15,7 @@ class PermissionSeeder extends Seeder
 
         // 2. Definir nuestra estructura de permisos (Módulo => Permisos)
         $modulos = [
-            'Gestión de Empleados' => [
+            'Gestión de Usuarios' => [
                 ['name' => 'view-users', 'display_name' => 'Ver Usuarios'],
                 ['name' => 'create-users', 'display_name' => 'Dar de alta Usuarios'],
                 ['name' => 'edit-users', 'display_name' => 'Editar información Usuarios'],
@@ -23,6 +23,7 @@ class PermissionSeeder extends Seeder
             ],
             
             'Catálogo e Inventario' => [
+                ['name' => 'manage-products', 'display_name' => 'Gestionar Categorías'],
                 ['name' => 'view-products', 'display_name' => 'Ver catálogo de Productos'],
                 ['name' => 'create-products', 'display_name' => 'Agregar nuevos Productos'],
                 ['name' => 'edit-products', 'display_name' => 'Modificar Productos'],

@@ -65,7 +65,9 @@
                                 <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-100 uppercase tracking-wider">Empresa</th>
                                 <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-100 uppercase tracking-wider">Registro</th>
                                 <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-100 uppercase tracking-wider">Rol</th>
+                                @can('manage-users')
                                 <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-100 uppercase tracking-wider">Acciones</th>
+                                @endcan
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -120,6 +122,7 @@
                                             <span class="text-xs text-gray-400 italic font-medium">Sin rol</span>
                                         @endforelse
                                     </td>
+                                    @can('manage-users') 
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
                                         <div class="flex items-center justify-center space-x-2">
                                             {{-- Botones de acción (Edit/Delete se implementarán después) --}}
@@ -141,6 +144,7 @@
                                      
                                         </div>
                                     </td>
+                                    @endcan
                                 </tr>
                             @empty
                                 <tr>

@@ -208,8 +208,8 @@
                             <i class="fas fa-exchange-alt text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Movimientos (Mes)</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $movimientosMes ?? 468 }}</p>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Movimientos (Mensual)</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $movimientosMes ?? 0 }}</p>
                         </div>
                     </div>
 
