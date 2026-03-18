@@ -1,4 +1,20 @@
-<nav x-data="{ open: false }" class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-0 z-50">
+<nav x-data="{ open: false, navVisible: true }" class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm sticky top-0 z-50 transition-transform duration-300"
+     :class="{ '-translate-y-full': !navVisible }">
+    
+    <!-- Botón flotante para mostrar/ocultar navegación -->
+    <button 
+        @click="navVisible = !navVisible"
+        class="fixed top-4 right-4 z-[60] bg-slate-700 hover:bg-slate-800 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+        :class="{ 'top-24': navVisible, 'top-4': !navVisible }"
+        title="Mostrar/Ocultar Navegación">
+        <svg x-show="navVisible" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+        </svg>
+        <svg x-show="!navVisible" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+    </button>
+
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-20">
@@ -137,7 +153,7 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden border-t border-gray-200 dark:border-gray-700">
+    <div :class="open ? 'block' : 'hidden'" class="sm:hidden border-t border-gray-200 dark:border-gray-700">
         <div class="pt-2 pb-3 space-y-1 bg-gray-50 dark:bg-gray-900">
 
             {{-- Dashboard --}}
