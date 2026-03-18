@@ -23,7 +23,7 @@ class PermissionSeeder extends Seeder
             ],
             
             'Catálogo e Inventario' => [
-                ['name' => 'manage-products', 'display_name' => 'Gestionar Categorías'],
+                ['name' => 'manage-products', 'display_name' => 'Gestionar Productos'],
                 ['name' => 'view-products', 'display_name' => 'Ver catálogo de Productos'],
                 ['name' => 'create-products', 'display_name' => 'Agregar nuevos Productos'],
                 ['name' => 'edit-products', 'display_name' => 'Modificar Productos'],

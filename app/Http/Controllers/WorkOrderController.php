@@ -221,13 +221,13 @@ public function processScan(Request $request, WorkOrder $workOrder): JsonRespons
         ^XZ
         ";
         
-        $printerIp = '10.20.1.227';
+        $printerIp = '192.168.137.32';
 
-        // Guardar el trabajo en la cola de impresión de la base de datos
+        
         PrintJob::create([
             'work_order_id' => $workOrder->id,
             'printer_ip' => $printerIp,
-            'zpl_data' => trim($zplCommands), // Aplicamos trim para evitar saltos de línea basura al inicio
+            'zpl_data' => trim($zplCommands), 
             'status' => 'pending'
         ]);
        
