@@ -482,7 +482,7 @@ class ContainerController extends Controller
                 'label_ids' => explode(',', $request->input('label_ids_string'))
             ]);
         }
-        
+
         $validated = $request->validate([
             'label_ids'   => 'required|array|min:1',
             'label_ids.*' => 'exists:inspection_labels,id',
@@ -493,5 +493,16 @@ class ContainerController extends Controller
             ->update(['printed' => true]);
 
         return back()->with('success', 'Etiquetas marcadas como impresas.');
+    }
+
+    public function scanMode(Container $container)
+    {
+        // Cargamos solo lo necesario para el escaneo
+        $container->load(['inspectionLabels' => function($query) {
+            // Solo necesitamos las pendientes o con diferencia para escanear
+            $query->whereIn('inspection_status', ['pendiente', 'con_diferencia']);
+        }, 'inspectionLabels.containerItem']);
+
+        return view('containers.scan', compact('container'));
     }
 }

@@ -10,7 +10,7 @@ use App\Http\Controllers\TenantController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DashboardController;
-
+use App\Http\Controllers\ContainerController;
 Route::middleware(['auth', 'role:Super Admin'])->group(function () {
     
     Route::resource('tenants', TenantController::class);
@@ -99,25 +99,26 @@ Route::middleware('auth')->group(function () {
 
     // --- Rutas de Contenedores (Recepción + Etiquetado Aduana) ---
     Route::prefix('containers')->name('containers.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\ContainerController::class, 'index'])->name('index');
-        Route::get('/create', [\App\Http\Controllers\ContainerController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\ContainerController::class, 'store'])->name('store');
-        Route::get('/{container}', [\App\Http\Controllers\ContainerController::class, 'show'])->name('show');
+        Route::get('/', [ContainerController::class, 'index'])->name('index');
+        Route::get('/create', [ContainerController::class, 'create'])->name('create');
+        Route::post('/', [ContainerController::class, 'store'])->name('store');
+        Route::get('/{container}', [ContainerController::class, 'show'])->name('show');
 
         // Items del packing list
-        Route::post('/{container}/items', [\App\Http\Controllers\ContainerController::class, 'addItem'])->name('add-item');
-        Route::patch('/items/{item}', [\App\Http\Controllers\ContainerController::class, 'updateItemReceived'])->name('update-item');
+        Route::post('/{container}/items', [ContainerController::class, 'addItem'])->name('add-item');
+        Route::patch('/items/{item}', [ContainerController::class, 'updateItemReceived'])->name('update-item');
 
         // Estatus
-        Route::patch('/{container}/customs', [\App\Http\Controllers\ContainerController::class, 'updateCustomsStatus'])->name('update-customs');
-        Route::patch('/{container}/close', [\App\Http\Controllers\ContainerController::class, 'close'])->name('close');
+        Route::patch('/{container}/customs', [ContainerController::class, 'updateCustomsStatus'])->name('update-customs');
+        Route::patch('/{container}/close', [ContainerController::class, 'close'])->name('close');
 
         // Etiquetado / Inspección aduanal
-        Route::get('/{container}/inspection', [\App\Http\Controllers\ContainerController::class, 'inspection'])->name('inspection');
-        Route::post('/{container}/labels', [\App\Http\Controllers\ContainerController::class, 'generateLabels'])->name('generate-labels');
-        Route::patch('/labels/{label}', [\App\Http\Controllers\ContainerController::class, 'updateLabelStatus'])->name('update-label');
-        Route::post('/{container}/bulk-inspect', [\App\Http\Controllers\ContainerController::class, 'bulkInspect'])->name('bulk-inspect');
-        Route::post('/{container}/mark-printed', [\App\Http\Controllers\ContainerController::class, 'markPrinted'])->name('mark-printed');
+        Route::get('/{container}/inspection', [ContainerController::class, 'inspection'])->name('inspection');
+        Route::post('/{container}/labels', [ContainerController::class, 'generateLabels'])->name('generate-labels');
+        Route::patch('/labels/{label}', [ContainerController::class, 'updateLabelStatus'])->name('update-label');
+        Route::post('/{container}/bulk-inspect', [ContainerController::class, 'bulkInspect'])->name('bulk-inspect');
+        Route::post('/{container}/mark-printed', [ContainerController::class, 'markPrinted'])->name('mark-printed');
+        Route::get('/containers/{container}/scan', [ContainerController::class, 'scanMode'])->name('containers.scan');
     });
 
     Route::resource('movements', MovementController::class);
