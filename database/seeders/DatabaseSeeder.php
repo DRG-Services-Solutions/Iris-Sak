@@ -18,16 +18,13 @@ class DatabaseSeeder extends Seeder
 
         // --- FASE 1: EL SUPER ADMIN (Global) ---
         
-        // Creamos al Super Admin que no pertenece a ningún tenant
         $superAdmin = User::factory()->create([
             'name' => 'Super Admin',
             'email' => 'administrador@drg.mx',
-            'password' => bcrypt('admin123!'), // La contraseña será 'password'
+            'password' => bcrypt('admin123!'), 
             'tenant_id' => null,
         ]);
 
-        // Creamos el rol global 'Super Admin'. 
-        // Al forzar tenant_id a null, le decimos a Spatie que este rol aplica a nivel general.
         $roleSuperAdmin = Role::create([
             'name' => 'Super Admin', 
             'tenant_id' => null
@@ -45,7 +42,6 @@ class DatabaseSeeder extends Seeder
         // --- FASE 3: USUARIOS Y ROLES POR INQUILINO ---
 
         // ----- INQUILINO A (Coca Cola) -----
-        // Le decimos a Spatie: "Todo lo que haga de roles ahora, es para el Tenant A"
         setPermissionsTeamId($tenantA->id); 
         
         // Creamos un rol "Gerente" exclusivo para Coca Cola
@@ -61,10 +57,8 @@ class DatabaseSeeder extends Seeder
 
 
         // ----- INQUILINO B (Pepsi) -----
-        // Cambiamos el contexto de Spatie al Tenant B
         setPermissionsTeamId($tenantB->id); 
         
-        // Creamos un rol "Gerente" exclusivo para Pepsi (Nota: el nombre puede repetirse porque es otro tenant)
         $roleGerenteB = Role::create(['name' => 'Gerente', 'tenant_id' => $tenantB->id]);
         
         $userB = User::factory()->create([

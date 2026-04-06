@@ -97,6 +97,29 @@ Route::middleware('auth')->group(function () {
 
     }); 
 
+    // --- Rutas de Contenedores (Recepción + Etiquetado Aduana) ---
+    Route::prefix('containers')->name('containers.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\ContainerController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\ContainerController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\ContainerController::class, 'store'])->name('store');
+        Route::get('/{container}', [\App\Http\Controllers\ContainerController::class, 'show'])->name('show');
+
+        // Items del packing list
+        Route::post('/{container}/items', [\App\Http\Controllers\ContainerController::class, 'addItem'])->name('add-item');
+        Route::patch('/items/{item}', [\App\Http\Controllers\ContainerController::class, 'updateItemReceived'])->name('update-item');
+
+        // Estatus
+        Route::patch('/{container}/customs', [\App\Http\Controllers\ContainerController::class, 'updateCustomsStatus'])->name('update-customs');
+        Route::patch('/{container}/close', [\App\Http\Controllers\ContainerController::class, 'close'])->name('close');
+
+        // Etiquetado / Inspección aduanal
+        Route::get('/{container}/inspection', [\App\Http\Controllers\ContainerController::class, 'inspection'])->name('inspection');
+        Route::post('/{container}/labels', [\App\Http\Controllers\ContainerController::class, 'generateLabels'])->name('generate-labels');
+        Route::patch('/labels/{label}', [\App\Http\Controllers\ContainerController::class, 'updateLabelStatus'])->name('update-label');
+        Route::post('/{container}/bulk-inspect', [\App\Http\Controllers\ContainerController::class, 'bulkInspect'])->name('bulk-inspect');
+        Route::post('/{container}/mark-printed', [\App\Http\Controllers\ContainerController::class, 'markPrinted'])->name('mark-printed');
+    });
+
     Route::resource('movements', MovementController::class);
     Route::get('/api/products/scan/{barcode}', function ($barcode) {
         $product = \App\Models\Product::where('barcode', $barcode)->first();
