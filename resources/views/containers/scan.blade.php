@@ -99,4 +99,4 @@
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
-</x-app-layout>
+</x-app-layout>cuantC
