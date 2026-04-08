@@ -29,7 +29,7 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            @role('Super Admin')
+            @if (Auth::user()->hasRole('Super Admin'))
                 {{-- ========================================================= --}}
                 {{-- 👑 UNIVERSO SUPER ADMIN: MÉTRICAS DE NEGOCIO (SaaS)       --}}
                 {{-- ========================================================= --}}
