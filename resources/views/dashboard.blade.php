@@ -35,28 +35,31 @@
                 {{-- ========================================================= --}}
 
                 {{-- KPIs Globales --}}
+                {{--  --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {{-- KPI: Ingresos Mensuales (MRR) --}}
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
                         <div class="p-3 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 rounded-lg">
-                            <i class="fas fa-dollar-sign text-2xl"></i>
+                            <i class="fas fa-brands fa-docker text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Ingresos (MRR)</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">$12,450 <span class="text-xs font-normal text-emerald-500">+8%</span></p>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Contenedores Procesados</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">12,450 <span class="text-xs font-normal text-emerald-500"></span></p>
                         </div>
                     </div>
 
                     {{-- KPI: Empresas Activas --}}
+                    
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
                         <div class="p-3 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-lg">
                             <i class="fas fa-building text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Empresas (Tenants)</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalTenants ?? 34 }} <span class="text-xs font-normal text-gray-400">Registradas</span></p> 
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Productos Procesados</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{-- {{ $totalTenants ?? 34 }} --}}401,380 <span class="text-xs font-normal text-gray-400">Registros</span></p> 
                         </div>
                     </div>
+                    
 
                     {{-- KPI: Nuevas Suscripciones --}}
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
@@ -64,8 +67,8 @@
                             <i class="fas fa-user-plus text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Nuevos Planes (Mes)</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">+5 <span class="text-xs font-normal text-gray-400">clientes</span></p>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Nuevos Usuarios</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">+1 <span class="text-xs font-normal text-gray-400"></span></p>
                         </div>
                     </div>
 
@@ -98,46 +101,47 @@
 
                     {{-- Distribución de Paquetes --}}
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Planes Activos</h3>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Eficiencia</h3>
                         <div class="space-y-4">
                             {{-- Plan Enterprise --}}
                             <div>
                                 <div class="flex justify-between text-sm mb-1">
-                                    <span class="font-bold text-gray-700 dark:text-gray-300">Plan 3 (Enterprise)</span>
-                                    <span class="text-indigo-600 dark:text-indigo-400 font-bold">12%</span>
+                                    <span class="font-bold text-gray-700 dark:text-gray-300">Surtido</span>
+                                    <span class="text-indigo-600 dark:text-indigo-400 font-bold">85%</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                    <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 12%"></div>
+                                    <div class="bg-indigo-600 h-2.5 rounded-full" style="width: 85%"></div>
                                 </div>
-                                <p class="text-xs text-gray-500 mt-1">4 empresas</p>
+                                <p class="text-xs text-gray-500 mt-1"></p>
                             </div>
                             {{-- Plan Pro --}}
                             <div>
                                 <div class="flex justify-between text-sm mb-1">
-                                    <span class="font-bold text-gray-700 dark:text-gray-300">Plan 2 (Pro)</span>
+                                    <span class="font-bold text-gray-700 dark:text-gray-300">Recepcion</span>
                                     <span class="text-blue-600 dark:text-blue-400 font-bold">58%</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                                     <div class="bg-blue-600 h-2.5 rounded-full" style="width: 58%"></div>
                                 </div>
-                                <p class="text-xs text-gray-500 mt-1">20 empresas</p>
+                                <p class="text-xs text-gray-500 mt-1"></p>
                             </div>
                             {{-- Plan Básico --}}
                             <div>
                                 <div class="flex justify-between text-sm mb-1">
-                                    <span class="font-bold text-gray-700 dark:text-gray-300">Plan 1 (Básico)</span>
-                                    <span class="text-emerald-600 dark:text-emerald-400 font-bold">30%</span>
+                                    <span class="font-bold text-gray-700 dark:text-gray-300">Inventarios</span>
+                                    <span class="text-emerald-600 dark:text-emerald-400 font-bold">95%</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                    <div class="bg-emerald-600 h-2.5 rounded-full" style="width: 30%"></div>
+                                    <div class="bg-emerald-600 h-2.5 rounded-full" style="width: 95%"></div>
                                 </div>
-                                <p class="text-xs text-gray-500 mt-1">10 empresas</p>
+                                <p class="text-xs text-gray-500 mt-1"></p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {{-- Tabla: Últimas Suscripciones / Actividad --}}
+                <!--
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                     <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex justify-between items-center">
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white">Empresas Recientes</h3>
@@ -175,6 +179,7 @@
                         </table>
                     </div>
                 </div>
+            -->
 
             @else
                 {{-- ========================================================= --}}
