@@ -155,51 +155,53 @@ class ContainerController extends Controller
             $colA = trim((string) $sheet->getCell("A{$row}")->getValue());
             $colH = trim((string) $sheet->getCell("H{$row}")->getValue());
 
+            $colA_upper = strtoupper($this->toAscii($colA));
+            $colH_upper = strtoupper($this->toAscii($colH));
+
             // Packing List No (H4)
-            if (str_contains($colH, 'CONTAINER')) {
-                $extracted = $this->extractAfterColon($colH);
-                $data['container_number'] = preg_replace('/[^A-Za-z0-9]/', '', $extracted);
+            if (str_contains($colH_upper, 'PACKING LIST NO')) {
+                $data['packing_list_number'] = $this->extractAfterColon($colH);
             }
 
             // Container (H11)
-            if (str_contains($colH, 'CONTAINER')) {
+            if (str_contains($colH_upper, 'CONTAINER')) {
                 $data['container_number'] = $this->extractAfterColon($colH);
             }
 
             // Transport mode (H6)
-            if (str_contains($colH, 'MODE OF TRANSPORT')) {
+            if (str_contains($colH_upper, 'MODE OF TRANSPORT')) {
                 $data['transport_mode'] = $this->extractAfterColon($colH);
             }
 
             // Port of loading (H8)
-            if (str_contains($colH, 'PORT OF LOADING')) {
+            if (str_contains($colH_upper, 'PORT OF LOADING')) {
                 $data['port_loading'] = $this->extractAfterColon($colH);
             }
 
             // Port of discharge (H9)
-            if (str_contains($colH, 'PORT OF DISCHARGE')) {
+            if (str_contains($colH_upper, 'PORT OF DISCHARGE')) {
                 $data['port_discharge'] = $this->extractAfterColon($colH);
             }
 
             // ETD (H12)
-            if (str_contains($colH, 'ETD')) {
+            if (str_contains($colH_upper, 'ETD')) {
                 $etd = $this->extractAfterColon($colH);
                 $data['etd'] = $this->parseDate($etd);
             }
 
             // ETA (H13)
-            if (str_contains($colH, 'ETA')) {
+            if (str_contains($colH_upper, 'ETA')) {
                 $eta = $this->extractAfterColon($colH);
                 $data['eta'] = $this->parseDate($eta);
             }
 
             // Seller / Supplier (A7)
-            if (str_contains(strtoupper($colA), 'SELLER')) {
+            if (str_contains($colA_upper, 'SELLER')) {
                 $data['supplier'] = $this->extractAfterColon($colA);
             }
 
             // Buyer (A4)
-            if (str_contains(strtoupper($colA), 'BUYER')) {
+            if (str_contains($colA_upper, 'BUYER')) {
                 $data['buyer'] = $this->extractAfterColon($colA);
             }
         }
@@ -313,16 +315,35 @@ class ContainerController extends Controller
 
     private function extractAfterColon(string $text): string
     {
-        // Agregamos el modificador 'u' a la expresión regular para manejar bien el Unicode
-        $parts = preg_split('/[:：]/u', $text, 2);
+        // Normalizar colons: fullwidth ： (U+FF1A) → ASCII :
+        $text = str_replace('：', ':', $text);
+
+        // Partir por el primer ":"
+        $parts = explode(':', $text, 2);
         $value = isset($parts[1]) ? $parts[1] : $text;
 
-        // Limpieza profunda: Dejamos solo letras (\p{L}), números (\p{N}), 
-        // espacios (\s) y signos de puntuación básicos (. - _ ,)
-        // Esto destruye automáticamente los caracteres  invisibles
-        $value = preg_replace('/[^\p{L}\p{N}\s\.\-\_,]/u', '', $value);
+        // Eliminar todo lo que NO sea ASCII imprimible (letras, números, puntuación básica)
+        $value = $this->toAscii($value);
 
         return trim($value);
+    }
+
+    /**
+     * Elimina caracteres no-ASCII de un string.
+     * Deja solo: letras a-z A-Z, números 0-9, espacios y puntuación común.
+     */
+    private function toAscii(string $text): string
+    {
+        // Reemplazar saltos de línea por espacio
+        $text = preg_replace('/[\r\n]+/', ' ', $text);
+
+        // Dejar solo ASCII imprimible (0x20-0x7E)
+        $text = preg_replace('/[^\x20-\x7E]/', '', $text);
+
+        // Colapsar espacios múltiples
+        $text = preg_replace('/\s+/', ' ', $text);
+
+        return trim($text);
     }
 
     private function parseDate(?string $dateStr): ?string

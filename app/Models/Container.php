@@ -54,6 +54,16 @@ class Container extends Model
         return $this->hasMany(InspectionLabel::class);
     }
 
+    public function boxes()
+    {
+        return $this->hasMany(Box::class);
+    }
+
+    public function pallets()
+    {
+        return $this->hasMany(Pallet::class);
+    }
+
     public function receivedByUser()
     {
         return $this->belongsTo(User::class, 'received_by');

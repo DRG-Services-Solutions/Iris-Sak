@@ -44,6 +44,11 @@ class ContainerItem extends Model
         return $this->hasMany(InspectionLabel::class);
     }
 
+    public function boxes()
+    {
+        return $this->hasMany(Box::class);
+    }
+
     public function getDifferenceAttribute(): int
     {
         return $this->declared_qty - $this->received_qty;
@@ -62,10 +67,12 @@ class ContainerItem extends Model
     {
         if ($this->received_qty === 0) {
             $this->update(['status' => 'pendiente']);
-        } elseif ($this->received_qty >= $this->declared_qty) {
+        } elseif ($this->received_qty === $this->declared_qty) {
             $this->update(['status' => 'conforme']);
+        } elseif ($this->received_qty > $this->declared_qty) {
+            $this->update(['status' => 'sobrante']);
         } else {
-            $this->update(['status' => 'con_diferencia']);
+            $this->update(['status' => 'faltante']);
         }
     }
 }

@@ -33,7 +33,7 @@
     <div class="py-8" x-data="inspectionManager()">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            {{-- MENSAJES FLASH Y ERRORES DE VALIDACIÓN --}}
+            {{-- Mensajes flash --}}
             @if(session('success'))
                 <div class="p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 text-green-800 dark:text-green-200 rounded-lg">
                     <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
@@ -42,19 +42,6 @@
             @if(session('error'))
                 <div class="p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-200 rounded-lg">
                     <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
-                </div>
-            @endif
-            @if($errors->any())
-                <div class="p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-200 rounded-lg">
-                    <div class="flex items-center mb-2">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>
-                        <span class="font-bold">Por favor corrige los siguientes errores:</span>
-                    </div>
-                    <ul class="list-disc list-inside text-sm">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
                 </div>
             @endif
 
@@ -82,6 +69,11 @@
                 </div>
             </div>
 
+            {{-- ============================================================ --}}
+            {{-- Todo lo operativo: solo si el contenedor está LIBERADO      --}}
+            {{-- ============================================================ --}}
+            @if($container->customs_status === 'liberado')
+
             {{-- Generar etiquetas --}}
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
                 <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">
@@ -96,7 +88,7 @@
                             <option value="">Seleccionar artículo...</option>
                             @foreach($container->items as $item)
                                 <option value="{{ $item->id }}">
-                                    {{ $item->sku ? $item->sku . ' — ' : '' }}{{ $item->product_description }} ({{ $item->declared_qty }} pzas)
+                                    {{ $item->product_code ? $item->product_code . ' — ' : '' }}{{ $item->product_description }} ({{ $item->declared_qty }} pzas)
                                 </option>
                             @endforeach
                         </select>
@@ -117,62 +109,37 @@
             {{-- Acciones masivas --}}
             @if($container->inspectionLabels->count() > 0)
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    
-                    {{-- Checkbox Seleccionar Todo --}}
                     <div class="flex items-center space-x-2">
-                        <input type="checkbox" @change="toggleAll($event)" :checked="allSelected" class="rounded border-gray-300 dark:border-gray-600 text-teal-600 focus:ring-teal-500">
+                        <input type="checkbox" @click="toggleAll($event)" class="rounded border-gray-300 dark:border-gray-600 text-teal-600 focus:ring-teal-500">
                         <span class="text-sm text-gray-600 dark:text-gray-300">Seleccionar todo</span>
-                        <span class="text-sm font-semibold text-teal-600 ml-2" x-show="selectedLabels.length > 0" x-text="selectedLabels.length + ' seleccionadas'" x-cloak></span>
+                        <span class="text-sm text-gray-400 ml-2" x-show="selectedLabels.length > 0" x-text="selectedLabels.length + ' seleccionadas'"></span>
                     </div>
-                    
-                    {{-- Formularios de Acción --}}
                     <div class="flex items-center space-x-2" x-show="selectedLabels.length > 0" x-cloak>
-                        
-                        {{-- FORMULARIO 1: APLICAR ESTATUS --}}
-                        <form method="POST" action="{{ route('containers.bulk-inspect', $container) }}" class="flex items-center space-x-2 m-0 p-0">
+                        <form method="POST" action="{{ route('containers.bulk-inspect', $container) }}" x-ref="bulkForm">
                             @csrf
-                            
-                            {{-- LA MAGIA: Enviamos un solo input de texto con los IDs separados por comas (ej. "1,2,3,4...") --}}
-                            <input type="hidden" name="label_ids_string" x-bind:value="selectedLabels.join(',')">
-                            
-                            <div class="flex rounded-md shadow-sm">
-                                <select name="inspection_status" required class="block w-full rounded-none rounded-l-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm focus:border-teal-500 focus:ring-teal-500 text-gray-900 dark:text-gray-100">
-                                    <option value="" disabled selected>Asignar estatus...</option>
+                            <template x-for="id in selectedLabels" :key="id">
+                                <input type="hidden" name="label_ids[]" :value="id">
+                            </template>
+                            <div class="flex items-center space-x-2">
+                                <select name="inspection_status" class="border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm py-2 px-3 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-amber-500">
                                     <option value="conforme">Conforme</option>
                                     <option value="pendiente">Pendiente</option>
                                     <option value="con_diferencia">Con diferencia</option>
                                 </select>
-                                
-                                <button type="submit" class="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-teal-600 bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-500">
-                                    <i class="fas fa-check-double"></i><span>Aplicar</span>
+                                <button type="submit" class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-500 text-sm transition">
+                                    <i class="fas fa-check-double mr-1"></i> Aplicar
                                 </button>
                             </div>
                         </form>
-
-                        {{-- FORMULARIO 2: MARCAR IMPRESAS --}}
-                        <form method="POST" action="{{ route('containers.mark-printed', $container) }}" class="m-0 p-0">
-                            @csrf
-                            
-                            {{-- Hacemos lo mismo aquí para que tampoco falle al imprimir miles de etiquetas --}}
-                            <input type="hidden" name="label_ids_string" x-bind:value="selectedLabels.join(',')">
-                            
-                            <button type="submit" class="inline-flex items-center space-x-2 rounded-md bg-cyan-600 px-4 py-2 text-sm font-medium text-white hover:bg-cyan-500">
-                                <i class="fas fa-print"></i><span>Marcar Impresas</span>
-                            </button>
-                        </form>
-                        
-                        {{-- FORMULARIO 2: MARCAR IMPRESAS --}}
-                        <form method="POST" action="{{ route('containers.mark-printed', $container) }}" class="m-0 p-0">
+                        <form method="POST" action="{{ route('containers.mark-printed', $container) }}">
                             @csrf
                             <template x-for="id in selectedLabels" :key="id">
-                                <input type="hidden" name="label_ids[]" x-bind:value="id">
+                                <input type="hidden" name="label_ids[]" :value="id">
                             </template>
-                            <button type="submit" class="inline-flex items-center space-x-2 rounded-md border border-transparent bg-cyan-600 px-4 py-2 text-sm font-medium text-white hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2">
-                                <i class="fas fa-print"></i>
-                                <span>Marcar Impresas</span>
+                            <button type="submit" class="px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-500 text-sm transition">
+                                <i class="fas fa-print mr-1"></i> Marcar Impresas
                             </button>
                         </form>
-
                     </div>
                 </div>
             @endif
@@ -203,7 +170,7 @@
                             @forelse($container->inspectionLabels->sortBy('piece_number') as $label)
                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
                                     <td class="px-4 py-3 text-center">
-                                        <input type="checkbox" value="{{ $label->id }}" x-model.number="selectedLabels"
+                                        <input type="checkbox" :value="{{ $label->id }}" x-model.number="selectedLabels"
                                                class="rounded border-gray-300 dark:border-gray-600 text-teal-600 focus:ring-teal-500">
                                     </td>
                                     <td class="px-4 py-3 text-sm font-mono font-bold text-gray-900 dark:text-white">{{ $label->label_code }}</td>
@@ -262,6 +229,28 @@
                 </div>
             </div>
 
+            @else
+            {{-- ============================================================ --}}
+            {{-- BLOQUEO: contenedor NO liberado                              --}}
+            {{-- ============================================================ --}}
+            <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-8 text-center">
+                <i class="fas fa-lock text-4xl text-amber-400 mb-4 block"></i>
+                <p class="text-lg text-amber-800 dark:text-amber-200 font-semibold">Contenedor aún no liberado por aduana</p>
+                <p class="text-sm text-amber-600 dark:text-amber-400 mt-2 max-w-md mx-auto">
+                    Los artículos del Packing List y la generación de etiquetas estarán disponibles una vez que el estatus de aduana sea <span class="font-bold">Liberado</span>.
+                </p>
+                <p class="text-xs text-amber-500 mt-3">
+                    Estatus actual: 
+                    <span class="inline-flex ml-1 px-2 py-0.5 rounded-full text-xs font-medium {{ $customsBadge }}">
+                        {{ ucfirst(str_replace('_', ' ', $container->customs_status)) }}
+                    </span>
+                </p>
+                <a href="{{ route('containers.show', $container) }}" class="inline-flex items-center mt-4 text-sm text-amber-700 dark:text-amber-300 hover:underline">
+                    <i class="fas fa-arrow-left mr-1"></i> Volver al detalle del contenedor para cambiar estatus
+                </a>
+            </div>
+            @endif
+
         </div>
     </div>
 
@@ -269,9 +258,6 @@
         function inspectionManager() {
             return {
                 selectedLabels: [],
-                get allSelected() {
-                    return this.selectedLabels.length > 0 && this.selectedLabels.length === {{ $container->inspectionLabels->count() }};
-                },
                 toggleAll(event) {
                     if (event.target.checked) {
                         this.selectedLabels = @json($container->inspectionLabels->pluck('id'));

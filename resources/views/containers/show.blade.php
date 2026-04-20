@@ -10,26 +10,21 @@
                 </div>
                 <div>
                     <h2 class="font-bold text-2xl text-gray-800 dark:text-gray-100 leading-tight">{{ $container->container_number }}</h2>
-
-                    {{-- Badge de Estatus --}}
-                    @if($container->status === 'abierto')
-                        <span class="px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded-full border border-blue-200 dark:border-blue-800">
-                            En Proceso
-                        </span>
-                    @else
-                        <span class="px-3 py-1 text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-600">
-                            Cerrado
-                        </span>
-                    @endif
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
                         {{ $container->packing_list_number ?? '' }}
                         {{ $container->supplier ? '· ' . $container->supplier : '' }}
                     </p>
                 </div>
             </div>
-            <div class="hidden md:flex items-center space-x-3">
-                <a href="{{ route('containers.inspection', $container) }}" class="px-4 py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-500 transition text-sm font-medium">
-                    <i class="fas fa-tags mr-1"></i> Etiquetado / Inspección
+            <div class="hidden md:flex items-center space-x-2">
+                <a href="{{ route('containers.inspection', $container) }}" class="px-3 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-500 transition text-sm font-medium">
+                    <i class="fas fa-tags mr-1"></i> Inspección
+                </a>
+                <a href="{{ route('containers.packing', $container) }}" class="px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition text-sm font-medium">
+                    <i class="fas fa-box mr-1"></i> Empaque
+                </a>
+                <a href="{{ route('containers.pallets', $container) }}" class="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition text-sm font-medium">
+                    <i class="fas fa-pallet mr-1"></i> Tarimas
                 </a>
             </div>
         </div>
@@ -80,38 +75,14 @@
             {{-- Información del contenedor --}}
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-3 text-sm">
-                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
-                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Proveedor</span>
-                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ $container->supplier ?? '—' }}</span>
-                    </div>
-                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
-                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Comprador</span>
-                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ $container->buyer ?? '—' }}</span>
-                    </div>
-                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
-                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Modo de transporte</span>
-                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ $container->transport_mode ?? '—' }}</span>
-                    </div>
-                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
-                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Puerto de carga</span>
-                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ $container->port_loading ?? '—' }}</span>
-                    </div>
-                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
-                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Puerto de descarga</span>
-                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ $container->port_discharge ?? '—' }}</span>
-                    </div>
-                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
-                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">ETD</span>
-                        <span class="font-medium text-gray-900 dark:text-gray-10  {{ $container->etd?->format('d/m/Y') ?? '—' }}</span>
-                    </div>
-                    <div class="flex flex-col border-b border-gray-1００ dark:border-gray-7００ pb-２">
-                        <span class="text-xs text-gray-5００ dark:text-gray-4００ uppercase tracking-wider mb-１">ETA</span>
-                        <span class="font-medium text-gray-9００ dark:textgray.1００">{{ $container->eta?->format('d/m/Y') ?? '—' }}</span>
-                    </div>
-                    <div class="flex flex-col border-b bordergray.1００ dark:bordergray.7００ pb-２">
-                        <span class="text-xs textgray.5００ dark:textgray.4００ uppercase tracking-wider mb-１">Recibido por</span>
-                        <span class="font-medium textgray.9００ dark:textgray.1００">{{ $container->receivedByUser?->name ?? '—' }}</span>
-                    </div>
+                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">Proveedor:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->supplier ?? '—' }}</span></div>
+                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">Comprador:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->buyer ?? '—' }}</span></div>
+                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">Transporte:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->transport_mode ?? '—' }}</span></div>
+                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">Puerto carga:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->port_loading ?? '—' }}</span></div>
+                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">Puerto descarga:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->port_discharge ?? '—' }}</span></div>
+                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">ETD:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->etd?->format('d/m/Y') ?? '—' }}</span></div>
+                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">ETA:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->eta?->format('d/m/Y') ?? '—' }}</span></div>
+                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">Recibido por:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->receivedByUser?->name ?? '—' }}</span></div>
                     <div><span class="font-semibold text-gray-800 dark:text-gray-100">Fecha registro:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->received_at?->format('d/m/Y H:i') ?? $container->created_at->format('d/m/Y H:i') }}</span></div>
                 </div>
 
@@ -143,9 +114,17 @@
                     @endif
 
                     {{-- Link a inspección en móvil --}}
-                    <a href="{{ route('containers.inspection', $container) }}" class="md:hidden px-4 py-2 bg-teal-600 text-white rounded-lg text-sm">
-                        <i class="fas fa-tags mr-1"></i> Etiquetado
-                    </a>
+                    <div class="md:hidden flex flex-wrap gap-2">
+                        <a href="{{ route('containers.inspection', $container) }}" class="px-3 py-2 bg-teal-600 text-white rounded-lg text-sm">
+                            <i class="fas fa-tags mr-1"></i> Inspección
+                        </a>
+                        <a href="{{ route('containers.packing', $container) }}" class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm">
+                            <i class="fas fa-box mr-1"></i> Empaque
+                        </a>
+                        <a href="{{ route('containers.pallets', $container) }}" class="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm">
+                            <i class="fas fa-pallet mr-1"></i> Tarimas
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -209,9 +188,10 @@
                                     <td class="px-3 py-3 text-center">
                                         @php
                                             $itemBadge = match($item->status) {
-                                                'conforme'       => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-                                                'con_diferencia' => 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-                                                default          => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
+                                                'conforme'  => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+                                                'faltante'  => 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+                                                'sobrante'  => 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+                                                default     => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
                                             };
                                         @endphp
                                         <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $itemBadge }}">
