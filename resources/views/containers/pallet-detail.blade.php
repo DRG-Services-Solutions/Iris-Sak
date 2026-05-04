@@ -83,7 +83,7 @@
                                     <td class="py-2">
                                         <span class="font-medium text-gray-800 dark:text-gray-200">{{ $item?->product_description ?? '—' }}</span>
                                         @if($item?->product_code)
-                                            <span class="text-xs text-gray-400 ml-1">({{ $item->product_code }})</span>
+                                            <span class="text-xs text-gray-400 ml-1">({{ $item->barcode }})</span>
                                         @endif
                                     </td>
                                     <td class="py-2 text-center font-medium text-gray-700 dark:text-gray-300">{{ $groupedBoxes->count() }}</td>
@@ -107,7 +107,7 @@
                     <div class="flex flex-wrap gap-2">
                         @foreach($pallet->boxes->sortBy('box_code') as $box)
                             <span class="inline-flex items-center px-2 py-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded text-xs font-mono">
-                                {{ $box->box_code }}
+                                {{ $box->containerItem?->barcode ?? 'Sin código' }}
                                 <span class="text-gray-400 ml-1">({{ $box->quantity }})</span>
                             </span>
                         @endforeach

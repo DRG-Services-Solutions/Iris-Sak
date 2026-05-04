@@ -7,6 +7,27 @@ use Illuminate\Database\Eloquent\Model;
 
 class Location extends Model
 {
-    /** @use HasFactory<\Database\Factories\LocationFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'code', 'name', 'zone', 'aisle', 'level',
+        'position', 'type', 'active', 'capacity',
+    ];
+
+    protected $casts = ['active' => 'boolean'];
+
+    public function pallets() { return $this->hasMany(Pallet::class); }
+
+    public function getFullCodeAttribute(): string
+    {
+        return collect([$this->zone, $this->aisle, $this->level, $this->position])
+            ->filter()->implode('-');
+    }
+
+    public function getOccupancyAttribute(): int
+    {
+        return $this->pallets()->count();
+    }
+
+    public function scopeActive($query) { return $query->where('active', true); }
 }

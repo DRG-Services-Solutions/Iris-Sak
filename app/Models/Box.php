@@ -11,46 +11,41 @@ class Box extends Model
     use HasFactory;
 
     protected $fillable = [
-        'container_id',
-        'container_item_id',
-        'box_code',
-        'quantity',
-        'status',
-        'pallet_id',
-        'created_by',
-        'closed_at',
+        'container_id', 'container_item_id', 'box_code', 'source',
+        'expected_qty', 'quantity', 'status', 'pallet_id',
+        'created_by', 'notes', 'closed_at',
     ];
 
-    protected $casts = [
-        'closed_at' => 'datetime',
-    ];
+    protected $casts = ['closed_at' => 'datetime'];
 
     // --- Relaciones ---
 
-    public function container()
+    public function container()     { return $this->belongsTo(Container::class); }
+    public function containerItem() { return $this->belongsTo(ContainerItem::class); }
+    public function pallet()        { return $this->belongsTo(Pallet::class); }
+    public function creator()       { return $this->belongsTo(User::class, 'created_by'); }
+
+    // --- Accesores ---
+
+    public function getMissingAttribute(): int
     {
-        return $this->belongsTo(Container::class);
+        return $this->expected_qty - $this->quantity;
     }
 
-    public function containerItem()
+    public function getIsCompleteAttribute(): bool
     {
-        return $this->belongsTo(ContainerItem::class);
+        return $this->quantity >= $this->expected_qty;
     }
 
-    public function pallet()
+    public function getIsOriginalAttribute(): bool
     {
-        return $this->belongsTo(Pallet::class);
+        return $this->source === 'contenedor';
     }
 
-    public function creator()
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    // --- Helpers ---
+    // --- Generadores de código ---
 
     /**
-     * Genera un código de caja único: CAJ-{últimos 6 del contenedor}-{secuencia 4 dígitos}
+     * Código para cajas de reempaque: CAJ-XXXXXX-0001
      */
     public static function generateBoxCode(Container $container, int $sequence): string
     {
@@ -58,44 +53,48 @@ class Box extends Model
         return sprintf('CAJ-%s-%04d', $suffix, $sequence);
     }
 
-    public function isAssignedToPallet(): bool
+    /**
+     * Código para cajas originales del contenedor: REC-XXXXXX-0001
+     */
+    public static function generateOriginalBoxCode(Container $container, int $sequence): string
     {
-        return $this->pallet_id !== null;
+        $suffix = strtoupper(Str::substr(preg_replace('/[^A-Za-z0-9]/', '', $container->container_number), -6));
+        return sprintf('REC-%s-%04d', $suffix, $sequence);
     }
+
+    // --- Estado ---
+
+    public function isAssignedToPallet(): bool { return $this->pallet_id !== null; }
 
     public function close(): void
     {
-        $this->update([
-            'status'    => 'cerrada',
-            'closed_at' => now(),
-        ]);
+        $this->update(['status' => 'cerrada', 'closed_at' => now()]);
     }
 
     public function assignToPallet(Pallet $pallet): void
     {
-        $this->update([
-            'pallet_id' => $pallet->id,
-            'status'    => 'en_tarima',
-        ]);
+        $this->update(['pallet_id' => $pallet->id, 'status' => 'en_tarima']);
     }
 
     public function removeFromPallet(): void
     {
-        $this->update([
-            'pallet_id' => null,
-            'status'    => 'cerrada',
-        ]);
+        $this->update(['pallet_id' => null, 'status' => 'cerrada']);
     }
 
     // --- Scopes ---
 
     public function scopeAvailableForPallet($query)
     {
-        return $query->whereIn('status', ['cerrada'])->whereNull('pallet_id');
+        return $query->where('status', 'cerrada')->whereNull('pallet_id');
     }
 
-    public function scopeByContainer($query, int $containerId)
+    public function scopeOriginal($query)
     {
-        return $query->where('container_id', $containerId);
+        return $query->where('source', 'contenedor');
+    }
+
+    public function scopeRepacked($query)
+    {
+        return $query->where('source', 'reempaque');
     }
 }

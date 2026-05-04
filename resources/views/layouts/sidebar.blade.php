@@ -49,6 +49,24 @@
                         <i class="fas fa-ship w-6 text-center text-teal-400"></i>
                         <span class="mx-2 font-medium">Contenedores</span>
                     </a>
+                    <a @click="if(window.innerWidth < 1024) closeSidebar()"
+                       class="flex items-center px-4 py-2.5 rounded-lg transition-colors {{ request()->routeIs('warehouse.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}" 
+                       href="{{ route('warehouse.locations') }}">
+                        <i class="fas fa-warehouse w-6 text-center text-emerald-400"></i>
+                        <span class="mx-2 font-medium">Localidades</span>
+                    </a>
+                    <a @click="if(window.innerWidth < 1024) closeSidebar()"
+                       class="flex items-center px-4 py-2.5 rounded-lg transition-colors {{ request()->routeIs('picking.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}" 
+                       href="{{ route('picking.index') }}">
+                        <i class="fas fa-clipboard-list w-6 text-center text-orange-400"></i>
+                        <span class="mx-2 font-medium">Surtido</span>
+                    </a>
+                    <a @click="if(window.innerWidth < 1024) closeSidebar()"
+                       class="flex items-center px-4 py-2.5 rounded-lg transition-colors {{ request()->routeIs('dispatch.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}" 
+                       href="{{ route('dispatch.index') }}">
+                        <i class="fas fa-truck w-6 text-center text-green-400"></i>
+                        <span class="mx-2 font-medium">Despachos</span>
+                    </a>
                 </div>
             </div>
 

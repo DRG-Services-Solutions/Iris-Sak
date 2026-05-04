@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class Pallet extends Model
@@ -17,12 +19,14 @@ class Pallet extends Model
         'created_by',
         'notes',
         'closed_at',
+        'location_id',
+        
     ];
 
     protected $casts = [
         'closed_at' => 'datetime',
     ];
-
+    const STATUS_CERRADA = 'cerrada';
     // --- Relaciones ---
 
     public function container()
@@ -40,6 +44,11 @@ class Pallet extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function location(): BelongsTo
+    {
+        return $this->belongsTo(Location::class);
+    }
+
     // --- Accesores calculados ---
 
     public function getTotalBoxesAttribute(): int
@@ -50,6 +59,24 @@ class Pallet extends Model
     public function getTotalPiecesAttribute(): int
     {
         return $this->boxes()->sum('quantity');
+    }
+
+
+    //funciones de asignación de tarima a localidad y validación de estado
+    public function canBeAssignedToLocation():bool
+    {
+        return $this->status === self::STATUS_CERRADA;
+    }
+
+    public function assignToLocation(Location $location)
+    {
+        if (!$this->canBeAssignedToLocation()) {
+            throw new \Exception("Solo tarimas cerradas pueden ser asignadas a una localidad.");
+        }
+        return $this->update([
+            'location_id' => $location->id
+        ]);
+        
     }
 
     /**
@@ -99,4 +126,16 @@ class Pallet extends Model
     {
         return $query->where('container_id', $containerId);
     }
+
+    public function scopeClosed(Builder $query): Builder
+    {
+        return $query->where('status', 'cerrada');
+    }
+
+    public function scopeUnassigned(Builder $query): Builder
+    {
+        return $query->whereNull('location_id');
+    }
+
+    
 }

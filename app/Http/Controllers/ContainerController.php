@@ -368,6 +368,7 @@ class ContainerController extends Controller
             'barcode'             => 'nullable|string|max:100',
             'product_description' => 'required|string|max:500',
             'declared_qty'        => 'required|integer|min:1',
+            'carton_count'        => 'required|integer|min:1',
             'package_type'        => 'nullable|string|max:50',
         ]);
 
@@ -382,14 +383,27 @@ class ContainerController extends Controller
     public function updateItemReceived(Request $request, ContainerItem $item)
     {
         $validated = $request->validate([
-            'received_qty' => 'required|integer|min:0',
+            'received_cartons' => 'required|integer|min:0',
         ]);
 
-        $item->update(['received_qty' => $validated['received_qty']]);
-        $item->evaluateStatus();
+        $item->updateReceivedCartons($validated['received_cartons'], Auth::id());
         $item->container->recalculateFromItems();
 
-        return back()->with('success', 'Cantidad recibida actualizada.');
+        return back()->with('success', "Recepción actualizada: {$validated['received_cartons']} cajas ({$item->received_qty} pzas).");
+    }
+
+    /**
+     * Guardar notas de un item (solo para faltante/sobrante).
+     */
+    public function updateItemNotes(Request $request, ContainerItem $item)
+    {
+        $validated = $request->validate([
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $item->update(['notes' => $validated['notes']]);
+
+        return back()->with('success', 'Notas actualizadas para: ' . ($item->barcode ?? $item->product_description));
     }
 
     // ===================================================================

@@ -10,22 +10,21 @@
                 </div>
                 <div>
                     <h2 class="font-bold text-2xl text-gray-800 dark:text-gray-100 leading-tight">{{ $container->container_number }}</h2>
+                    @if($container->status === 'abierto')
+                        <span class="px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded-full border border-blue-200 dark:border-blue-800">En Proceso</span>
+                    @else
+                        <span class="px-3 py-1 text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-600">Cerrado</span>
+                    @endif
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
                         {{ $container->packing_list_number ?? '' }}
-                        {{ $container->supplier ? '· ' . $container->supplier : '' }}
+                        {{ $container->supplier ? ' · ' . $container->supplier : '' }}
                     </p>
                 </div>
             </div>
             <div class="hidden md:flex items-center space-x-2">
-                <a href="{{ route('containers.inspection', $container) }}" class="px-3 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-500 transition text-sm font-medium">
-                    <i class="fas fa-tags mr-1"></i> Inspección
-                </a>
-                <a href="{{ route('containers.packing', $container) }}" class="px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition text-sm font-medium">
-                    <i class="fas fa-box mr-1"></i> Empaque
-                </a>
-                <a href="{{ route('containers.pallets', $container) }}" class="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition text-sm font-medium">
-                    <i class="fas fa-pallet mr-1"></i> Tarimas
-                </a>
+                <a href="{{ route('containers.inspection', $container) }}" class="px-3 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-500 transition text-sm font-medium"><i class="fas fa-tags mr-1"></i> Inspección</a>
+                <a href="{{ route('containers.packing', $container) }}" class="px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition text-sm font-medium"><i class="fas fa-box mr-1"></i> Empaque</a>
+                <a href="{{ route('containers.pallets', $container) }}" class="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition text-sm font-medium"><i class="fas fa-pallet mr-1"></i> Tarimas</a>
             </div>
         </div>
     </x-slot>
@@ -34,17 +33,13 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             @if(session('success'))
-                <div class="p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 text-green-800 dark:text-green-200 rounded-lg">
-                    <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
-                </div>
+                <div class="p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 text-green-800 dark:text-green-200 rounded-lg"><i class="fas fa-check-circle mr-2"></i>{{ session('success') }}</div>
             @endif
             @if(session('error'))
-                <div class="p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-200 rounded-lg">
-                    <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
-                </div>
+                <div class="p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-200 rounded-lg"><i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}</div>
             @endif
 
-            {{-- KPIs principales --}}
+            {{-- KPIs --}}
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center">
                     <p class="text-2xl font-bold text-gray-800 dark:text-white">{{ number_format($container->declared_qty) }}</p>
@@ -56,11 +51,12 @@
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center">
                     <p class="text-2xl font-bold text-slate-700 dark:text-slate-300">{{ $container->total_cartons }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Cajas / Bultos</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Cajas declaradas</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center">
-                    <p class="text-2xl font-bold text-blue-600">{{ number_format($container->total_cbm, 2) }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">CBM</p>
+                    @php $totalReceivedCartons = $container->items->sum('received_cartons'); @endphp
+                    <p class="text-2xl font-bold {{ $totalReceivedCartons >= $container->total_cartons ? 'text-green-600' : 'text-amber-600' }}">{{ $totalReceivedCartons }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Cajas recibidas</p>
                 </div>
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center">
                     <p class="text-2xl font-bold text-orange-600">{{ number_format($container->total_gross_weight_kg, 1) }}</p>
@@ -72,25 +68,52 @@
                 </div>
             </div>
 
-            {{-- Información del contenedor --}}
+            {{-- Info del contenedor --}}
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-3 text-sm">
-                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">Proveedor:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->supplier ?? '—' }}</span></div>
-                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">Comprador:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->buyer ?? '—' }}</span></div>
-                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">Transporte:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->transport_mode ?? '—' }}</span></div>
-                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">Puerto carga:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->port_loading ?? '—' }}</span></div>
-                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">Puerto descarga:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->port_discharge ?? '—' }}</span></div>
-                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">ETD:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->etd?->format('d/m/Y') ?? '—' }}</span></div>
-                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">ETA:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->eta?->format('d/m/Y') ?? '—' }}</span></div>
-                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">Recibido por:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->receivedByUser?->name ?? '—' }}</span></div>
-                    <div><span class="font-semibold text-gray-800 dark:text-gray-100">Fecha registro:</span> <span class="text-gray-600 dark:text-gray-300">{{ $container->received_at?->format('d/m/Y H:i') ?? $container->created_at->format('d/m/Y H:i') }}</span></div>
+                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
+                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Proveedor</span>
+                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ $container->supplier ?? '—' }}</span>
+                    </div>
+                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
+                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Comprador</span>
+                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ $container->buyer ?? '—' }}</span>
+                    </div>
+                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
+                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Modo de transporte</span>
+                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ $container->transport_mode ?? '—' }}</span>
+                    </div>
+                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
+                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Puerto de carga</span>
+                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ $container->port_loading ?? '—' }}</span>
+                    </div>
+                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
+                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Puerto de descarga</span>
+                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ $container->port_discharge ?? '—' }}</span>
+                    </div>
+                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
+                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">ETD</span>
+                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ $container->etd?->format('d/m/Y') ?? '—' }}</span>
+                    </div>
+                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
+                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">ETA</span>
+                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ $container->eta?->format('d/m/Y') ?? '—' }}</span>
+                    </div>
+                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
+                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Recibido por</span>
+                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ $container->receivedByUser?->name ?? '—' }}</span>
+                    </div>
+                    <div class="flex flex-col border-b border-gray-100 dark:border-gray-700 pb-2">
+                        <span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Fecha de registro</span>
+                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ $container->received_at?->format('d/m/Y H:i') ?? $container->created_at->format('d/m/Y H:i') }}</span>
+                    </div>
                 </div>
 
                 @if($container->notes)
                     <p class="mt-3 text-sm text-gray-500 dark:text-gray-400 italic">{{ $container->notes }}</p>
                 @endif
 
-                {{-- Acciones de estatus --}}
+                {{-- Acciones --}}
                 <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex flex-wrap items-center gap-3">
                     <form method="POST" action="{{ route('containers.update-customs', $container) }}" class="flex items-center space-x-2">
                         @csrf @method('PATCH')
@@ -99,56 +122,43 @@
                                 <option value="{{ $cs }}" {{ $container->customs_status === $cs ? 'selected' : '' }}>{{ ucfirst(str_replace('_', ' ', $cs)) }}</option>
                             @endforeach
                         </select>
-                        <button type="submit" class="px-3 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 text-sm transition">
-                            <i class="fas fa-sync-alt mr-1"></i> Aduana
-                        </button>
+                        <button type="submit" class="px-3 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 text-sm transition"><i class="fas fa-sync-alt mr-1"></i> Aduana</button>
                     </form>
-
                     @if($container->status !== 'cerrado')
                         <form method="POST" action="{{ route('containers.close', $container) }}" onsubmit="return confirm('¿Cerrar este contenedor?')">
                             @csrf @method('PATCH')
-                            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 text-sm transition">
-                                <i class="fas fa-lock mr-1"></i> Cerrar contenedor
-                            </button>
+                            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 text-sm transition"><i class="fas fa-lock mr-1"></i> Cerrar contenedor</button>
                         </form>
                     @endif
-
-                    {{-- Link a inspección en móvil --}}
+                    {{-- Links móvil --}}
                     <div class="md:hidden flex flex-wrap gap-2">
-                        <a href="{{ route('containers.inspection', $container) }}" class="px-3 py-2 bg-teal-600 text-white rounded-lg text-sm">
-                            <i class="fas fa-tags mr-1"></i> Inspección
-                        </a>
-                        <a href="{{ route('containers.packing', $container) }}" class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm">
-                            <i class="fas fa-box mr-1"></i> Empaque
-                        </a>
-                        <a href="{{ route('containers.pallets', $container) }}" class="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm">
-                            <i class="fas fa-pallet mr-1"></i> Tarimas
-                        </a>
+                        <a href="{{ route('containers.inspection', $container) }}" class="px-3 py-2 bg-teal-600 text-white rounded-lg text-sm"><i class="fas fa-tags mr-1"></i> Inspección</a>
+                        <a href="{{ route('containers.packing', $container) }}" class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm"><i class="fas fa-box mr-1"></i> Empaque</a>
+                        <a href="{{ route('containers.pallets', $container) }}" class="px-3 py-2 bg-purple-600 text-white rounded-lg text-sm"><i class="fas fa-pallet mr-1"></i> Tarimas</a>
                     </div>
                 </div>
             </div>
 
-            {{-- Tabla de items --}}
+            {{-- ================================================================ --}}
+            {{-- TABLA DE ARTÍCULOS — Recepción por cajas                         --}}
+            {{-- ================================================================ --}}
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-                    <h3 class="text-lg font-bold text-gray-800 dark:text-white">
-                        <i class="fas fa-list-alt text-teal-500 mr-2"></i>Artículos del Packing List
-                    </h3>
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white"><i class="fas fa-list-alt text-teal-500 mr-2"></i>Artículos del Packing List</h3>
                     <span class="text-sm text-gray-500 dark:text-gray-400">{{ $container->items->count() }} artículos</span>
                 </div>
-
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
                                 <th class="px-3 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">#</th>
-                                <th class="px-3 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Código</th>
-                                <th class="px-3 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Descripción</th>
                                 <th class="px-3 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Barcode</th>
-                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Declarado</th>
-                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Recibido</th>
-                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Cajas</th>
-                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Peso bruto</th>
+                                <th class="px-3 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Descripción</th>
+                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Pzas/Caja</th>
+                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Cajas declaradas</th>
+                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Cajas recibidas</th>
+                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Diferencia</th>
+                                <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Pzas totales</th>
                                 <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Empaque</th>
                                 <th class="px-3 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase">Estatus</th>
                             </tr>
@@ -157,34 +167,58 @@
                             @forelse($container->items as $item)
                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                     <td class="px-3 py-3 text-gray-500">{{ $item->item_number }}</td>
-                                    <td class="px-3 py-3 font-mono text-xs text-gray-700 dark:text-gray-300">{{ $item->product_code ?? '—' }}</td>
+                                    {{-- Barcode como identificador principal --}}
+                                    <td class="px-3 py-3">
+                                        <span class="font-mono font-bold text-gray-900 dark:text-white text-xs">{{ $item->barcode ?? '—' }}</span>
+                                        @if($item->product_code)
+                                            <span class="block text-xs text-gray-400 mt-0.5">{{ $item->product_code }}</span>
+                                        @endif
+                                    </td>
                                     <td class="px-3 py-3 text-gray-800 dark:text-gray-200 max-w-xs">
                                         <div class="truncate" title="{{ $item->product_description }}">{{ $item->product_description }}</div>
                                         @if($item->product_description_cn)
                                             <div class="text-xs text-gray-400 truncate">{{ $item->product_description_cn }}</div>
                                         @endif
                                     </td>
-                                    <td class="px-3 py-3 font-mono text-xs text-gray-500">{{ $item->barcode ?? '—' }}</td>
-                                    <td class="px-3 py-3 text-center font-medium text-gray-800 dark:text-gray-200">{{ number_format($item->declared_qty) }}</td>
+                                    {{-- Piezas por caja --}}
+                                    <td class="px-3 py-3 text-center">
+                                        <span class="font-medium text-indigo-600 dark:text-indigo-400">{{ $item->pieces_per_carton }}</span>
+                                    </td>
+                                    {{-- Cajas declaradas --}}
+                                    <td class="px-3 py-3 text-center font-medium text-gray-800 dark:text-gray-200">{{ $item->carton_count }}</td>
+                                    {{-- Cajas recibidas (editable) --}}
                                     <td class="px-3 py-3 text-center">
                                         @if($container->status !== 'cerrado')
                                             <form method="POST" action="{{ route('containers.update-item', $item) }}" class="inline-flex items-center space-x-1">
                                                 @csrf @method('PATCH')
-                                                <input type="number" name="received_qty" value="{{ $item->received_qty }}" min="0"
-                                                       class="w-20 text-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-sm py-1 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-teal-500">
-                                                <button type="submit" class="text-teal-600 hover:text-teal-800 dark:text-teal-400" title="Guardar">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
+                                                <input type="number" name="received_cartons" value="{{ $item->received_cartons }}" min="0"
+                                                       class="w-16 text-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-sm py-1 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-teal-500">
+                                                <button type="submit" class="text-teal-600 hover:text-teal-800 dark:text-teal-400" title="Guardar"><i class="fas fa-check"></i></button>
                                             </form>
                                         @else
-                                            <span class="font-medium">{{ number_format($item->received_qty) }}</span>
+                                            <span class="font-medium">{{ $item->received_cartons }}</span>
                                         @endif
                                     </td>
-                                    <td class="px-3 py-3 text-center text-gray-600 dark:text-gray-300">{{ $item->carton_count }}</td>
-                                    <td class="px-3 py-3 text-center text-gray-600 dark:text-gray-300">{{ number_format($item->gross_weight_kg, 1) }} kg</td>
+                                    {{-- Diferencia en cajas --}}
+                                    <td class="px-3 py-3 text-center">
+                                        @if($item->carton_difference > 0)
+                                            <span class="text-red-600 font-bold">-{{ $item->carton_difference }}</span>
+                                        @elseif($item->carton_difference < 0)
+                                            <span class="text-blue-600 font-bold">+{{ abs($item->carton_difference) }}</span>
+                                        @else
+                                            <span class="text-green-600"><i class="fas fa-check"></i></span>
+                                        @endif
+                                    </td>
+                                    {{-- Piezas totales recibidas (calculado) --}}
+                                    <td class="px-3 py-3 text-center text-gray-600 dark:text-gray-300">
+                                        <span class="font-medium">{{ number_format($item->received_qty) }}</span>
+                                        <span class="text-xs text-gray-400 block">de {{ number_format($item->declared_qty) }}</span>
+                                    </td>
+                                    {{-- Empaque --}}
                                     <td class="px-3 py-3 text-center">
                                         <span class="text-xs text-gray-500">{{ $item->package_type ?? '—' }}</span>
                                     </td>
+                                    {{-- Estatus --}}
                                     <td class="px-3 py-3 text-center">
                                         @php
                                             $itemBadge = match($item->status) {
@@ -195,10 +229,68 @@
                                             };
                                         @endphp
                                         <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $itemBadge }}">
-                                            {{ ucfirst(str_replace('_', ' ', $item->status)) }}
+                                            {{ ucfirst($item->status) }}
                                         </span>
                                     </td>
                                 </tr>
+                                {{-- Fila de notas: solo visible para faltante o sobrante --}}
+                                @if(in_array($item->status, ['faltante', 'sobrante']))
+                                    @php
+                                        $hasNote = !empty($item->notes);
+                                        $colorBg = $item->status === 'faltante' ? 'bg-red-50 dark:bg-red-900/10' : 'bg-blue-50 dark:bg-blue-900/10';
+                                        $colorText = $item->status === 'faltante' ? 'text-red-700 dark:text-red-300' : 'text-blue-700 dark:text-blue-300';
+                                        $colorBorder = $item->status === 'faltante' ? 'border-red-200 dark:border-red-800' : 'border-blue-200 dark:border-blue-800';
+                                        $colorIcon = $item->status === 'faltante' ? 'text-red-400' : 'text-blue-400';
+                                        $colorBtn = $item->status === 'faltante' ? 'bg-red-600 hover:bg-red-500' : 'bg-blue-600 hover:bg-blue-500';
+                                        $colorInput = $item->status === 'faltante' ? 'border-red-300 dark:border-red-700 focus:ring-red-500' : 'border-blue-300 dark:border-blue-700 focus:ring-blue-500';
+                                        $diffLabel = abs($item->carton_difference) . ($item->carton_difference > 0 ? ' cajas faltantes' : ' cajas sobrantes');
+                                    @endphp
+                                    <tr class="{{ $colorBg }}" x-data="{ editing: {{ $hasNote ? 'false' : 'true' }} }">
+                                        <td colspan="10" class="px-4 py-2">
+
+                                            {{-- Vista compacta: nota guardada --}}
+                                            <div x-show="!editing" class="flex items-center gap-3 py-1">
+                                                <i class="fas fa-sticky-note {{ $colorIcon }}"></i>
+                                                <div class="flex-1 flex items-center gap-2">
+                                                    <span class="text-xs font-semibold {{ $colorText }}">{{ ucfirst($item->status) }} ({{ $diffLabel }}):</span>
+                                                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ $item->notes }}</span>
+                                                </div>
+                                                <button @click="editing = true" type="button" class="flex-shrink-0 text-xs {{ $colorText }} hover:underline">
+                                                    <i class="fas fa-pen mr-1"></i> Editar
+                                                </button>
+                                            </div>
+
+                                            {{-- Vista edición: textarea --}}
+                                            <div x-show="editing" x-cloak>
+                                                <form method="POST" action="{{ route('containers.update-item-notes', $item) }}" class="flex items-start gap-3">
+                                                    @csrf @method('PATCH')
+                                                    <div class="flex-shrink-0 mt-1">
+                                                        <i class="fas fa-sticky-note {{ $colorIcon }}"></i>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <label class="block text-xs font-semibold {{ $colorText }} mb-1">
+                                                            Nota de {{ $item->status }} — {{ $item->barcode ?? $item->product_description }} ({{ $diffLabel }})
+                                                        </label>
+                                                        <textarea name="notes" rows="2"
+                                                            class="w-full border {{ $colorInput }} rounded-lg bg-white dark:bg-gray-700 text-sm py-2 px-3 text-gray-900 dark:text-gray-100 focus:ring-2"
+                                                            placeholder="Describir motivo: caja dañada, faltante en origen, sobrante no declarado...">{{ $item->notes }}</textarea>
+                                                    </div>
+                                                    <div class="flex flex-col gap-1 flex-shrink-0 mt-6">
+                                                        <button type="submit" class="px-3 py-2 {{ $colorBtn }} text-white rounded-lg text-xs transition">
+                                                            <i class="fas fa-save mr-1"></i> Guardar
+                                                        </button>
+                                                        @if($hasNote)
+                                                            <button type="button" @click="editing = false" class="px-3 py-1.5 text-gray-500 hover:text-gray-700 text-xs">
+                                                                Cancelar
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                @endif
                             @empty
                                 <tr>
                                     <td colspan="10" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
@@ -215,36 +307,31 @@
             {{-- Agregar item manual --}}
             @if($container->status !== 'cerrado')
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4">
-                        <i class="fas fa-plus-circle text-teal-500 mr-2"></i>Agregar Artículo Manual
-                    </h3>
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-4"><i class="fas fa-plus-circle text-teal-500 mr-2"></i>Agregar Artículo Manual</h3>
                     <form method="POST" action="{{ route('containers.add-item', $container) }}" class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
                         @csrf
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Código producto</label>
-                            <input type="text" name="product_code" class="w-full border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm py-2 px-3 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-teal-500" placeholder="Código">
+                            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Barcode</label>
+                            <input type="text" name="barcode" class="w-full border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm py-2 px-3 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-teal-500" placeholder="EAN/UPC">
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Descripción *</label>
                             <input type="text" name="product_description" required class="w-full border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm py-2 px-3 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-teal-500" placeholder="Descripción del artículo">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Barcode</label>
-                            <input type="text" name="barcode" class="w-full border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm py-2 px-3 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-teal-500" placeholder="EAN/UPC">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Cantidad *</label>
+                            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Piezas total *</label>
                             <input type="number" name="declared_qty" required min="1" class="w-full border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm py-2 px-3 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-teal-500" placeholder="0">
                         </div>
                         <div>
-                            <button type="submit" class="w-full px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-500 transition text-sm font-medium">
-                                <i class="fas fa-plus mr-1"></i> Agregar
-                            </button>
+                            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">Cajas *</label>
+                            <input type="number" name="carton_count" required min="1" value="1" class="w-full border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm py-2 px-3 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-teal-500" placeholder="1">
+                        </div>
+                        <div>
+                            <button type="submit" class="w-full px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-500 transition text-sm font-medium"><i class="fas fa-plus mr-1"></i> Agregar</button>
                         </div>
                     </form>
                 </div>
             @endif
-
         </div>
     </div>
 </x-app-layout>

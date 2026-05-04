@@ -14,6 +14,7 @@ return new class extends Migration
             $table->foreignId('container_item_id')->constrained('container_items')->cascadeOnDelete();
             $table->string('box_code')->unique();
             $table->integer('quantity')->default(0);
+            $table->integer('expected_qty')->default(0);
             $table->enum('status', ['abierta', 'cerrada', 'en_tarima'])->default('abierta');
             $table->foreignId('pallet_id')->nullable()->constrained('pallets')->nullOnDelete();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
