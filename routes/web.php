@@ -11,6 +11,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContainerController;
+use App\Http\Controllers\PalletController;
+
+
 Route::middleware(['auth', 'role:Super Admin'])->group(function () {
     
     Route::resource('tenants', TenantController::class);
@@ -26,6 +29,10 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 // --- Grupo principal que requiere autenticación ---
 Route::middleware('auth')->group(function () {
+
+    //Ruta de resource de Pallets
+    Route::resource('pallets', PalletController::class);
+    Route::post('/pallets/{pallet}/assign-location', [PalletController::class, 'assignToLocation'])->name('pallets.assign-location');
 
     //Ruta de resource de Usuarios
     Route::resource('users', UserController::class);

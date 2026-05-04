@@ -11,10 +11,11 @@ class Location extends Model
 
     protected $fillable = [
         'code', 'name', 'zone', 'aisle', 'level',
-        'position', 'type', 'active', 'capacity',
+        'position', 'type', 'active', 'capacity', 'pallet_id'
     ];
 
     protected $casts = ['active' => 'boolean'];
+    
 
     public function pallets() { return $this->hasMany(Pallet::class); }
 
@@ -28,6 +29,21 @@ class Location extends Model
     {
         return $this->pallets()->count();
     }
+
+    public function hasPallets(): bool
+    {
+        return $this->pallets()->exists();
+    }
+
+    public function isEmpty(): bool
+    {
+        return !$this->hasPallets();
+    }   
+
+    
+
+
+
 
     public function scopeActive($query) { return $query->where('active', true); }
 }

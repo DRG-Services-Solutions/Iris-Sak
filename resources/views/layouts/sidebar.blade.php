@@ -49,6 +49,13 @@
                         <i class="fas fa-ship w-6 text-center text-teal-400"></i>
                         <span class="mx-2 font-medium">Contenedores</span>
                     </a>
+                    <!-- Tarimas -->
+                    <a @click="if(window.innerWidth < 1024) closeSidebar()"
+                       class="flex items-center px-4 py-2.5 rounded-lg transition-colors {{ request()->routeIs('pallets.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}" 
+                       href="{{ route('pallets.index') }}">
+                        <i class="fas fa-box w-6 text-center text-blue-400"></i>
+                        <span class="mx-2 font-medium">Tarimas</span>
+                    </a>
                     <a @click="if(window.innerWidth < 1024) closeSidebar()"
                        class="flex items-center px-4 py-2.5 rounded-lg transition-colors {{ request()->routeIs('warehouse.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}" 
                        href="{{ route('warehouse.locations') }}">
