@@ -26,7 +26,8 @@ class Pallet extends Model
     protected $casts = [
         'closed_at' => 'datetime',
     ];
-    const STATUS_CERRADA = 'cerrada';
+    //agregado visibilidad para constantes de clase
+    public const STATUS_CERRADA = 'cerrada';
     // --- Relaciones ---
 
     public function container()
