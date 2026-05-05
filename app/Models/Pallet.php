@@ -20,14 +20,21 @@ class Pallet extends Model
         'notes',
         'closed_at',
         'location_id',
+        'maquila_station',
+        'maquila_started_at',
+        'maquila_completed_at',
         
     ];
 
     protected $casts = [
         'closed_at' => 'datetime',
+        'maquila_started_at' => 'datetime', // Añadido para que Laravel los trate como fechas
+        'maquila_completed_at' => 'datetime', // Añadido para que Laravel los trate como fechas
     ];
+    
     //agregado visibilidad para constantes de clase
     public const STATUS_CERRADA = 'cerrada';
+    
     // --- Relaciones ---
 
     public function container()
@@ -110,7 +117,7 @@ class Pallet extends Model
     public static function generatePalletCode(Container $container, int $sequence): string
     {
         $suffix = strtoupper(Str::substr(preg_replace('/[^A-Za-z0-9]/', '', $container->container_number), -6));
-        return sprintf('TAR-%s-%04d', $suffix, $sequence);
+        return sprintf('TAR-%s-%04d', $container->container_seal_number, $sequence);
     }
 
     public function close(): void
@@ -120,7 +127,7 @@ class Pallet extends Model
             'closed_at' => now(),
         ]);
     }
-
+    
     // --- Scopes ---
 
     public function scopeOpen($query)
@@ -143,11 +150,22 @@ class Pallet extends Model
         return $query->whereNull('location_id');
     }
 
-    # Accesores
+    // NUEVO SCOPE: Para buscar tarimas en una estación específica
+    public function scopeAtStation(Builder $query, int $station): Builder
+    {
+        return $query->where('maquila_station', $station)
+                     ->whereNull('maquila_completed_at'); // Asegura que no cuente las ya terminadas
+    }
+
+    // NUEVO SCOPE: Para buscar tarimas que ya terminaron maquila
+    public function scopeMaquilaCompleted(Builder $query): Builder
+    {
+        return $query->whereNotNull('maquila_completed_at');
+    }
+
+    // --- Accesores ---
     public function getAvailablePalletAttribute(): bool
     {
         return $this->location_id === null;
     }
-
-    
 }

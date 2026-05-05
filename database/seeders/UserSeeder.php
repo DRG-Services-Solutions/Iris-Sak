@@ -43,11 +43,7 @@ class UserSeeder extends Seeder
         $operationsRole->syncPermissions($permissions);
         $operationsRole2->syncPermissions($permissions);
 
-        $leader = User::create([
-            'name' => 'Francisco Mena',
-            'email' => 'fmena@drg.mx',
-            'password' => 'fmena123',
-        ]);
+        
 
         $admin = User::create([
             'name' => 'Administrador DRG',
@@ -55,21 +51,9 @@ class UserSeeder extends Seeder
             'password' => 'admin123', 
         ]);
 
-        $wharehouseAdmin = User::create([
-            'name' => 'Almacenista DRG',
-            'email' => 'warehouse@drg.mx',
-            'password' => 'warehouse123', 
-        ]);
-
-        $etiquetado = User::create([
-            'name' => 'Especialista Etiquetado',
-            'email' => 'jcruz@drg.mx',
-            'password' => 'zebra123_',
-        ]);
+       
 
         $admin->assignRole($adminRole);
-        $wharehouseAdmin->assignRole($wharehouseAdminRole);
-        $leader->assignRole($operationsRole);
-        $etiquetado->assignRole($operationsRole2);
+      
     }
 }

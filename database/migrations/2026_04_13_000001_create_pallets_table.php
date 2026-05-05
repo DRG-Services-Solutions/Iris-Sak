@@ -17,6 +17,10 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->timestamp('closed_at')->nullable();
             $table->foreignId('location_id')->nullable()->constrained('locations')->nullOnDelete();
+            $table->unsignedTinyInteger('maquila_station')->nullable()->default(null);
+            $table->timestamp('maquila_started_at')->nullable();
+            $table->timestamp('maquila_completed_at')->nullable();
+
             $table->timestamps();
         });
     }

@@ -62,6 +62,13 @@
                         <i class="fas fa-warehouse w-6 text-center text-emerald-400"></i>
                         <span class="mx-2 font-medium">Localidades</span>
                     </a>
+                    {{-- Maquila --}}
+                    <a @click="if(window.innerWidth < 1024) closeSidebar()"
+                       class="flex items-center px-4 py-2.5 rounded-lg transition-colors {{ request()->routeIs('customs.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}" 
+                       href="#">
+                        <i class="fas fa-passport w-6 text-center text-red-400"></i>
+                        <span class="mx-2 font-medium">Maquila</span>
+                    </a>
                     <a @click="if(window.innerWidth < 1024) closeSidebar()"
                        class="flex items-center px-4 py-2.5 rounded-lg transition-colors {{ request()->routeIs('picking.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}" 
                        href="{{ route('picking.index') }}">
@@ -77,41 +84,7 @@
                 </div>
             </div>
 
-            {{-- OPERACIONES --}}
-            @can('manage-products')
-            <div>
-                <p class="px-4 text-xs font-semibold tracking-wider text-gray-500 uppercase">Operaciones</p>
-                <div class="mt-2 space-y-1">
-                    <a @click="if(window.innerWidth < 1024) closeSidebar()"
-                       class="flex items-center px-4 py-2.5 rounded-lg transition-colors {{ request()->routeIs('products.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}" 
-                       href="{{ route('products.index') }}">
-                        <i class="fas fa-tools w-6 text-center text-amber-400"></i>
-                        <span class="mx-2 font-medium">Catálogo</span>
-                    </a>
-                    
-                    <a @click="if(window.innerWidth < 1024) closeSidebar()"
-                       class="flex items-center px-4 py-2.5 rounded-lg transition-colors {{ request()->routeIs('movements.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}" 
-                       href="{{ route('movements.index') }}">
-                        <i class="fas fa-exchange-alt w-6 text-center text-orange-400"></i>
-                        <span class="mx-2 font-medium">Movimientos</span>
-                    </a>
-
-                    <a @click="if(window.innerWidth < 1024) closeSidebar()"
-                       class="flex items-center px-4 py-2.5 rounded-lg transition-colors {{ request()->routeIs('work_orders.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}" 
-                       href="{{ route('work_orders.index') }}">
-                        <i class="fas fa-microchip w-6 text-center text-blue-400"></i>
-                        <span class="mx-2 font-medium">Gestión RFID</span>
-                    </a>
-
-                    <a @click="if(window.innerWidth < 1024) closeSidebar()"
-                       class="flex items-center px-4 py-2.5 rounded-lg transition-colors {{ request()->routeIs('inventory.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}" 
-                       href="{{ route('inventory.index') }}">
-                        <i class="fas fa-boxes w-6 text-center text-green-400"></i>
-                        <span class="mx-2 font-medium">Existencias</span>
-                    </a>
-                </div>
-            </div>
-            @endcan
+            
 
             {{-- ADMINISTRACIÓN --}}
             <div>
@@ -133,20 +106,7 @@
                 </div>
             </div>
 
-            {{-- SUPER ADMIN --}}
-            @role('Super Admin')
-            <div>
-                <p class="px-4 text-xs font-semibold tracking-wider text-indigo-400 uppercase">Global</p>
-                <div class="mt-2 space-y-1">
-                    <a @click="if(window.innerWidth < 1024) closeSidebar()"
-                       class="flex items-center px-4 py-2.5 rounded-lg transition-colors {{ request()->routeIs('tenants.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}" 
-                       href="{{ route('tenants.index') }}">
-                        <i class="fas fa-building w-6 text-center text-indigo-400"></i>
-                        <span class="mx-2 font-medium">Clientes</span>
-                    </a>
-                </div>
-            </div>
-            @endrole
+           
 
         </nav>
         

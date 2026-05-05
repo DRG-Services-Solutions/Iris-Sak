@@ -85,7 +85,7 @@
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Ultimas Tarimas Trabajadas</h3>
                         <div class="space-y-4">
-                            @foreach($tarimas as $tarima)
+                            @forelse($tarimas as $tarima)
                                 <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
                                     <div>
                                         <p class="text-sm font-bold text-gray-900 dark:text-white">Tarima ID: {{ $tarima->pallet_code }}</p>
@@ -93,7 +93,12 @@
                                     </div>
                                     <span class="px-2 py-1 text-xs font-bold bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded">Último movimiento: {{ $tarima->updated_at->diffForHumans() }}</span>        
                                 </div>
-                            @endforeach
+                            @empty
+                                <div class="flex items-center justify-center p-6 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                                    <i class="fas fa-boxes text-4xl text-gray-300 dark:text-gray-600 mb-2"></i>
+                                    <p class="text-gray-500 dark:text-gray-400 text-sm">No se han registrado tarimas aún.</p>
+                                </div>  
+                            @endforelse
                             
                         </div>
                     </div>

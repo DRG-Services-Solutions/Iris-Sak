@@ -32,43 +32,5 @@ class DatabaseSeeder extends Seeder
         
         $superAdmin->assignRole($roleSuperAdmin);
 
-
-        // --- FASE 2: CREAR LOS INQUILINOS (Tenants) ---
-        
-        $tenantA = Tenant::create(['name' => 'Coca Cola', 'is_active' => true]);
-        $tenantB = Tenant::create(['name' => 'Pepsi', 'is_active' => true]);
-
-
-        // --- FASE 3: USUARIOS Y ROLES POR INQUILINO ---
-
-        // ----- INQUILINO A (Coca Cola) -----
-        setPermissionsTeamId($tenantA->id); 
-        
-        // Creamos un rol "Gerente" exclusivo para Coca Cola
-        $roleGerenteA = Role::create(['name' => 'Gerente', 'tenant_id' => $tenantA->id]);
-        
-        $userA = User::factory()->create([
-            'name' => 'Juan de Coca Cola',
-            'email' => 'juan@cocacola.com',
-            'password' => bcrypt('password'),
-            'tenant_id' => $tenantA->id,
-        ]);
-        $userA->assignRole($roleGerenteA);
-
-
-        // ----- INQUILINO B (Pepsi) -----
-        setPermissionsTeamId($tenantB->id); 
-        
-        $roleGerenteB = Role::create(['name' => 'Gerente', 'tenant_id' => $tenantB->id]);
-        
-        $userB = User::factory()->create([
-            'name' => 'Maria de Pepsi',
-            'email' => 'maria@pepsi.com',
-            'password' => bcrypt('password'),
-            'tenant_id' => $tenantB->id,
-        ]);
-        $userB->assignRole($roleGerenteB);
-    }
-
-    
+    }  
 }

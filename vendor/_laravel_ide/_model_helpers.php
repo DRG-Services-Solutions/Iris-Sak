@@ -4240,13 +4240,13 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
+     * @property \Illuminate\Support\Carbon|null $maquila_completed_at
+     * @property \Illuminate\Support\Carbon|null $maquila_started_at
+     * @property mixed $maquila_station
      * @property mixed $location_id
      * @property \Illuminate\Support\Carbon|null $closed_at
      * @property string|null $notes
      * @property mixed $created_by
-     * @property string|null $maquila_completed_at
-     * @property string|null $maquila_started_at
-     * @property mixed $maquila_station
      * @property mixed $status
      * @property string $pallet_code
      * @property mixed $container_id
@@ -4264,13 +4264,13 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereContainerId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet wherePalletCode($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereStatus($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereMaquilaStation($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereMaquilaStartedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereMaquilaCompletedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereCreatedBy($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereNotes($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereClosedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereLocationId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereMaquilaStation($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereMaquilaStartedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereMaquilaCompletedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet newModelQuery()
@@ -4280,6 +4280,8 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet byContainer(int $containerId) {@see App\Models\Pallet::scopeByContainer()}
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet closed() {@see App\Models\Pallet::scopeClosed()}
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet unassigned() {@see App\Models\Pallet::scopeUnassigned()}
+     * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet atStation(int $station) {@see App\Models\Pallet::scopeAtStation()}
+     * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet maquilaCompleted() {@see App\Models\Pallet::scopeMaquilaCompleted()}
      * @method static mixed select($columns)
      * @method static mixed selectSub($query, $as)
      * @method static mixed selectRaw($expression, array $bindings)

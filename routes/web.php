@@ -12,6 +12,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContainerController;
 use App\Http\Controllers\PalletController;
+use App\Htpp\Controllers\MaquilaController;
 
 
 Route::middleware(['auth', 'role:Super Admin'])->group(function () {
@@ -29,6 +30,12 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 // --- Grupo principal que requiere autenticación ---
 Route::middleware('auth')->group(function () {
+
+    //Ruta de reource de Maquila
+    Route::resource('maquila', \App\Http\Controllers\MaquilaController::class);
+    Route::post('/maquila/{pallet}/move', [\App\Http\Controllers\MaquilaController::class, 'moveToStation'])->name('maquila.move');
+    Route::post('/maquila/{pallet}/complete', [\App\Http\Controllers\MaquilaController::class, 'complete'])->name('maquila.complete');
+    Route::get('/maquila/logs', [\App\Http\Controllers\MaquilaController::class, 'logs'])->name('maquila.logs');
 
     //Ruta de resource de Pallets
     Route::resource('pallets', PalletController::class);
