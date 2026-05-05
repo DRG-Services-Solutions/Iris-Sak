@@ -69,6 +69,11 @@ class Pallet extends Model
         return $this->status === self::STATUS_CERRADA;
     }
 
+    public function hasLocation(): bool
+    {
+        return $this->location_id !== null;
+    }
+
     public function assignToLocation(Location $location)
     {
         if (!$this->canBeAssignedToLocation()) {
@@ -136,6 +141,12 @@ class Pallet extends Model
     public function scopeUnassigned(Builder $query): Builder
     {
         return $query->whereNull('location_id');
+    }
+
+    # Accesores
+    public function getAvailablePalletAttribute(): bool
+    {
+        return $this->location_id === null;
     }
 
     

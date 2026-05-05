@@ -15,7 +15,9 @@ class PalletController extends Controller
     {
         $pallets = Pallet::with('container', 'location')->get();
         $locations = Location::all();
-        return view('pallets.index', compact('pallets', 'locations'));
+        $unassignedPallets = Pallet::whereNull('location_id')->get();
+       
+        return view('pallets.index', compact('pallets', 'locations', 'unassignedPallets'));
     }
     public function assignToLocation(Request $request, Pallet $pallet, Location $location)
     {

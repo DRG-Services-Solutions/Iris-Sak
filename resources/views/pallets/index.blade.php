@@ -44,12 +44,7 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center space-x-3">
-                        <a href="{{ route('pallets.create') }}" 
-                           class="px-4 py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-500 transition text-sm font-medium shadow-sm">
-                            <i class="fas fa-plus mr-1"></i> Nueva Tarima
-                        </a>
-                    </div>
+                    
                 </div>
             </div>
 
@@ -61,9 +56,8 @@
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Código / Tarima</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Contenedor</th>
-                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ubicación</th>
-                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Estado</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Asignar Ubicación</th>
+                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ubicación Asignada</th>
+                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Asignacion de Ubicacion</th>
                                 <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
                             </tr>
                         </thead>
@@ -76,7 +70,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                                         <div class="flex items-center">
                                             <i class="fas fa-box text-xs mr-2 text-gray-400"></i>
-                                            {{ $pallet->container ? $pallet->container->container_number : 'Sin asignar' }}
+                                            {{ $pallet->container ? $pallet->container->container_seal_number : 'Sin asignar' }} -- {{ $pallet->container ? $pallet->container->container_number : 'N/A' }}
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
@@ -85,25 +79,30 @@
                                             {{ $pallet->location ? $pallet->location->name : 'Pendiente' }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        @php
-                                            $statusClass = $pallet->closed_at 
-                                                ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' 
-                                                : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
-                                        @endphp
-                                        <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusClass }}">
-                                            {{ $pallet->closed_at ? 'Cerrada' : 'Abierta' }}
-                                        </span>
-                                    </td>
+                                    
+                                    @if($pallet->hasLocation())
+                                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                                            <span class="text-sm text-gray-600 dark:text-gray-300 text-right">
+                                                {{ $pallet->location->code }} - {{ $pallet->location->name }}
+                                            </span>
+                                        </td>
+                                    @else
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <form action="{{ route('pallets.assign-location', $pallet) }}" method="POST" class="flex items-center space-x-2">
                                             @csrf
                                             <select name="location_id" class="text-xs border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-teal-500 py-1">
-                                                <option class="text-gray-500" value="">Seleccionar...</option>
+                                                <option class="text-gray-500 text-center" value="">Seleccionar...</option>
                                                 @foreach($locations as $location)
+                                                    @if ($location->hasPallets())
+                                                        <option value="{{ $location->id }}" disabled class="text-red-500">
+                                                            {{ $location->code }} - {{ $location->name }} (Ocupada)
+                                                        </option>
+                                                    
+                                                    @else
                                                     <option value="{{ $location->id }}" {{ $pallet->location_id == $location->id ? 'selected' : '' }}>
                                                         {{ $location->code }} - {{ $location->name }} -- {{ $location->hasPallets() ? 'Ocupada' : 'Disponible' }} 
                                                     </option>
+                                                    @endif
                                                 @endforeach
                                             </select>
                                             <button type="submit" class="p-1.5 bg-slate-700 text-white rounded hover:bg-slate-600 transition" title="Guardar ubicación">
@@ -112,6 +111,9 @@
                                            
                                         </form>
                                     </td>
+
+                                    @endif
+                                    
                                     <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                         <div class="flex items-center justify-center space-x-3">
                                             <a href="{{ route('pallets.show', $pallet) }}" class="text-slate-600 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white" title="Ver detalle">
