@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Container;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Tenant;
+use App\Models\Pallet;
+use App\Models\ContainerItem;
+
 use Spatie\Permission\Models\Role;
 // use App\Models\Product; // Descomenta esto cuando tengas tu modelo Product
 
@@ -42,6 +46,11 @@ class DashboardController extends Controller
         $salidasMes = 128;
         $alertasStock = 5;
 
+        $contenedores = Container::with('pallets')->get();
+        $productos = ContainerItem::with('container')->get();
+        $usuarios = User::all();
+        $tarimas = Pallet::all();
+
         return view('dashboard', compact(
             'totalTenants', 
             'totalUsers', 
@@ -49,7 +58,11 @@ class DashboardController extends Controller
             'totalProducts',
             'entradasMes',
             'salidasMes',
-            'alertasStock'
+            'alertasStock',
+            'contenedores',
+            'productos',
+            'usuarios',
+            'tarimas'
         ));
     }
 }

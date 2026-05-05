@@ -36,7 +36,7 @@
 
                 {{-- KPIs Globales --}}
                 {{--  --}}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {{-- KPI: Ingresos Mensuales (MRR) --}}
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
                         <div class="p-3 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 rounded-lg">
@@ -44,7 +44,7 @@
                         </div>
                         <div>
                             <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Contenedores Procesados</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">12,450 <span class="text-xs font-normal text-emerald-500"></span></p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{$contenedores->count() }} <span class="text-xs font-normal text-emerald-500"></span></p>
                         </div>
                     </div>
 
@@ -56,23 +56,14 @@
                         </div>
                         <div>
                             <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Productos Procesados</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{-- {{ $totalTenants ?? 34 }} --}}401,380 <span class="text-xs font-normal text-gray-400">Registros</span></p> 
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $productos->sum('received_qty') }} <span class="text-xs font-normal text-gray-400">Registros</span></p> 
                         </div>
                     </div>
                     
 
-                    {{-- KPI: Nuevas Suscripciones --}}
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
-                        <div class="p-3 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-lg">
-                            <i class="fas fa-user-plus text-2xl"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Nuevos Usuarios</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">+1 <span class="text-xs font-normal text-gray-400"></span></p>
-                        </div>
-                    </div>
+                   
 
-                    {{-- KPI: Salud del Sistema --}}
+                    {{-- Usuarios--}}
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 flex items-center space-x-4">
                         <div class="p-3 bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 rounded-lg relative">
                             <span class="absolute top-0 right-0 -mt-1 -mr-1 flex h-3 w-3">
@@ -83,21 +74,30 @@
                         </div>
                         <div>
                             <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Usuarios Totales</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalUsers ?? 158 }} <span class="text-xs font-normal text-gray-400">activos</span></p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $usuarios->count() }} <span class="text-xs font-normal text-gray-400">activos</span></p>
                         </div>
                     </div>
                 </div>
 
                 {{-- Gráficos de Negocio (Placeholders) --}}
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {{-- Gráfico: Crecimiento de Ingresos --}}
-                    <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Crecimiento Mensual (MRR)</h3>
-                        <div class="w-full h-64 bg-gray-50 dark:bg-gray-900/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center">
-                            <i class="fas fa-chart-line text-4xl text-gray-300 dark:text-gray-600 mb-2"></i>
-                            <p class="text-gray-500 dark:text-gray-400 text-sm">Gráfico de líneas (Ene - Dic)</p>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Ultimas Tarimas Trabajadas</h3>
+                        <div class="space-y-4">
+                            @foreach($tarimas as $tarima)
+                                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-900 dark:text-white">Tarima ID: {{ $tarima->pallet_code }}</p>
+                                        <p class="text-xs text-gray-500">Contenedor: {{ $tarima->container->container_seal_number }}</p>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs font-bold bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded">Último movimiento: {{ $tarima->updated_at->diffForHumans() }}</span>        
+                                </div>
+                            @endforeach
+                            
                         </div>
                     </div>
+                  
 
                     {{-- Distribución de Paquetes --}}
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
