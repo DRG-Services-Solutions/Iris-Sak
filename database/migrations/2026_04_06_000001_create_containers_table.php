@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('containers', function (Blueprint $table) {
             $table->id();
             $table->string('container_number')->unique();
+            $table->string('container_seal_number')->nullable();
             $table->string('packing_list_number')->nullable();
             $table->string('supplier')->nullable();
             $table->string('buyer')->nullable();

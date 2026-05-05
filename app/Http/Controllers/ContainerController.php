@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Container;
 use App\Models\ContainerItem;
+use App\Models\Box;
 use App\Models\InspectionLabel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Support\Str;
+
 
 class ContainerController extends Controller
 {
@@ -57,6 +60,7 @@ class ContainerController extends Controller
             'customs_status'   => 'required|in:pendiente,en_revision,liberado,retenido',
             'notes'            => 'nullable|string|max:1000',
             'packing_list'     => 'nullable|file|mimes:xlsx,xls,csv|max:10240',
+            'container_seal_number' => 'nullable|string|max:100',
         ]);
 
         DB::beginTransaction();
@@ -72,6 +76,7 @@ class ContainerController extends Controller
                 'received_by'      => Auth::id(),
                 'received_at'      => now(),
                 'status'           => 'abierto',
+                'container_seal_number' => $validated['container_seal_number'] ?? null,
             ];
 
             // Si hay packing list, extraer metadata del header primero
@@ -395,15 +400,22 @@ class ContainerController extends Controller
     /**
      * Guardar notas de un item (solo para faltante/sobrante).
      */
-    public function updateItemNotes(Request $request, ContainerItem $item)
+    public function updateItemNotes(Request $request, Container $container, ContainerItem $item)
     {
-        $validated = $request->validate([
-            'notes' => 'nullable|string|max:1000',
+        $request->validate([
+            // Cambiamos a 'nullable' para permitir borrar la nota
+            'notes' => 'nullable|string|max:500', 
         ]);
 
-        $item->update(['notes' => $validated['notes']]);
+        // Lógica para Deshacer: Si envían nota vacía y estaba como no recibido, revertimos a pendiente
+        if (empty($request->notes) && $item->status === 'no_recibido') {
+            $item->status = 'pendiente';
+        }
 
-        return back()->with('success', 'Notas actualizadas para: ' . ($item->barcode ?? $item->product_description));
+        $item->notes = $request->notes;
+        $item->save();
+
+        return $this->cartonAdjustResponse($container, $item);
     }
 
     // ===================================================================
@@ -422,12 +434,55 @@ class ContainerController extends Controller
 
     public function close(Container $container)
     {
+        // Validar que no haya pendientes
         if (!$container->canClose()) {
             return back()->with('error', 'No se puede cerrar: hay artículos pendientes de revisar.');
         }
 
-        $container->update(['status' => 'cerrado']);
-        return back()->with('success', 'Contenedor cerrado exitosamente.');
+        DB::beginTransaction();
+        try {
+            // 1. Cambiamos el estatus del contenedor
+            $container->update(['status' => 'cerrado']);
+
+            // 2. Generamos las cajas físicas en el sistema
+            foreach ($container->items as $item) {
+                
+                if ($item->received_cartons > 0) {
+                    // Calculamos las piezas que lleva cada caja
+                    $piezasPorCaja = $item->carton_count > 0 
+                                    ? floor($item->declared_qty / $item->carton_count) 
+                                    : 0;
+
+                    for ($i = 0; $i < $item->received_cartons; $i++) {
+                        
+                        // Generar un código único (Ej: BX-14-2-001-A4F2)
+                        // Combina ID Contenedor, ID Item, Secuencia y un string aleatorio para evitar colisiones
+                        $secuencia = str_pad($i + 1, 3, '0', STR_PAD_LEFT);
+                        $boxCode = "BX-{$container->id}-{$item->id}-{$secuencia}-" . strtoupper(Str::random(4));
+
+                        Box::create([
+                            'container_id'      => $container->id,
+                            'container_item_id' => $item->id,
+                            'box_code'          => $boxCode,
+                            'source'            => 'contenedor',
+                            'quantity'          => $piezasPorCaja,
+                            'expected_qty'      => $piezasPorCaja,
+                            'status'            => 'cerrada',
+                            'closed_at'         => now(),
+                            'created_by'        => Auth::id(),
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+            
+            return back()->with('success', 'Contenedor cerrado exitosamente. Las cajas han sido ingresadas al inventario.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Error al cerrar el contenedor y generar cajas: ' . $e->getMessage());
+        }
     }
 
     // ===================================================================
@@ -540,4 +595,196 @@ class ContainerController extends Controller
 
         return view('containers.scan', compact('container'));
     }
+    public function scanBarcode(Request $request, Container $container)
+    {
+        // Validar que el contenedor esté abierto
+        if ($container->status === 'cerrado') {
+            return response()->json([
+                'success' => false,
+                'message' => 'El contenedor está cerrado, no se pueden registrar escaneos.',
+            ], 422);
+        }
+    
+        $request->validate([
+            'barcode' => 'required|string|max:100',
+        ]);
+    
+        $barcode = trim($request->barcode);
+    
+        // Buscar el item por barcode dentro de este contenedor
+        $item = $container->items()->where('barcode', $barcode)->first();
+    
+        if (!$item) {
+            return response()->json([
+                'success' => false,
+                'message' => "Barcode '{$barcode}' no encontrado en este contenedor.",
+            ], 404);
+        }
+    
+        // Incrementar cajas recibidas
+        $item->increment('received_cartons');
+        $item->refresh();
+    
+        return $this->cartonAdjustResponse($container, $item);
+    }
+
+    public function addCarton(Request $request, Container $container, ContainerItem $item)
+    {
+        if ($container->status === 'cerrado') {
+            return response()->json(['success' => false, 'message' => 'Contenedor cerrado.'], 422);
+        }
+    
+        $item->increment('received_cartons');
+        $item->refresh();
+    
+        return $this->cartonAdjustResponse($container, $item);
+    }
+    
+    /**
+     * Remover 1 caja (botón - para corregir escaneo doble).
+     */
+        public function removeCarton(Request $request, Container $container, ContainerItem $item)
+        {
+            if ($container->status === 'cerrado') {
+                return response()->json(['success' => false, 'message' => 'Contenedor cerrado.'], 422);
+            }
+        
+            if ($item->received_cartons <= 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Las cajas recibidas ya están en 0.',
+                ], 422);
+            }
+        
+            $item->decrement('received_cartons');
+            $item->refresh();
+        
+            return $this->cartonAdjustResponse($container, $item);
+        }
+
+    private function cartonAdjustResponse(Container $container, ContainerItem $item): \Illuminate\Http\JsonResponse
+    {
+        // Recalcular valores derivados
+        $receivedQty    = $item->received_cartons * $item->pieces_per_carton;
+        $cartonDiff     = $item->carton_count - $item->received_cartons; // positivo = faltante
+        $declaredQty    = $item->declared_qty;
+    
+        // Determinar estatus del item
+        if ($item->status === 'no_recibido' && $item->received_cartons == 0) {
+            $status = 'no_recibido'; // Preservar estado si no se está borrando la nota
+        } elseif ($item->received_cartons === 0 && $item->carton_count > 0) {
+            $status = 'pendiente';
+        } elseif ($cartonDiff > 0) {
+            $status = 'faltante';
+        } elseif ($cartonDiff < 0) {
+            $status = 'sobrante';
+        } else {
+            $status = 'conforme';
+        }
+    
+        // Actualizar status en BD si difiere
+        if ($item->status !== $status) {
+            $item->update(['status' => $status]);
+        }
+    
+        // Actualizar received_qty calculado si lo almacenas
+        if ($item->received_qty !== $receivedQty) {
+            $item->update(['received_qty' => $receivedQty]);
+        }
+    
+        // Totales del contenedor (para KPIs)
+        $container->load('items');
+        $totalReceivedCartons = $container->items->sum('received_cartons');
+        $totalReceivedQty     = $container->items->sum(fn ($i) => $i->received_cartons * $i->pieces_per_carton);
+    
+        // Actualizar totales en el contenedor si los almacenas
+        $container->update([
+            'received_qty' => $totalReceivedQty,
+        ]);
+    
+        return response()->json([
+            'success'                => true,
+            'item_id'                => $item->id,
+            'barcode'                => $item->barcode,
+            'product_description'    => $item->product_description,
+            'received_cartons'       => $item->received_cartons,
+            'carton_count'           => $item->carton_count,
+            'carton_difference'      => $cartonDiff,
+            'received_qty'           => $receivedQty,
+            'declared_qty'           => $declaredQty,
+            'status'                 => $status,
+            'total_received_cartons' => $totalReceivedCartons,
+            'total_received_qty'     => $totalReceivedQty,
+        ]);
+    }
+
+    public function markNotReceived(Request $request, Container $container, ContainerItem $item)
+    {
+        if ($container->status === 'cerrado') {
+            return response()->json(['success' => false, 'message' => 'Contenedor cerrado.'], 422);
+        }
+    
+        $request->validate([
+            'notes' => 'required|string|max:500',
+        ]);
+    
+        $item->update([
+            'received_cartons' => 0,
+            'received_qty'     => 0,
+            'status'           => 'no_recibido',
+            'notes'            => $request->notes,
+        ]);
+    
+        $item->refresh();
+    
+        // Recalcular totales del contenedor
+        $container->load('items');
+        $totalReceivedCartons = $container->items->sum('received_cartons');
+        $totalReceivedQty     = $container->items->sum(fn ($i) => $i->received_cartons * $i->pieces_per_carton);
+    
+        $container->update(['received_qty' => $totalReceivedQty]);
+    
+        return response()->json([
+            'success'                => true,
+            'item_id'                => $item->id,
+            'barcode'                => $item->barcode,
+            'product_description'    => $item->product_description,
+            'received_cartons'       => 0,
+            'carton_count'           => $item->carton_count,
+            'carton_difference'      => $item->carton_count, // todas faltantes
+            'received_qty'           => 0,
+            'declared_qty'           => $item->declared_qty,
+            'status'                 => 'no_recibido',
+            'total_received_cartons' => $totalReceivedCartons,
+            'total_received_qty'     => $totalReceivedQty,
+        ]);
+    }
+
+    /**
+     * Establecer cantidad manual de cajas desde el input (AJAX).
+     */
+    public function setCartons(Request $request, Container $container, ContainerItem $item)
+    {
+        if ($container->status === 'cerrado') {
+            return response()->json([
+                'success' => false, 
+                'message' => 'Contenedor cerrado.'
+            ], 422);
+        }
+
+        $request->validate([
+            'cartons' => 'required|integer|min:0',
+        ]);
+        $item->update([
+            'received_cartons' => $request->cartons
+        ]);
+
+        return $this->cartonAdjustResponse($container, $item);
+    }
+
+
+
+
+
+
 }

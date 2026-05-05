@@ -24,7 +24,8 @@ return new class extends Migration
             $table->string('package_type')->nullable();        // KIND OF PACKAGE (BAG, CARTON)
             $table->text('carton_numbers')->nullable();        // CARTON NO. (lista separada por comas)
             $table->integer('carton_count')->default(0);       // Cuántas cajas trae este item
-            $table->enum('status', ['pendiente', 'conforme', 'faltante', 'sobrante'])->default('pendiente');
+            $table->integer('received_cartons')->default(0);   // El estatus se determina automáticamente en base a las cantidades, pero lo guardamos para facilitar consultas y reportes
+            $table->enum('status', ['pendiente', 'conforme', 'faltante', 'sobrante', 'no_recibido'])->default('pendiente');
             $table->text('notes')->nullable();
             $table->timestamps();
         });

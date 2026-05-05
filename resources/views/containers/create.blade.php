@@ -28,6 +28,7 @@
                     @csrf
 
                     {{-- Número de contenedor --}}
+                    {{-- 
                     <div>
                         <label for="container_number" class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">
                             Número de Contenedor
@@ -40,8 +41,11 @@
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+                     --}}
 
+                     
                     {{-- Proveedor y País --}}
+                    {{--  
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="supplier" class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">Proveedor</label>
@@ -56,9 +60,11 @@
                                    placeholder="Ej: China">
                         </div>
                     </div>
+                    --}}
 
                     {{-- Cantidad declarada y Estatus de aduana --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
                         <div>
                             <label for="declared_qty" class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">
                                 Cantidad Declarada <span class="text-xs font-normal text-gray-400">(se calcula del PL)</span>
@@ -82,6 +88,7 @@
                             </select>
                         </div>
                     </div>
+                    
 
                     {{-- Packing List --}}
                     <div>
@@ -105,11 +112,21 @@
                     </div>
 
                     {{-- Notas --}}
+                    {{-- 
                     <div>
                         <label for="notes" class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">Notas</label>
                         <textarea name="notes" id="notes" rows="3"
                                   class="w-full border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2.5 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                                   placeholder="Observaciones adicionales...">{{ old('notes') }}</textarea>
+                    </div>
+                     --}}
+
+                     {{-- Folio (ID) del contenedor --}}
+                    <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
+                        <div>
+                            <label for="container_seal_number" class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1 text-center">Id Contenedor</label>
+                            <input type="text" name="container_seal_number" id="container_seal_number" class="w-full border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-4 py-2.5 focus:ring-2 focus:ring-teal-500 focus:border-transparent" placeholder="Ej. A-S109001" value="{{ old('container_seal_number') }}" />
+                        </div>
                     </div>
 
                     {{-- Botones --}}

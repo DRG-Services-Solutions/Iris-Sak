@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->text('notes')->nullable();
             $table->timestamp('closed_at')->nullable();
+            $table->enum('source', ['contenedor', 'reempaque'])->default('reempaque');
             $table->timestamps();
         });
     }

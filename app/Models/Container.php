@@ -11,6 +11,7 @@ class Container extends Model
 
     protected $fillable = [
         'container_number',
+        'container_seal_number',
         'packing_list_number',
         'supplier',
         'buyer',

@@ -111,6 +111,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [ContainerController::class, 'store'])->name('store');
         Route::get('/{container}', [ContainerController::class, 'show'])->name('show');
 
+        
+
+
+
         // Items del packing list
         Route::post('/{container}/items', [ContainerController::class, 'addItem'])->name('add-item');
         Route::patch('/items/{item}', [ContainerController::class, 'updateItemReceived'])->name('update-item');
@@ -136,6 +140,24 @@ Route::middleware('auth')->group(function () {
         Route::get('/{container}/pallets', [\App\Http\Controllers\BoxController::class, 'pallets'])->name('pallets');
         Route::post('/{container}/pallets', [\App\Http\Controllers\BoxController::class, 'createPallet'])->name('create-pallet');
     });
+    Route::post('/containers/{container}/scan', [ContainerController::class, 'scanBarcode'])
+        ->name('containers.scan');
+
+    Route::post('/containers/{container}/items/{item}/add-carton', [ContainerController::class, 'addCarton'])
+        ->name('containers.add-carton');
+
+    Route::post('/containers/{container}/items/{item}/remove-carton', [ContainerController::class, 'removeCarton'])
+        ->name('containers.remove-carton');
+
+    Route::patch('/containers/{container}/items/{item}/update-notes', [ContainerController::class, 'updateItemNotes'])
+        ->name('containers.update-item-notes-ajax');
+
+    Route::patch('/containers/{container}/items/{item}/mark-not-received', [ContainerController::class, 'markNotReceived'])
+        ->name('containers.mark-not-received');
+    
+    Route::post('containers/{container}/items/{item}/set-cartons', [ContainerController::class, 'setCartons']);    
+    
+
 
     // Cajas (operaciones individuales)
     Route::patch('/boxes/{box}/update-qty', [\App\Http\Controllers\BoxController::class, 'updateBoxQuantity'])->name('boxes.update-qty');
