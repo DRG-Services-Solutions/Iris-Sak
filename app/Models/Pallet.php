@@ -127,6 +127,37 @@ class Pallet extends Model
             'closed_at' => now(),
         ]);
     }
+
+    // --- Helpers de Maquila ---
+
+    /**
+     * Mueve la tarima a una estación específica y registra el inicio si es la primera vez.
+     */
+    public function moveToStation(int $station): void
+    {
+        $data = [
+            'maquila_station' => $station,
+            // Si la tarima estaba completada y la regresaron a una estación, borramos la fecha de completado
+            'maquila_completed_at' => null, 
+        ];
+
+        // Si es la primera vez que entra a la línea de maquila, registramos la hora de inicio
+        if (is_null($this->maquila_started_at)) {
+            $data['maquila_started_at'] = now();
+        }
+
+        $this->update($data);
+    }
+
+    /**
+     * Marca la tarima como completada en su proceso de maquila.
+     */
+    public function completeMaquila(): void
+    {
+        $this->update([
+            'maquila_completed_at' => now(),
+        ]);
+    }
     
     // --- Scopes ---
 
