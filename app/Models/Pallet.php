@@ -86,10 +86,14 @@ class Pallet extends Model
         if (!$this->canBeAssignedToLocation()) {
             throw new \Exception("Solo tarimas cerradas pueden ser asignadas a una localidad.");
         }
+
+        if (!$location->hasAvailableSpace()) {
+            throw new \Exception("La localidad está llena.");
+        }
+
         return $this->update([
             'location_id' => $location->id
         ]);
-        
     }
 
     /**

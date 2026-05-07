@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BoxController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController; 
@@ -13,7 +14,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContainerController;
 use App\Http\Controllers\PalletController;
 use App\Http\Controllers\MaquilaController;
-
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\PickingController;
+use App\Http\Controllers\DispatchController;
 
 Route::middleware(['auth', 'role:Super Admin'])->group(function () {
     
@@ -30,6 +34,10 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 // --- Grupo principal que requiere autenticación ---
 Route::middleware('auth')->group(function () {
+    //ruta de reportes
+    Route::prefix('reports')->name('reports.')->middleware(['auth'])->group(function () {
+        Route::get('/storage-time', [ReportController::class, 'storageTimeReport'])->name('storage-time');
+    });
 
     //Ruta de reource de Maquila
     Route::resource('maquila', MaquilaController::class);
@@ -140,13 +148,18 @@ Route::middleware('auth')->group(function () {
         Route::post('/{container}/mark-printed', [ContainerController::class, 'markPrinted'])->name('mark-printed');
         Route::get('/containers/{container}/scan', [ContainerController::class, 'scanMode'])->name('containers.scan');
 
-        // Empaque en cajas (Semana 2)
-        Route::get('/{container}/packing', [\App\Http\Controllers\BoxController::class, 'packing'])->name('packing');
-        Route::post('/{container}/boxes', [\App\Http\Controllers\BoxController::class, 'createBoxes'])->name('create-boxes');
+        // Empaque en cajas 
+        Route::get('/{container}/packing', [BoxController::class, 'packing'])->name('packing');
+        Route::post('/{container}/boxes', [BoxController::class, 'createBoxes'])->name('create-boxes');
+    
 
-        // Armado de tarimas (Semana 2)
-        Route::get('/{container}/pallets', [\App\Http\Controllers\BoxController::class, 'pallets'])->name('pallets');
-        Route::post('/{container}/pallets', [\App\Http\Controllers\BoxController::class, 'createPallet'])->name('create-pallet');
+
+
+        // Armado de tarimas 
+        Route::get('/{container}/pallets', [BoxController::class, 'pallets'])->name('pallets');
+        Route::post('/{container}/pallets', [BoxController::class, 'createPallet'])->name('create-pallet');
+        
+
     });
     Route::post('/containers/{container}/scan', [ContainerController::class, 'scanBarcode'])
         ->name('containers.scan');
@@ -168,32 +181,33 @@ Route::middleware('auth')->group(function () {
 
 
     // Cajas (operaciones individuales)
-    Route::patch('/boxes/{box}/update-qty', [\App\Http\Controllers\BoxController::class, 'updateBoxQuantity'])->name('boxes.update-qty');
-    Route::delete('/boxes/{box}', [\App\Http\Controllers\BoxController::class, 'destroyBox'])->name('boxes.destroy');
-    Route::patch('/boxes/{box}/remove', [\App\Http\Controllers\BoxController::class, 'removeBox'])->name('boxes.remove');
+    Route::patch('/boxes/{box}/update-qty', [BoxController::class, 'updateBoxQuantity'])->name('boxes.update-qty');
+    Route::delete('/boxes/{box}', [BoxController::class, 'destroyBox'])->name('boxes.destroy');
+    Route::patch('/boxes/{box}/remove', [BoxController::class, 'removeBox'])->name('boxes.remove');
 
     // Tarimas (operaciones individuales)
-    Route::post('/pallets/{pallet}/assign-boxes', [\App\Http\Controllers\BoxController::class, 'assignBoxes'])->name('pallets.assign-boxes');
-    Route::patch('/pallets/{pallet}/close', [\App\Http\Controllers\BoxController::class, 'closePallet'])->name('pallets.close');
-    Route::get('/pallets/{pallet}', [\App\Http\Controllers\BoxController::class, 'showPallet'])->name('pallets.show');
+    Route::post('/pallets/{pallet}/assign-boxes', [BoxController::class, 'assignBoxes'])->name('pallets.assign-boxes');
+    Route::patch('/pallets/{pallet}/close', [BoxController::class, 'closePallet'])->name('pallets.close');
+    Route::get('/pallets/{pallet}', [BoxController::class, 'showPallet'])->name('pallets.show');
+    Route::get('/pallets/{pallet}/print-label', [BoxController::class, 'printLabel'])->name('containers.label-4x2');
 
     // --- Localidades y Movimientos (Semana 3) ---
     Route::prefix('warehouse')->name('warehouse.')->group(function () {
-        Route::get('/locations', [\App\Http\Controllers\WarehouseController::class, 'locations'])->name('locations');
-        Route::post('/locations', [\App\Http\Controllers\WarehouseController::class, 'storeLocation'])->name('store-location');
-        Route::get('/locations/{location}', [\App\Http\Controllers\WarehouseController::class, 'showLocation'])->name('show-location');
-        Route::post('/assign-pallet', [\App\Http\Controllers\WarehouseController::class, 'assignPallet'])->name('assign-pallet');
-        Route::post('/pallets/{pallet}/transfer', [\App\Http\Controllers\WarehouseController::class, 'transferPallet'])->name('transfer-pallet');
+        Route::get('/locations', [WarehouseController::class, 'locations'])->name('locations');
+        Route::post('/locations', [WarehouseController::class, 'storeLocation'])->name('store-location');
+        Route::get('/locations/{location}', [WarehouseController::class, 'showLocation'])->name('show-location');
+        Route::post('/assign-pallet', [WarehouseController::class, 'assignPallet'])->name('assign-pallet');
+        Route::post('/pallets/{pallet}/transfer', [WarehouseController::class, 'transferPallet'])->name('transfer-pallet');
         Route::get('/transfers', [\App\Http\Controllers\WarehouseController::class, 'transfers'])->name('transfers');
     });
 
     // --- Lista de Surtido / Picking (Semana 3) ---
     Route::prefix('picking')->name('picking.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\PickingController::class, 'index'])->name('index');
-        Route::get('/create', [\App\Http\Controllers\PickingController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\PickingController::class, 'store'])->name('store');
-        Route::get('/{order}', [\App\Http\Controllers\PickingController::class, 'show'])->name('show');
-        Route::post('/{order}/start', [\App\Http\Controllers\PickingController::class, 'start'])->name('start');
+        Route::get('/', [PickingController::class, 'index'])->name('index');
+        Route::get('/create', [PickingController::class, 'create'])->name('create');
+        Route::post('/', [PickingController::class, 'store'])->name('store');
+        Route::get('/{order}', [PickingController::class, 'show'])->name('show');
+        Route::post('/{order}/start', [PickingController::class, 'start'])->name('start');
         Route::patch('/items/{item}/prepared', [\App\Http\Controllers\PickingController::class, 'markItemPrepared'])->name('mark-prepared');
     });
 

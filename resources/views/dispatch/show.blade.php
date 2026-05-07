@@ -52,7 +52,7 @@
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Tarima</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Contenedor</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">ID Contenedor</th>
                                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Localidad</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase">Cajas</th>
                                 <th class="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase">Piezas</th>
@@ -65,7 +65,7 @@
                                 @php $totalBoxes += $item->pallet->boxes->count(); $totalPcs += $item->pallet->boxes->sum('quantity'); @endphp
                                 <tr>
                                     <td class="px-4 py-3 font-mono font-bold text-gray-900 dark:text-white">{{ $item->pallet->pallet_code }}</td>
-                                    <td class="px-4 py-3 text-gray-600 text-xs font-mono">{{ $item->pallet->container->container_number }}</td>
+                                    <td class="px-4 py-3 text-gray-600 text-xs font-mono">{{ $item->pallet->container->container_seal_number }}</td>
                                     <td class="px-4 py-3 text-gray-600">{{ $item->pallet->location?->code ?? '—' }}</td>
                                     <td class="px-4 py-3 text-center">{{ $item->pallet->boxes->count() }}</td>
                                     <td class="px-4 py-3 text-center font-medium">{{ number_format($item->pallet->boxes->sum('quantity')) }}</td>

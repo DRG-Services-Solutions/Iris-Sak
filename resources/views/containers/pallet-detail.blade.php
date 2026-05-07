@@ -127,9 +127,9 @@
 
             {{-- Botón imprimir móvil --}}
             <div class="mt-4 print:hidden">
-                <button onclick="window.print()" class="w-full px-4 py-3 bg-slate-700 text-white rounded-lg text-sm font-medium">
-                    <i class="fas fa-print mr-2"></i> Imprimir Etiqueta Maestra
-                </button>
+                <a href="{{ route('containers.label-4x2', $pallet) }}" target="_blank" class="hidden md:inline-flex items-center px-4 py-2.5 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition text-sm font-medium print:hidden">
+                    <i class="fas fa-print mr-1"></i> Imprimir
+                </a>
             </div>
 
         </div>

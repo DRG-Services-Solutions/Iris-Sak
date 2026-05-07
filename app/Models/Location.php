@@ -40,6 +40,29 @@ class Location extends Model
         return !$this->hasPallets();
     }   
 
+    /**
+     * Verifica si esta ubicación es el Piso (Bulk Storage).
+     */
+    public function isFloor(): bool
+    {
+        return $this->code === 'PISO';
+    }
+
+    /**
+     * Verifica si la localidad tiene espacio disponible.
+     */
+    public function hasAvailableSpace(): bool
+    {
+        // Si es el Piso, la capacidad es infinita
+        if ($this->isFloor()) {
+            return true;
+        }
+
+        // Aquí iría tu lógica normal, por ejemplo:
+        // return $this->pallets()->count() < $this->max_capacity;
+        return true; // Reemplaza esto con tu validación actual si existe
+    }
+
     
 
 

@@ -164,4 +164,10 @@ class BoxController extends Controller
         $pallet->load(['container', 'boxes.containerItem', 'creator',]);
         return view('containers.pallet-detail', compact('pallet'));
     }
+     public function printLabel(Pallet $pallet)
+    {
+        $pallet->load(['container', 'boxes.containerItem']);
+        return view('containers.label-4x2', compact('pallet'));
+    }
+   
 }

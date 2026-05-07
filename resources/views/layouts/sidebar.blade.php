@@ -65,7 +65,7 @@
                     {{-- Maquila --}}
                     <a @click="if(window.innerWidth < 1024) closeSidebar()"
                        class="flex items-center px-4 py-2.5 rounded-lg transition-colors {{ request()->routeIs('customs.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}" 
-                       href="#">
+                       href="{{ route('maquila.index') }}">
                         <i class="fas fa-passport w-6 text-center text-red-400"></i>
                         <span class="mx-2 font-medium">Maquila</span>
                     </a>
@@ -81,6 +81,21 @@
                         <i class="fas fa-truck w-6 text-center text-green-400"></i>
                         <span class="mx-2 font-medium">Despachos</span>
                     </a>
+                </div>
+            </div>
+
+            {{-- REPORTES --}}
+            <div>
+                <p class="px-4 text-xs font-semibold tracking-wider text-gray-500 uppercase">Reportes</p>
+                <div class="mt-2 space-y-1">
+                    <a @click="if(window.innerWidth < 1024) closeSidebar()"
+                       class="flex items-center px-4 py-2.5 rounded-lg transition-colors {{ request()->routeIs('reports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}" 
+                       href="{{ route('reports.storage-time') }}"> {{-- Asegúrate de que esta ruta coincida con tu web.php --}}
+                        <i class="fas fa-chart-line w-6 text-center text-pink-400"></i>
+                        <span class="mx-2 font-medium">Lead Time (Almacenaje)</span>
+                    </a>
+                    
+                    {{-- Aquí podrás agregar más reportes en el futuro, ej. Productividad, Inventario --}}
                 </div>
             </div>
 

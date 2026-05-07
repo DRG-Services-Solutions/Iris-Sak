@@ -15,6 +15,9 @@ namespace App\Models {
      * @property int $id
      * @property-read mixed $readable_action
      * @property-read \App\Models\User $user
+     * @property-read \App\Models\Container $container
+     * @property-read \App\Models\Box $box
+     * @property-read \App\Models\ContainerItem $containerItem
      * @property-read \App\Models\ProductInstance $productInstance
      * @property-read \App\Models\WorkOrder $workOrder
      * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog whereId($value)
@@ -28,6 +31,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog query()
+     * @method static \Illuminate\Database\Eloquent\Builder<ActivityLog>|ActivityLog whereDetail(string $key, mixed $value) {@see App\Models\ActivityLog::scopeWhereDetail()}
      * @method static mixed select($columns)
      * @method static mixed selectSub($query, $as)
      * @method static mixed selectRaw($expression, array $bindings)

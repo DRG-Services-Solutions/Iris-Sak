@@ -58,7 +58,7 @@
                                         <p class="font-mono font-bold text-gray-900 dark:text-white">{{ $item->pallet->pallet_code }}</p>
                                         <p class="text-xs text-gray-500">
                                             <i class="fas fa-map-marker-alt mr-1"></i>{{ $item->pallet->location?->code ?? 'Sin localidad' }}
-                                            · {{ $item->pallet->container->packing_list_number }}
+                                            · {{ $item->pallet->container->container_seal_number }}
                                             · {{ $item->pallet->boxes->count() }} cajas
                                             · {{ $item->pallet->boxes->sum('quantity') }} pzas
                                         </p>

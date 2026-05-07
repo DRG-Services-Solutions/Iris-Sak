@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Models\ActivityLog;
 use Illuminate\Support\Str;
 
 
@@ -53,30 +54,32 @@ class ContainerController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'container_number' => 'nullable|string|max:50',
-            'supplier'         => 'nullable|string|max:255',
-            'origin_country'   => 'nullable|string|max:100',
-            'declared_qty'     => 'nullable|integer|min:0',
-            'customs_status'   => 'required|in:pendiente,en_revision,liberado,retenido',
-            'notes'            => 'nullable|string|max:1000',
-            'packing_list'     => 'nullable|file|mimes:xlsx,xls,csv|max:10240',
+            'container_number'      => 'nullable|string|max:50',
+            'supplier'              => 'nullable|string|max:255',
+            'origin_country'        => 'nullable|string|max:100',
+            'declared_qty'          => 'nullable|integer|min:0',
+            'customs_status'        => 'required|in:pendiente,en_revision,liberado,retenido',
+            'notes'                 => 'nullable|string|max:1000',
+            'packing_list'          => 'nullable|file|mimes:xlsx,xls,csv|max:10240',
             'container_seal_number' => 'nullable|string|max:100',
+            'tax_id'                => 'nullable|string|max:100', // Agregado para soportar Tax ID
         ]);
 
         DB::beginTransaction();
         try {
             // Datos base — se pueden sobrescribir si el XLSX trae la info
             $containerData = [
-                'container_number' => $validated['container_number'] ?? 'TEMP-' . now()->format('YmdHis'),
-                'supplier'         => $validated['supplier'] ?? null,
-                'origin_country'   => $validated['origin_country'] ?? null,
-                'declared_qty'     => $validated['declared_qty'] ?? 0,
-                'customs_status'   => $validated['customs_status'],
-                'notes'            => $validated['notes'] ?? null,
-                'received_by'      => Auth::id(),
-                'received_at'      => now(),
-                'status'           => 'abierto',
+                'container_number'      => $validated['container_number'] ?? 'TEMP-' . now()->format('YmdHis'),
+                'supplier'              => $validated['supplier'] ?? null,
+                'origin_country'        => $validated['origin_country'] ?? null,
+                'declared_qty'          => $validated['declared_qty'] ?? 0,
+                'customs_status'        => $validated['customs_status'],
+                'notes'                 => $validated['notes'] ?? null,
+                'received_by'           => Auth::id(),
+                'received_at'           => now(),
+                'status'                => 'abierto',
                 'container_seal_number' => $validated['container_seal_number'] ?? null,
+                'tax_id'                => $validated['tax_id'] ?? null,
             ];
 
             // Si hay packing list, extraer metadata del header primero
@@ -91,10 +94,39 @@ class ContainerController extends Controller
                 }
             }
 
-            // Evitar duplicado si el container_number ya existe
-            if (Container::where('container_number', $containerData['container_number'])->exists()) {
-                $containerData['container_number'] .= '-' . now()->format('His');
+            // ===================================================================
+            // VALIDACIÓN ESTRICTA DE DUPLICADOS
+            // ===================================================================
+            $hasDuplicateCondition = false;
+            $duplicateQuery = Container::query();
+
+            $duplicateQuery->where(function ($q) use ($containerData, &$hasDuplicateCondition) {
+                // Solo validamos container_number si no es un temporal generado por el sistema
+                if (!empty($containerData['container_number']) && !str_starts_with($containerData['container_number'], 'TEMP-')) {
+                    $q->orWhere('container_number', $containerData['container_number']);
+                    $hasDuplicateCondition = true;
+                }
+                if (!empty($containerData['packing_list_number'])) {
+                    $q->orWhere('packing_list_number', $containerData['packing_list_number']);
+                    $hasDuplicateCondition = true;
+                }
+                if (!empty($containerData['container_seal_number'])) {
+                    $q->orWhere('container_seal_number', $containerData['container_seal_number']);
+                    $hasDuplicateCondition = true;
+                }
+                if (!empty($containerData['tax_id'])) {
+                    $q->orWhere('tax_id', $containerData['tax_id']);
+                    $hasDuplicateCondition = true;
+                }
+            });
+
+            // Si se ingresó al menos un dato rastreable y existe en BD, detenemos todo
+            if ($hasDuplicateCondition && $duplicateQuery->exists()) {
+                DB::rollBack();
+                return back()->withInput()
+                    ->with('error', 'Alerta: Posible duplicado. El Contenedor, Sello, Packing List o Tax ID ya se encuentra registrado en el sistema. Verifique la información.');
             }
+            // ===================================================================
 
             $container = Container::create($containerData);
 
@@ -474,7 +506,15 @@ class ContainerController extends Controller
                     }
                 }
             }
-
+            ActivityLog::create([
+                        'action'  => 'CONTAINER_CLOSED',
+                        'user_id' => Auth::id(),
+                        'details' => [
+                            'container_id'     => $container->id,
+                            'container_number' => $container->container_number,
+                            'total_boxes'      => $container->boxes()->count(),
+                        ]
+                    ]);
             DB::commit();
             
             return back()->with('success', 'Contenedor cerrado exitosamente. Las cajas han sido ingresadas al inventario.');
@@ -781,6 +821,8 @@ class ContainerController extends Controller
 
         return $this->cartonAdjustResponse($container, $item);
     }
+
+    
 
 
 
