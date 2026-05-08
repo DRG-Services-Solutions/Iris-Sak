@@ -160,10 +160,23 @@
                                         @if(!$isCompleted)
                                             <div class="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-0.5">
                                                 @foreach([1, 2, 3] as $st)
+                                                    @php
+                                                        $isCurrentStation = $pallet->maquila_station === $st;
+                                                        // Si el contador global de esta estación es > 0, está ocupada
+                                                        $isStationOccupied = $stationCounts[$st] > 0; 
+                                                        $isDisabled = $isCurrentStation || $isStationOccupied;
+                                                    @endphp
                                                     <form method="POST" action="{{ route('maquila.move', $pallet) }}" class="inline">
                                                         @csrf
                                                         <input type="hidden" name="station" value="{{ $st }}">
-                                                        <button type="submit" class="px-3 py-1.5 text-xs font-bold rounded-md transition {{ $pallet->maquila_station === $st ? match($st) { 1 => 'bg-amber-500 text-white shadow', 2 => 'bg-blue-500 text-white shadow', 3 => 'bg-purple-500 text-white shadow' } : 'text-gray-500 hover:bg-white dark:hover:bg-gray-600 hover:shadow' }}" {{ $pallet->maquila_station === $st ? 'disabled' : '' }}>E{{ $st }}</button>
+                                                        <button type="submit" 
+                                                                title="{{ $isCurrentStation ? 'Estación actual' : ($isStationOccupied ? 'Estación Ocupada' : 'Mover a E'.$st) }}"
+                                                                class="px-3 py-1.5 text-xs font-bold rounded-md transition 
+                                                                {{ $isCurrentStation ? match($st) { 1 => 'bg-amber-500 text-white shadow', 2 => 'bg-blue-500 text-white shadow', 3 => 'bg-purple-500 text-white shadow' } : 
+                                                                ($isStationOccupied ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed' : 'text-gray-500 hover:bg-white dark:hover:bg-gray-600 hover:shadow') }}" 
+                                                                {{ $isDisabled ? 'disabled' : '' }}>
+                                                            E{{ $st }}
+                                                        </button>
                                                     </form>
                                                 @endforeach
                                             </div>

@@ -62,6 +62,11 @@
                                 <button @click="showAssign = !showAssign" class="text-sm text-indigo-600 hover:underline font-medium"><i class="fas fa-plus-circle mr-1"></i> Agregar cajas</button>
                                 <div x-show="showAssign" x-collapse x-cloak>
                                     @if($availableBoxes->count())
+                                        @php
+                                            // Agrupamos las cajas físicas individuales por su artículo
+                                            $groupedAvailable = $availableBoxes->groupBy('container_item_id');
+                                        @endphp
+                                        
                                         {{-- Componente Alpine para filtrado --}}
                                         <div x-data="{ searchBox: '' }" class="space-y-3">
                                             
@@ -71,46 +76,62 @@
                                                     <i class="fas fa-barcode text-gray-400"></i>
                                                 </div>
                                                 <input type="text" 
-                                                    x-model="searchBox" 
-                                                    placeholder="Escanea el código del producto para filtrar..." 
-                                                    class="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-gray-100 placeholder-gray-400">
-                                                <button x-show="searchBox.length > 0" @click="searchBox = ''" type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
-                                                    <i class="fas fa-times-circle"></i>
+                                                       x-model="searchBox" 
+                                                       placeholder="Escanea el código para asignar cajas en masa..." 
+                                                       class="w-full pl-10 pr-10 py-3 border-2 border-indigo-200 dark:border-indigo-800 rounded-lg bg-gray-50 dark:bg-gray-900 text-lg font-mono focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-gray-100 placeholder-gray-400 shadow-sm">
+                                                <button x-show="searchBox.length > 0" @click="searchBox = ''" type="button" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600">
+                                                    <i class="fas fa-times-circle text-lg"></i>
                                                 </button>
                                             </div>
 
-                                            {{-- Formulario y Lista de Cajas --}}
-                                            <form method="POST" action="{{ route('pallets.assign-boxes', $pallet) }}">@csrf
-                                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mb-3 max-h-64 overflow-y-auto p-1">
-                                                    @foreach($availableBoxes as $ab)
-                                                        @php
-                                                            // Pre-computamos un string de búsqueda invisible para comparar fácilmente en JS
-                                                            $searchString = strtolower($ab->containerItem->barcode . ' ' . $ab->containerItem->product_code . ' ' . $ab->containerItem->product_description);
-                                                        @endphp
+                                            {{-- Tarjetas de Asignación Masiva --}}
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 max-h-[400px] overflow-y-auto p-1">
+                                                @foreach($groupedAvailable as $itemId => $boxes)
+                                                    @php
+                                                        $item = $boxes->first()->containerItem;
+                                                        $maxBoxes = $boxes->count();
+                                                        // String invisible para el buscador
+                                                        $searchString = strtolower($item->barcode . ' ' . $item->product_code . ' ' . $item->product_description);
+                                                    @endphp
+                                                    
+                                                    {{-- Tarjeta del Producto --}}
+                                                    <div x-show="searchBox === '' || '{{ $searchString }}'.includes(searchBox.toLowerCase())"
+                                                         class="flex flex-col p-4 bg-white dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
                                                         
-                                                        {{-- x-show evalúa si el texto escaneado está dentro de nuestro string de búsqueda --}}
-                                                        <label x-show="searchBox === '' || '{{ $searchString }}'.includes(searchBox.toLowerCase())"
-                                                            class="flex items-center p-2 bg-white dark:bg-gray-700 rounded border border-gray-200 dark:border-gray-600 cursor-pointer hover:border-indigo-400 transition-colors">
-                                                            <input type="checkbox" name="box_ids[]" value="{{ $ab->id }}" class="rounded border-gray-300 text-indigo-600 mr-2 focus:ring-indigo-500">
-                                                            <div class="text-xs flex-1">
-                                                                <span class="font-mono font-bold">{{ $ab->containerItem->barcode }}</span> -- <span class="text-gray-500 dark:text-gray-400">{{ $ab->containerItem->product_description }}</span><br>
-                                                                <span class="text-gray-500 dark:text-gray-400 ml-1">{{ $ab->quantity }} pzas</span>
-                                                                <span class="ml-1 px-1.5 py-0.5 rounded text-[10px] font-semibold {{ $ab->source === 'contenedor' ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400' : 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' }}">
-                                                                    {{ $ab->source === 'contenedor' ? 'Original' : 'Reempaque' }}
+                                                        <div class="mb-3 border-b border-gray-100 dark:border-gray-600 pb-2">
+                                                            <div class="flex justify-between items-start">
+                                                                <span class="font-mono font-bold text-gray-900 dark:text-white text-base">{{ $item->barcode ?? 'Sin código' }}</span>
+                                                                <span class="px-2 py-1 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 rounded text-xs font-bold whitespace-nowrap">
+                                                                    {{ $maxBoxes }} DISP
                                                                 </span>
                                                             </div>
-                                                        </label>
-                                                    @endforeach
-                                                </div>
-                                                
-                                                <div class="flex items-center justify-between">
-                                                    <span class="text-xs text-gray-500 dark:text-gray-400"><i class="fas fa-info-circle mr-1"></i> Selecciona las cajas a asignar</span>
-                                                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-500 transition shadow"><i class="fas fa-check mr-1"></i> Asignar Seleccionadas</button>
-                                                </div>
-                                            </form>
+                                                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate mt-1" title="{{ $item->product_description }}">{{ $item->product_description }}</p>
+                                                        </div>
+                                                        
+                                                        {{-- Formulario de Asignación --}}
+                                                        <form method="POST" action="{{ route('pallets.assign-bulk', $pallet) }}" class="flex items-end space-x-3 mt-auto">
+                                                            @csrf
+                                                            <input type="hidden" name="container_item_id" value="{{ $itemId }}">
+                                                            
+                                                            <div class="flex-1">
+                                                                <label class="block text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Cajas a asignar</label>
+                                                                {{-- El input arranca con el máximo disponible por defecto para mayor rapidez --}}
+                                                                <input type="number" name="quantity" min="1" max="{{ $maxBoxes }}" value="{{ $maxBoxes }}" required
+                                                                       class="w-full text-lg border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-bold text-center">
+                                                            </div>
+                                                            
+                                                            <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition shadow-sm h-[42px] flex items-center justify-center">
+                                                                <i class="fas fa-plus mr-1"></i> Asignar
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                @endforeach
+                                            </div>
                                         </div>
                                     @else
-                                        <p class="text-sm text-gray-400">No hay cajas disponibles.</p>
+                                        <div class="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-center">
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">No hay cajas disponibles en este contenedor para asignar.</p>
+                                        </div>
                                     @endif
                                 </div>
                                 @if($pallet->boxes->count())

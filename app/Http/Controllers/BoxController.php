@@ -140,6 +140,38 @@ class BoxController extends Controller
         return back()->with('success', "{$assigned} cajas asignadas a {$pallet->pallet_code}.");
     }
 
+    public function assignBulk(Request $request, Pallet $pallet)
+    {
+        // 1. Validamos lo que viene del nuevo formulario (ID del producto y la cantidad)
+        $validated = $request->validate([
+            'container_item_id' => 'required|exists:container_items,id',
+            'quantity'          => 'required|integer|min:1',
+        ]);
+
+        // 2. Buscamos las cajas disponibles (huérfanas) de ese producto específico
+        $boxes = Box::where('container_id', $pallet->container_id)
+            ->where('container_item_id', $validated['container_item_id'])
+            ->whereNull('pallet_id') // Asumiendo que así sabes que están libres en BD
+            ->take($validated['quantity']) // Tomamos EXACTAMENTE la cantidad que pidió el usuario
+            ->get();
+
+        // 3. Validamos que el sistema sí encontró suficientes cajas
+        if ($boxes->count() < $validated['quantity']) {
+            return back()->with('error', "Atención: Solo hay {$boxes->count()} cajas disponibles de este producto.");
+        }
+
+        // 4. Asignamos usando tu lógica existente
+        $assigned = 0;
+        foreach ($boxes as $box) {
+            if (!$box->isAssignedToPallet()) {
+                $box->assignToPallet($pallet);
+                $assigned++;
+            }
+        }
+
+        return back()->with('success', "{$assigned} cajas asignadas a {$pallet->pallet_code}.");
+    }
+
     public function removeBox(Box $box)
     {
         if (!$box->isAssignedToPallet()) {

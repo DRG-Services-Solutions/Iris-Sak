@@ -137,30 +137,47 @@ class Pallet extends Model
     /**
      * Mueve la tarima a una estación específica y registra el inicio si es la primera vez.
      */
-    public function moveToStation(int $station): void
+    public function moveToStation($station, $userId = null, $notes = null): void
     {
-        $data = [
+        // 1. Actualizamos la tarima con la nueva estación
+        $this->update([
             'maquila_station' => $station,
-            // Si la tarima estaba completada y la regresaron a una estación, borramos la fecha de completado
-            'maquila_completed_at' => null, 
-        ];
+            'maquila_started_at' => $this->maquila_started_at ?? now(), 
+        ]);
 
-        // Si es la primera vez que entra a la línea de maquila, registramos la hora de inicio
-        if (is_null($this->maquila_started_at)) {
-            $data['maquila_started_at'] = now();
+        // 2. Creamos el registro en el historial (MaquilaLog)
+        // Esto es lo que aprovecha los argumentos extra que enviamos desde el controlador
+        if (class_exists(\App\Models\MaquilaLog::class)) {
+            \App\Models\MaquilaLog::create([
+                'pallet_id'  => $this->id,
+                'station'    => $station,
+                'changed_by' => $userId,
+                'notes'      => $notes,
+            ]);
         }
-
-        $this->update($data);
     }
 
     /**
      * Marca la tarima como completada en su proceso de maquila.
      */
-    public function completeMaquila(): void
+    public function completeMaquila($userId = null, $notes = null): void
     {
+        // 1. Actualizamos la tarima marcando la hora de finalización
         $this->update([
             'maquila_completed_at' => now(),
+            // 'maquila_station' => null, // (Opcional) Descomenta esto si quieres que al completar se libere el número de estación
         ]);
+
+        // 2. Si manejas un historial (MaquilaLog), aquí es el lugar perfecto para guardarlo
+        // Asegúrate de ajustar los nombres de las columnas a como los tengas en tu base de datos
+        if (class_exists(\App\Models\MaquilaLog::class)) {
+            \App\Models\MaquilaLog::create([
+                'pallet_id'  => $this->id,
+                'action'     => 'completado', // O el estatus que uses para identificar este evento
+                'changed_by' => $userId,
+                'notes'      => $notes,
+            ]);
+        }
     }
     
     // --- Scopes ---

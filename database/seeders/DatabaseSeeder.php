@@ -7,12 +7,15 @@ use App\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
+use App\Models\Location;
 
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call(FloorLocationSeeder::class);
+
         // 1. Limpiar la caché de Spatie Permissions (Súper importante cuando hacemos seeds)
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 

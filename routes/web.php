@@ -187,6 +187,7 @@ Route::middleware('auth')->group(function () {
 
     // Tarimas (operaciones individuales)
     Route::post('/pallets/{pallet}/assign-boxes', [BoxController::class, 'assignBoxes'])->name('pallets.assign-boxes');
+    Route::post('/pallets/{pallet}/assign-bulk', [BoxController::class, 'assignBulk'])->name('pallets.assign-bulk');
     Route::patch('/pallets/{pallet}/close', [BoxController::class, 'closePallet'])->name('pallets.close');
     Route::get('/pallets/{pallet}', [BoxController::class, 'showPallet'])->name('pallets.show');
     Route::get('/pallets/{pallet}/print-label', [BoxController::class, 'printLabel'])->name('containers.label-4x2');
@@ -198,7 +199,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/locations/{location}', [WarehouseController::class, 'showLocation'])->name('show-location');
         Route::post('/assign-pallet', [WarehouseController::class, 'assignPallet'])->name('assign-pallet');
         Route::post('/pallets/{pallet}/transfer', [WarehouseController::class, 'transferPallet'])->name('transfer-pallet');
-        Route::get('/transfers', [\App\Http\Controllers\WarehouseController::class, 'transfers'])->name('transfers');
+        Route::get('/transfers', [WarehouseController::class, 'transfers'])->name('transfers');
     });
 
     // --- Lista de Surtido / Picking (Semana 3) ---
@@ -208,17 +209,17 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [PickingController::class, 'store'])->name('store');
         Route::get('/{order}', [PickingController::class, 'show'])->name('show');
         Route::post('/{order}/start', [PickingController::class, 'start'])->name('start');
-        Route::patch('/items/{item}/prepared', [\App\Http\Controllers\PickingController::class, 'markItemPrepared'])->name('mark-prepared');
+        Route::patch('/items/{item}/prepared', [PickingController::class, 'markItemPrepared'])->name('mark-prepared');
     });
 
     // --- Despacho y Carga (Semana 3) ---
     Route::prefix('dispatch')->name('dispatch.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\DispatchController::class, 'index'])->name('index');
-        Route::get('/create', [\App\Http\Controllers\DispatchController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\DispatchController::class, 'store'])->name('store');
-        Route::get('/{dispatch}', [\App\Http\Controllers\DispatchController::class, 'show'])->name('show');
-        Route::patch('/{dispatch}/loaded', [\App\Http\Controllers\DispatchController::class, 'markLoaded'])->name('mark-loaded');
-        Route::patch('/{dispatch}/dispatched', [\App\Http\Controllers\DispatchController::class, 'markDispatched'])->name('mark-dispatched');
+        Route::get('/', [DispatchController::class, 'index'])->name('index');
+        Route::get('/create', [DispatchController::class, 'create'])->name('create');
+        Route::post('/', [DispatchController::class, 'store'])->name('store');
+        Route::get('/{dispatch}', [DispatchController::class, 'show'])->name('show');
+        Route::patch('/{dispatch}/loaded', [DispatchController::class, 'markLoaded'])->name('mark-loaded');
+        Route::patch('/{dispatch}/dispatched', [DispatchController::class, 'markDispatched'])->name('mark-dispatched');
     });
 
     Route::resource('movements', MovementController::class);

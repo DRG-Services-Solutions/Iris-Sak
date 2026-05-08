@@ -89,8 +89,20 @@ class MaquilaController extends Controller
             'notes'   => 'nullable|string|max:500',
         ]);
 
-        $pallet->moveToStation($validated['station'], Auth::id(), $validated['notes'] ?? null);
-        return back()->with('success', "Tarima {$pallet->pallet_code} movida a Estación {$validated['station']}.");
+        $targetStation = $validated['station'];
+
+        $isOccupied = Pallet::atStation($targetStation)
+            ->where('id', '!=', $pallet->id)
+            ->exists();
+
+        if ($isOccupied) {
+            // Si la estación ya tiene una tarima, rebotamos la acción con un mensaje de error
+            return back()->with('error', "Operación denegada: La Estación E{$targetStation} ya está ocupada por otra tarima. Debe completarla primero.");
+        }
+
+        $pallet->moveToStation($targetStation, Auth::id(), $validated['notes'] ?? null);
+        
+        return back()->with('success', "Tarima {$pallet->pallet_code} ingresada a la Estación E{$targetStation}.");
     }
 
     public function complete(Request $request, Pallet $pallet)

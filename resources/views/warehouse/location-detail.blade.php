@@ -35,7 +35,7 @@
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3">
                         <div>
                             <h4 class="font-bold text-gray-900 dark:text-white">{{ $pallet->pallet_code }}</h4>
-                            <p class="text-xs text-gray-500">{{ $pallet->container->container_number }} · {{ $pallet->boxes->count() }} cajas · {{ $pallet->boxes->sum('quantity') }} pzas</p>
+                            <p class="text-xs text-gray-500">ID Contenedor: {{ $pallet->container->container_seal_number }} · {{ $pallet->boxes->count() }} cajas · {{ $pallet->boxes->sum('quantity') }} pzas</p>
                         </div>
                         <form method="POST" action="{{ route('warehouse.transfer-pallet', $pallet) }}" class="flex items-center space-x-2">
                             @csrf
@@ -46,10 +46,45 @@
                             <button type="submit" class="px-3 py-2 bg-amber-600 text-white rounded-lg text-sm"><i class="fas fa-exchange-alt mr-1"></i> Mover</button>
                         </form>
                     </div>
-                    <div class="flex flex-wrap gap-2">
-                        @foreach($pallet->boxes->sortBy('box_code') as $box)
-                            <span class="inline-flex items-center px-2 py-1 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded text-xs font-mono">{{ $box->containerItem->barcode }}-{{ $box->containerItem->product_description }} <span class="text-gray-400 ml-1">({{ $box->quantity }})</span></span>
-                        @endforeach
+                    {{-- Acordeón de Cajas Agrupadas --}}
+                    <div class="mt-4 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden" x-data="{ openBoxes: false }">
+                        
+                        {{-- Botón para abrir/cerrar --}}
+                        <div @click="openBoxes = !openBoxes" class="flex justify-between items-center px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                <i class="fas fa-boxes text-emerald-500 mr-2"></i>Ver Contenido Detallado
+                            </span>
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300" :class="{'rotate-180': openBoxes}"></i>
+                        </div>
+
+                        {{-- Lista colapsable --}}
+                        <div x-show="openBoxes" x-collapse x-cloak>
+                            <div class="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-80 overflow-y-auto pr-2">
+                                    
+                                    @php
+                                        // Agrupamos las cajas por producto para que 80 cajas de "Minecraft" se vean como 1 sola tarjeta resumen
+                                        $groupedBoxes = $pallet->boxes->groupBy('container_item_id');
+                                    @endphp
+
+                                    @foreach($groupedBoxes as $itemId => $boxes)
+                                        @php $item = $boxes->first()->containerItem; @endphp
+                                        
+                                        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg">
+                                            <div class="flex-1 overflow-hidden">
+                                                <p class="text-xs font-mono font-bold text-gray-900 dark:text-white truncate" title="{{ $item?->barcode }}">{{ $item?->barcode ?? 'Sin código' }}</p>
+                                                <p class="text-[10px] text-gray-500 truncate mt-0.5" title="{{ $item?->product_description }}">{{ $item?->product_description ?? '—' }}</p>
+                                            </div>
+                                            <div class="ml-3 text-right flex flex-col justify-center">
+                                                <span class="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded">{{ $boxes->count() }} cajas</span>
+                                                <span class="text-[10px] font-medium text-gray-500 mt-1">{{ number_format($boxes->sum('quantity')) }} pzas</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             @empty

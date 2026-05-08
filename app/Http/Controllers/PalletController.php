@@ -19,18 +19,22 @@ class PalletController extends Controller
        
         return view('pallets.index', compact('pallets', 'locations', 'unassignedPallets'));
     }
-    public function assignToLocation(Request $request, Pallet $pallet, Location $location)
+    public function assignToLocation(Request $request, Pallet $pallet)
     {
+        // 1. Validar el request
         $request->validate([
             'location_id' => 'required|exists:locations,id',
         ]);
 
+        // 2. Obtener la localidad
         $location = Location::findOrFail($request->input('location_id'));
 
-        if($location->hasPallets()) {
-            return redirect()->route('pallets.index')->with('error', 'La localidad seleccionada ya tiene una tarima asignada.');
+        // 3. Usar nuestro método inteligente en lugar de hasPallets()
+        if (!$location->hasAvailableSpace()) {
+            return redirect()->route('pallets.index')->with('error', 'La localidad seleccionada ya está llena o no tiene espacio disponible.');
         }
 
+        // 4. Intentar asignar
         try {
             $pallet->assignToLocation($location);
             return redirect()->route('pallets.index')->with('success', 'Tarima asignada a la localidad exitosamente.');
