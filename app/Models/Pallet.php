@@ -23,13 +23,17 @@ class Pallet extends Model
         'maquila_station',
         'maquila_started_at',
         'maquila_completed_at',
+        'located_at', 
+        'dispatched_at'
         
     ];
 
     protected $casts = [
         'closed_at' => 'datetime',
-        'maquila_started_at' => 'datetime', // Añadido para que Laravel los trate como fechas
-        'maquila_completed_at' => 'datetime', // Añadido para que Laravel los trate como fechas
+        'maquila_started_at' => 'datetime', 
+        'maquila_completed_at' => 'datetime',
+        'located_at' => 'datetime',
+        'dispatched_at' => 'datetime',
     ];
     
     //agregado visibilidad para constantes de clase
@@ -86,13 +90,14 @@ class Pallet extends Model
         if (!$this->canBeAssignedToLocation()) {
             throw new \Exception("Solo tarimas cerradas pueden ser asignadas a una localidad.");
         }
-
+    
         if (!$location->hasAvailableSpace()) {
             throw new \Exception("La localidad está llena.");
         }
-
+    
         return $this->update([
-            'location_id' => $location->id
+            'location_id' => $location->id,
+            'located_at'  => now(), // ← NUEVO: registra cuándo se ubicó en rack
         ]);
     }
 
@@ -186,14 +191,15 @@ class Pallet extends Model
     public function dispatchPallet(): void
     {
         $this->update([
-            'location_id'   => null, 
-            'status'        => 'despachado', 
-            'dispatched_at' => now(), 
+            'location_id'   => null,
+            'status'        => 'despachado',
+            'dispatched_at' => now(),
         ]);
-
-        // 2. Marcamos todas sus cajas internas también como despachadas
+    
+        // Marcamos todas sus cajas con timestamp de despacho
         $this->boxes()->update([
-            'status' => 'despachado'
+            'status'        => 'despachado',
+            'dispatched_at' => now(), 
         ]);
     }
     

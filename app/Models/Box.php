@@ -14,10 +14,10 @@ class Box extends Model
         'container_id', 'container_item_id', 'box_code', 'source',
         'expected_qty', 'quantity', 'status', 'pallet_id',
         'picking_order_id', 
-        'created_by', 'notes', 'closed_at',
+        'created_by', 'notes', 'closed_at', 'assigned_to_pallet_at', 'dispatched_at'
     ];
 
-    protected $casts = ['closed_at' => 'datetime'];
+    protected $casts = ['closed_at' => 'datetime', 'assigned_to_pallet_at' => 'datetime', 'dispatched_at' => 'datetime',];
 
     // --- Relaciones ---
 
@@ -78,12 +78,20 @@ class Box extends Model
 
     public function assignToPallet(Pallet $pallet): void
     {
-        $this->update(['pallet_id' => $pallet->id, 'status' => 'en_tarima']);
+        $this->update([
+            'pallet_id'              => $pallet->id,
+            'status'                 => 'en_tarima',
+            'assigned_to_pallet_at'  => now(), // ← NUEVO: registra cuándo se asignó
+        ]);
     }
 
     public function removeFromPallet(): void
     {
-        $this->update(['pallet_id' => null, 'status' => 'cerrada']);
+        $this->update([
+            'pallet_id'              => null,
+            'status'                 => 'cerrada',
+            'assigned_to_pallet_at'  => null, // ← limpiamos el timestamp
+        ]);
     }
 
     // --- Scopes ---

@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Dispatch;
 use App\Models\PickingOrder;
+use App\Models\Box;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB; // <-- Asegúrate de importar DB
+use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\Log;
+
 
 class DispatchController extends Controller
 {
@@ -87,49 +90,67 @@ class DispatchController extends Controller
         return back()->with('success', 'Mercancía cargada al transporte.');
     }
 
+
     public function markDispatched(Dispatch $dispatch)
     {
+        Log::info("[Despacho] Iniciando markDispatched para dispatch #{$dispatch->id} ({$dispatch->dispatch_number})");
+
         DB::beginTransaction();
         try {
-            // 1. Marcamos el despacho como completado/embarcado
             $dispatch->markDispatched();
-            
-            $order = $dispatch->pickingOrder;
+            Log::info("[Despacho] Dispatch #{$dispatch->id} marcado como despachado");
 
-            // 2. Procesamos el inventario físico para sacarlo del almacén
+            $order = $dispatch->pickingOrder;
+            Log::info("[Despacho] Orden de picking #{$order->id} tiene {$order->items->count()} ítems");
+
             foreach ($order->items as $item) {
+                Log::info("[Despacho] Procesando ítem #{$item->id} | pick_type: {$item->pick_type} | pallet_id: {$item->pallet_id}");
+
                 if ($item->pick_type === 'full_pallet' && $item->pallet) {
-                    // --- SE VA LA TARIMA COMPLETA ---
-                    // Vaciamos la localidad para que el hueco del rack quede libre de inmediato.
-                    // Cambiamos el estatus a 'embarcado' para que desaparezca de las vistas activas.
-                    $item->pallet->update([
+                    $pallet = $item->pallet;
+                    $oldLocationId = $pallet->location_id;
+
+                    $pallet->update([
                         'location_id' => null,
-                        'status'      => 'embarcado'
+                        'status'      => 'despachado'
                     ]);
-                    
-                    // Todas las cajas de esta tarima se marcan como embarcadas
-                    $item->pallet->boxes()->update([
-                        'status' => 'embarcado'
+
+                    $boxCount = $pallet->boxes()->count();
+                    $pallet->boxes()->update([
+                        'status' => 'despachada'
                     ]);
+
+                    Log::info("[Despacho] FULL_PALLET: Tarima #{$pallet->id} embarcada | location_id: {$oldLocationId} → null | {$boxCount} cajas marcadas embarcadas");
 
                 } elseif ($item->pick_type === 'partial') {
-                    // --- SE VAN SOLO ALGUNAS CAJAS (TARIMA MIXTA) ---
-                    // La tarima original NO libera la localidad porque sigue físicamente en el rack 
-                    // con las cajas que no se solicitaron.
-                    
-                    // Solo "desaparecemos" las cajas exactas que el operador separó para esta orden
-                    \App\Models\Box::where('picking_order_id', $order->id)
+                    $affectedBoxes = Box::where('picking_order_id', $order->id)->count();
+
+                    Box::where('picking_order_id', $order->id)
                         ->update([
-                            'status' => 'embarcado'
+                            'status' => 'despachada'
                         ]);
+
+                    Log::info("[Despacho] PARTIAL: {$affectedBoxes} cajas de orden #{$order->id} marcadas embarcadas (tarima #{$item->pallet_id} sin cambios)");
+
+                } else {
+                    
+                    Log::warning("[Despacho] Ítem #{$item->id} no procesado | pick_type: {$item->pick_type} | pallet presente: " . ($item->pallet ? 'sí' : 'no'));
                 }
             }
+            $pallet->update(['dispatched_at' => now()]);
 
             DB::commit();
+            Log::info("[Despacho] ✅ Commit exitoso para dispatch #{$dispatch->id}");
+
             return back()->with('success', "Despacho {$dispatch->dispatch_number} confirmado. El inventario ha sido descontado y las localidades actualizadas.");
 
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error("[Despacho] ❌ Rollback en dispatch #{$dispatch->id}: {$e->getMessage()}", [
+                'exception' => $e,
+                'trace'     => $e->getTraceAsString()
+            ]);
+
             return back()->with('error', 'Error crítico al procesar el inventario del despacho: ' . $e->getMessage());
         }
     }

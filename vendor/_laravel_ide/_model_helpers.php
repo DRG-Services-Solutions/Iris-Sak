@@ -636,6 +636,8 @@ namespace App\Models {
      * @property mixed $picking_order_id
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
+     * @property \Illuminate\Support\Carbon|null $dispatched_at
+     * @property \Illuminate\Support\Carbon|null $assigned_to_pallet_at
      * @property mixed $source
      * @property \Illuminate\Support\Carbon|null $closed_at
      * @property string|null $notes
@@ -668,6 +670,8 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box whereNotes($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box whereClosedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box whereSource($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box whereAssignedToPalletAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box whereDispatchedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box wherePickingOrderId($value)
@@ -4247,7 +4251,10 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
-     * @property string|null $dispatched_at
+     * @property \Illuminate\Support\Carbon|null $located_at
+     * @property mixed $station
+     * @property string|null $next_station_movement
+     * @property \Illuminate\Support\Carbon|null $dispatched_at
      * @property \Illuminate\Support\Carbon|null $maquila_completed_at
      * @property \Illuminate\Support\Carbon|null $maquila_started_at
      * @property mixed $maquila_station
@@ -4280,6 +4287,9 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereMaquilaStartedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereMaquilaCompletedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereDispatchedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereNextStationMovement($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereStation($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereLocatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet newModelQuery()

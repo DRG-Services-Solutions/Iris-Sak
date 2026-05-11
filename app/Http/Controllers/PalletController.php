@@ -21,7 +21,7 @@ class PalletController extends Controller
     }
     public function assignToLocation(Request $request, Pallet $pallet)
     {
-        // 1. Validar el request
+        // 1. Validar el request (Laravel ya responde en JSON automático si falla y la petición es AJAX)
         $request->validate([
             'location_id' => 'required|exists:locations,id',
         ]);
@@ -31,14 +31,33 @@ class PalletController extends Controller
 
         // 3. Usar nuestro método inteligente en lugar de hasPallets()
         if (!$location->hasAvailableSpace()) {
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'La localidad seleccionada ya está llena o no tiene espacio disponible.'], 400);
+            }
             return redirect()->route('pallets.index')->with('error', 'La localidad seleccionada ya está llena o no tiene espacio disponible.');
         }
 
         // 4. Intentar asignar
         try {
             $pallet->assignToLocation($location);
+
+            // ---> AQUÍ ESTÁ LA MAGIA AJAX <---
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success'       => true,
+                    'location_code' => $location->code,
+                    'location_name' => $location->name,
+                    'message'       => 'Ubicación asignada'
+                ]);
+            }
+
+            // Respuesta clásica si no es AJAX
             return redirect()->route('pallets.index')->with('success', 'Tarima asignada a la localidad exitosamente.');
+
         } catch (\Exception $e) {
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            }
             return redirect()->route('pallets.index')->with('error', $e->getMessage());
         }
     }

@@ -21,6 +21,10 @@ return new class extends Migration
             $table->timestamp('maquila_started_at')->nullable();
             $table->timestamp('maquila_completed_at')->nullable();
             $table->timestamp('dispatched_at')->nullable();
+            $table->timestamp('next_station_movement')->nullable();
+            $table->enum('station', ['rack', 'picking', 'despachada'])->nullable();
+            $table->timestamp('located_at')->nullable();
+
 
             $table->timestamps();
         });

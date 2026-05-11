@@ -36,7 +36,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 Route::middleware('auth')->group(function () {
     //ruta de reportes
     Route::prefix('reports')->name('reports.')->middleware(['auth'])->group(function () {
-        Route::get('/storage-time', [ReportController::class, 'storageTimeReport'])->name('storage-time');
+        Route::get('/storage-time', [ReportController::class, 'traceabilityReport'])->name('storage-time');
     });
 
     //Ruta de reource de Maquila

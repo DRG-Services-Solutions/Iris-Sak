@@ -21,6 +21,8 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->timestamp('closed_at')->nullable();
             $table->enum('source', ['contenedor', 'reempaque'])->default('reempaque');
+            $table->timestamp('assigned_to_pallet_at')->nullable();
+            $table->timestamp('dispatched_at')->nullable();
             $table->timestamps();
         });
     }

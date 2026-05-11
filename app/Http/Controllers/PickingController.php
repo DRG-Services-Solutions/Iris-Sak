@@ -44,10 +44,11 @@ class PickingController extends Controller
             ->with(['container', 'location', 'boxes.containerItem'])
             ->orderBy('pallet_code')
             ->get();
+       
 
         $users = User::orderBy('name')->get();
 
-        return view('picking.create', compact('availablePallets', 'users'));
+        return view('picking.create', compact('availablePallets', 'users',  ));
     }
 
     public function store(Request $request)

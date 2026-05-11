@@ -76,11 +76,9 @@
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Contenedor</th>
-                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Proveedor</th>
                                 <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Declarado / Recibido</th>
                                 <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Aduana</th>
                                 <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Estatus</th>
-                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Etiquetas</th>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fecha</th>
                                 <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
                             </tr>
@@ -89,11 +87,9 @@
                             @forelse($containers as $container)
                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="text-sm font-bold text-gray-900 dark:text-white">{{ $container->container_number }}</span>
+                                        <span class="text-sm font-bold text-gray-900 dark:text-white">{{ $container->container_seal_number }}</span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                                        {{ $container->supplier ?? '—' }}
-                                    </td>
+                                   
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
                                         <span class="text-sm font-medium {{ $container->received_qty === $container->declared_qty ? 'text-green-600' : 'text-amber-600' }}">
                                             {{ number_format($container->received_qty) }} / {{ number_format($container->declared_qty) }}
@@ -126,9 +122,7 @@
                                             {{ ucfirst($container->status) }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-600 dark:text-gray-300">
-                                        {{ $container->inspection_labels_count ?? 0 }}
-                                    </td>
+                                    
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                         {{ $container->received_at?->format('d/m/Y H:i') ?? $container->created_at->format('d/m/Y H:i') }}
                                     </td>

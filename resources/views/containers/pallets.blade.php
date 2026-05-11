@@ -16,13 +16,13 @@
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center"><p class="text-2xl font-bold text-purple-600">{{ $stats['total_pallets'] }}</p><p class="text-xs text-gray-500">Total tarimas</p></div>
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center"><p class="text-2xl font-bold text-yellow-600">{{ $stats['pallets_open'] }}</p><p class="text-xs text-gray-500">Abiertas</p></div>
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center"><p class="text-2xl font-bold text-green-600">{{ $stats['pallets_closed'] }}</p><p class="text-xs text-gray-500">Cerradas</p></div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center"><p class="text-2xl font-bold text-green-600">{{ $stats['pallets_open'] }}</p><p class="text-xs text-gray-500">Abiertas</p></div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center"><p class="text-2xl font-bold text-yellow-600">{{ $stats['pallets_closed'] }}</p><p class="text-xs text-gray-500">Cerradas</p></div>
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 text-center"><p class="text-2xl font-bold text-indigo-600">{{ $stats['available_boxes'] }}</p><p class="text-xs text-gray-500">Cajas disponibles</p></div>
             </div>
 
             @forelse($container->pallets->sortByDesc('created_at') as $pallet)
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden" x-data="{ expanded: {{ $pallet->status === 'abierta' ? 'true' : 'false' }}, showAssign: false }">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden {{ $pallet->status !== 'abierta' ? 'opacity-75' : '' }}" x-data="{ expanded: {{ $pallet->status === 'abierta' ? 'true' : 'false' }}, showAssign: false, readonly: {{ $pallet->status !== 'abierta' ? 'true' : 'false' }} }">
                     <div class="px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 cursor-pointer border-b border-gray-200 dark:border-gray-700" @click="expanded = !expanded">
                         <div class="flex items-center space-x-3">
                             <div class="bg-purple-100 dark:bg-purple-900/30 p-2.5 rounded-lg"><i class="fas fa-pallet text-purple-600"></i></div>
@@ -34,7 +34,7 @@
                             @endif
                         </div>
                         <div class="flex items-center space-x-2">
-                            @php $pBadge = $pallet->status === 'abierta' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'; @endphp
+                            @php $pBadge = $pallet->status === 'abierta' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'; @endphp
                             <span class="px-2.5 py-0.5 rounded-full text-xs font-medium {{ $pBadge }}">{{ ucfirst($pallet->status) }}</span>
                             <a href="{{ route('pallets.show', $pallet) }}" class="text-purple-600 hover:text-purple-800 text-sm" @click.stop><i class="fas fa-qrcode"></i></a>
                             <svg class="w-5 h-5 text-gray-400 transition-transform" :class="{'rotate-180':expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
@@ -73,13 +73,22 @@
                                                     @php
                                                         $item = $boxes->first()->containerItem;
                                                         $maxBoxes = $boxes->count();
-                                                        // String invisible para el buscador
-                                                        $searchString = strtolower($item->barcode . ' ' . $item->product_code . ' ' . $item->product_description);
+                                                        
+                                                        // Usamos addslashes para evitar que comillas o apóstrofes rompan el Javascript
+                                                        $barcode = strtolower(trim($item->barcode ?? ''));
+                                                        $sku = strtolower(trim($item->product_code ?? ''));
+                                                        $desc = strtolower(trim($item->product_description ?? ''));
                                                     @endphp
                                                     
                                                     {{-- Tarjeta del Producto --}}
-                                                    <div x-show="searchBox === '' || '{{ $searchString }}'.includes(searchBox.toLowerCase())"
-                                                         class="flex flex-col p-4 bg-white dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
+                                                    <div x-show="
+                                                            searchBox === '' || 
+                                                            '{{ addslashes($barcode) }}' === searchBox.toLowerCase().trim() || 
+                                                            ('{{ addslashes($sku) }}' !== '' && '{{ addslashes($sku) }}' === searchBox.toLowerCase().trim()) || 
+                                                            '{{ addslashes($desc) }}'.includes(searchBox.toLowerCase().trim())
+                                                        "
+                                                        x-effect="if (searchBox.trim().toLowerCase() === '{{ addslashes($barcode) }}' && '{{ addslashes($barcode) }}' !== '') { $nextTick(() => { $refs.qtyInput_{{ $itemId }}.focus(); $refs.qtyInput_{{ $itemId }}.select(); }); }"
+                                                        class="flex flex-col p-4 bg-white dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
                                                         
                                                         <div class="mb-3 border-b border-gray-100 dark:border-gray-600 pb-2">
                                                             <div class="flex justify-between items-start">
@@ -98,9 +107,9 @@
                                                             
                                                             <div class="flex-1">
                                                                 <label class="block text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1">Cajas a asignar</label>
-                                                                {{-- El input arranca con el máximo disponible por defecto para mayor rapidez --}}
                                                                 <input type="number" name="quantity" min="1" max="{{ $maxBoxes }}" value="{{ $maxBoxes }}" required
-                                                                       class="w-full text-lg border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-bold text-center">
+                                                                    x-ref="qtyInput_{{ $itemId }}"
+                                                                    class="w-full text-lg border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-indigo-500 focus:border-indigo-500 font-bold text-center">
                                                             </div>
                                                             
                                                             <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition shadow-sm h-[42px] flex items-center justify-center">
