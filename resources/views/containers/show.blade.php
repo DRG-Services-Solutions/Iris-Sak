@@ -273,9 +273,9 @@
                                                     value="{{ $item->received_cartons }}"
                                                     min="0"
                                                     onchange="setCartonCount({{ $item->id }}, this)"
-                                                    onkeydown="if(event.key === 'Enter') this.blur();"
+                                                    onkeydown="handleEnterKey(event, this)"
                                                     onfocus="this.select()"
-                                                    class="w-14 text-center font-bold text-lg text-gray-900 dark:text-gray-100 bg-transparent border border-transparent hover:bg-gray-50 dark:hover:bg-gray-700 focus:bg-white dark:focus:bg-gray-800 focus:border-teal-500 focus:ring-2 focus:ring-teal-500 rounded px-1 py-0.5 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                    class="carton-input w-14 text-center font-bold text-lg text-gray-900 dark:text-gray-100 bg-transparent border border-transparent hover:bg-gray-50 dark:hover:bg-gray-700 focus:bg-white dark:focus:bg-gray-800 focus:border-teal-500 focus:ring-2 focus:ring-teal-500 rounded px-1 py-0.5 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                 >
 
                                                 <button type="button" onclick="addCarton({{ $item->id }})"
@@ -695,6 +695,28 @@
                 inputElement.value = inputElement.defaultValue;
             } finally {
                 inputElement.disabled = false;
+            }
+        }
+        function handleEnterKey(event, currentInput) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Evita comportamientos por defecto del navegador
+                currentInput.blur(); // Asegura que se dispare el onchange para guardar el dato en BD
+
+                // Crear un arreglo con todos los inputs que tengan la clase 'carton-input'
+                const inputs = Array.from(document.querySelectorAll('.carton-input'));
+                const currentIndex = inputs.indexOf(currentInput);
+
+                // Si hay un renglón siguiente, movemos el foco ahí
+                if (currentIndex !== -1 && currentIndex + 1 < inputs.length) {
+                    // Un micro-retraso permite que el fetch de guardado inicie antes de mover el foco
+                    setTimeout(() => {
+                        inputs[currentIndex + 1].focus();
+                    }, 50);
+                } else {
+                    // Si ya era el último renglón de la tabla, regresamos el foco al escáner principal
+                    const scanInput = document.querySelector('[x-ref="scanInput"]');
+                    if(scanInput) scanInput.focus();
+                }
             }
         }
 

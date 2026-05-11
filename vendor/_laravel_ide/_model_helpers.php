@@ -633,6 +633,7 @@ namespace App\Models {
     /**
      * App\Models\Box
      *
+     * @property mixed $picking_order_id
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property mixed $source
@@ -654,6 +655,7 @@ namespace App\Models {
      * @property-read \App\Models\ContainerItem $containerItem
      * @property-read \App\Models\Pallet $pallet
      * @property-read \App\Models\User $creator
+     * @property-read \App\Models\PickingOrder $pickingOrder
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box whereContainerId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box whereContainerItemId($value)
@@ -668,6 +670,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box whereSource($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box whereUpdatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box wherePickingOrderId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Box>|Box query()
@@ -4244,6 +4247,7 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
+     * @property string|null $dispatched_at
      * @property \Illuminate\Support\Carbon|null $maquila_completed_at
      * @property \Illuminate\Support\Carbon|null $maquila_started_at
      * @property mixed $maquila_station
@@ -4275,6 +4279,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereMaquilaStation($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereMaquilaStartedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereMaquilaCompletedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereDispatchedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet newModelQuery()
@@ -5232,27 +5237,34 @@ namespace App\Models {
     /**
      * App\Models\PickingOrderItem
      *
+     * @property mixed $quantity
+     * @property mixed $container_item_id
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property string|null $notes
      * @property \Illuminate\Support\Carbon|null $picked_at
      * @property mixed $picked_by
      * @property mixed $status
+     * @property mixed $pick_type
      * @property mixed $pallet_id
      * @property mixed $picking_order_id
      * @property int $id
      * @property-read \App\Models\PickingOrder $pickingOrder
      * @property-read \App\Models\Pallet $pallet
      * @property-read \App\Models\User $pickedByUser
+     * @property-read \App\Models\ContainerItem $containerItem
      * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem wherePickingOrderId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem wherePalletId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem wherePickType($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem whereStatus($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem wherePickedBy($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem wherePickedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem whereNotes($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem whereUpdatedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem whereContainerItemId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem whereQuantity($value)
      * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<PickingOrderItem>|PickingOrderItem query()

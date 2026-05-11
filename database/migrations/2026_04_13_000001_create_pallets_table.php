@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('container_id')->constrained('containers')->cascadeOnDelete();
             $table->string('pallet_code')->unique();
-            $table->enum('status', ['abierta', 'cerrada'])->default('abierta');
+            $table->enum('status', ['abierta', 'cerrada', 'despachado'])->default('abierta');
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->text('notes')->nullable();
             $table->timestamp('closed_at')->nullable();
@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('maquila_station')->nullable()->default(null);
             $table->timestamp('maquila_started_at')->nullable();
             $table->timestamp('maquila_completed_at')->nullable();
+            $table->timestamp('dispatched_at')->nullable();
 
             $table->timestamps();
         });

@@ -13,6 +13,7 @@ class Box extends Model
     protected $fillable = [
         'container_id', 'container_item_id', 'box_code', 'source',
         'expected_qty', 'quantity', 'status', 'pallet_id',
+        'picking_order_id', 
         'created_by', 'notes', 'closed_at',
     ];
 
@@ -24,6 +25,10 @@ class Box extends Model
     public function containerItem() { return $this->belongsTo(ContainerItem::class); }
     public function pallet()        { return $this->belongsTo(Pallet::class); }
     public function creator()       { return $this->belongsTo(User::class, 'created_by'); }
+    public function pickingOrder() 
+    { 
+        return $this->belongsTo(PickingOrder::class); 
+    }
 
     // --- Accesores ---
 

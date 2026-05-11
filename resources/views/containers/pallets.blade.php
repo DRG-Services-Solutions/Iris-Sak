@@ -27,6 +27,11 @@
                         <div class="flex items-center space-x-3">
                             <div class="bg-purple-100 dark:bg-purple-900/30 p-2.5 rounded-lg"><i class="fas fa-pallet text-purple-600"></i></div>
                             <div><h4 class="font-bold text-gray-900 dark:text-white">{{ $pallet->pallet_code }}</h4><p class="text-xs text-gray-500">{{ $pallet->boxes->count() }} cajas · {{ $pallet->boxes->sum('quantity') }} pzas · {{ $pallet->location?->code ?? 'Sin localidad' }}</p></div>
+                            @if($pallet->boxes->count() && $pallet->status === 'abierta')
+                                <div class="pt-2 border-t border-gray-100 dark:border-gray-700">
+                                    <form method="POST" action="{{ route('pallets.close', $pallet) }}" onsubmit="return confirm('¿Cerrar tarima {{ $pallet->pallet_code }}?')">@csrf @method('PATCH')<button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm"><i class="fas fa-lock mr-1"></i> Cerrar Tarima</button></form>
+                                </div>
+                            @endif
                         </div>
                         <div class="flex items-center space-x-2">
                             @php $pBadge = $pallet->status === 'abierta' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'; @endphp
@@ -35,29 +40,7 @@
                             <svg class="w-5 h-5 text-gray-400 transition-transform" :class="{'rotate-180':expanded}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </div>
                     </div>
-                    <div x-show="expanded" x-collapse x-cloak>
-                        <div class="px-6 py-3">
-                            @if($pallet->boxes->count())
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                                    @foreach($pallet->boxes->sortBy('box_code') as $box)
-                                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
-                                            <div>
-                                                <p class="font-mono font-bold text-sm text-gray-900 dark:text-white">
-                                                    {{ $box->containerItem?->barcode ?? 'Sin código' }}
-                                                    <span class="ml-1 px-1 py-0.5 rounded text-[10px] font-semibold {{ $box->source === 'contenedor' ? 'bg-teal-100 text-teal-700' : 'bg-indigo-100 text-indigo-700' }}">{{ $box->source === 'contenedor' ? 'ORI' : 'REE' }}</span>
-                                                </p>
-                                                <p class="text-xs text-gray-500 truncate max-w-[200px]">{{ $box->containerItem?->product_description ?? '' }}</p>
-                                                <p class="text-xs text-indigo-600 font-medium">{{ $box->quantity }} pzas</p>
-                                            </div>
-                                            @if($pallet->status === 'abierta')<form method="POST" action="{{ route('boxes.remove', $box) }}" class="ml-2">@csrf @method('PATCH')<button type="submit" class="text-red-400 hover:text-red-600"><i class="fas fa-times-circle text-lg"></i></button></form>@endif
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                <p class="text-sm text-gray-400 text-center py-4">Sin cajas asignadas.</p>
-                            @endif
-                        </div>
-                        @if($pallet->status === 'abierta')
+                    @if($pallet->status === 'abierta')
                             <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 space-y-4">
                                 <button @click="showAssign = !showAssign" class="text-sm text-indigo-600 hover:underline font-medium"><i class="fas fa-plus-circle mr-1"></i> Agregar cajas</button>
                                 <div x-show="showAssign" x-collapse x-cloak>
@@ -134,13 +117,32 @@
                                         </div>
                                     @endif
                                 </div>
-                                @if($pallet->boxes->count())
-                                    <div class="pt-2 border-t border-gray-100 dark:border-gray-700">
-                                        <form method="POST" action="{{ route('pallets.close', $pallet) }}" onsubmit="return confirm('¿Cerrar tarima {{ $pallet->pallet_code }}?')">@csrf @method('PATCH')<button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm"><i class="fas fa-lock mr-1"></i> Cerrar Tarima</button></form>
-                                    </div>
-                                @endif
+                                
                             </div>
                         @endif
+                    <div x-show="expanded" x-collapse x-cloak>
+                        <div class="px-6 py-3">
+                            @if($pallet->boxes->count())
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                    @foreach($pallet->boxes->sortBy('box_code') as $box)
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+                                            <div>
+                                                <p class="font-mono font-bold text-sm text-gray-900 dark:text-white">
+                                                    {{ $box->containerItem?->barcode ?? 'Sin código' }}
+                                                    <span class="ml-1 px-1 py-0.5 rounded text-[10px] font-semibold {{ $box->source === 'contenedor' ? 'bg-teal-100 text-teal-700' : 'bg-indigo-100 text-indigo-700' }}">{{ $box->source === 'contenedor' ? 'ORI' : 'REE' }}</span>
+                                                </p>
+                                                <p class="text-xs text-gray-500 truncate max-w-[200px]">{{ $box->containerItem?->product_description ?? '' }}</p>
+                                                <p class="text-xs text-indigo-600 font-medium">{{ $box->quantity }} pzas</p>
+                                            </div>
+                                            @if($pallet->status === 'abierta')<form method="POST" action="{{ route('boxes.remove', $box) }}" class="ml-2">@csrf @method('PATCH')<button type="submit" class="text-red-400 hover:text-red-600"><i class="fas fa-times-circle text-lg"></i></button></form>@endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="text-sm text-gray-400 text-center py-4">Sin cajas asignadas.</p>
+                            @endif
+                        </div>
+                        
                     </div>
                 </div>
             @empty

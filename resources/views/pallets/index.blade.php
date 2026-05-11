@@ -90,13 +90,13 @@
             @php
                 // Agrupamos las tarimas por el número de contenedor. Si no tienen, van a 'Sin Contenedor'
                 $groupedPallets = $pallets->groupBy(function($pallet) {
-                    return $pallet->container ? $pallet->container->container_number : 'Sin Contenedor Asignado';
+                    return $pallet->container ? $pallet->container->container_seal_number : 'Sin Contenedor Asignado';
                 });
             @endphp
 
             {{-- Contenedores en Acordeón --}}
             <div class="space-y-4">
-                @forelse($groupedPallets as $containerNumber => $containerPallets)
+                @forelse($groupedPallets as $containerNumber => $containerPallets )
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden" x-data="{ expanded: false }">
                         
                         {{-- Cabecera del Acordeón (Contenedor) --}}

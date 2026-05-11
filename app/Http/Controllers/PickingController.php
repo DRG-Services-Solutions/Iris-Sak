@@ -6,6 +6,7 @@ use App\Models\PickingOrder;
 use App\Models\PickingOrderItem;
 use App\Models\Pallet;
 use App\Models\User;
+use App\Models\Box;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +40,7 @@ class PickingController extends Controller
         // Tarimas cerradas con localidad asignada = disponibles para surtir
         $availablePallets = Pallet::closed()
             ->whereNotNull('location_id')
+            ->whereNotNull('maquila_completed_at')
             ->with(['container', 'location', 'boxes.containerItem'])
             ->orderBy('pallet_code')
             ->get();
@@ -111,18 +113,86 @@ class PickingController extends Controller
     }
 
     /**
-     * Marcar una tarima como preparada.
+     * Procesar y marcar una tarima (o fracción) como preparada.
      */
-    public function markItemPrepared(PickingOrderItem $item)
+    public function markItemPrepared(Request $request, PickingOrderItem $item)
     {
-        $item->markPrepared(Auth::id());
+        // 1. Validamos qué tipo de surtido nos envía la vista
+        $validated = $request->validate([
+            'pick_type'         => 'required|in:full_pallet,partial',
+            'container_item_id' => 'required_if:pick_type,partial|exists:container_items,id|nullable',
+            'quantity'          => 'required_if:pick_type,partial|integer|min:1|nullable',
+        ]);
 
-        // Si todos están preparados, completar la orden
         $order = $item->pickingOrder;
-        if ($order->items()->where('status', '!=', 'preparado')->doesntExist()) {
-            $order->complete();
-        }
+        $pallet = $item->pallet;
 
-        return back()->with('success', "Tarima {$item->pallet->pallet_code} marcada como preparada.");
+        DB::beginTransaction();
+        try {
+            if ($validated['pick_type'] === 'partial') {
+                
+                $boxesToPick = $pallet->boxes()
+                    ->where('container_item_id', $validated['container_item_id'])
+                    ->take($validated['quantity'])
+                    ->get();
+
+                if ($boxesToPick->count() < $validated['quantity']) {
+                    return back()->with('error', 'No hay suficientes cajas de este artículo en la tarima.');
+                }
+                foreach ($boxesToPick as $box) {
+                    $box->pallet_id = null; 
+                    $box->picking_order_id = $order->id; 
+                    $box->status = 'cerrada'; 
+                    $box->save();
+                }
+
+                // Descontamos las cajas de la tarima original y las asignamos al carrito/orden
+                Box::whereIn('id', $boxesToPick->pluck('id'))->update([
+                    'pallet_id'        => null, 
+                    'picking_order_id' => $order->id, 
+                ]);
+
+                // Actualizamos el registro de la orden para saber exactamente qué se pidió
+                $item->update([
+                    'pick_type'         => 'partial',
+                    'container_item_id' => $validated['container_item_id'],
+                    'quantity'          => $validated['quantity'],
+                ]);
+
+                $pallet->refresh(); 
+                if ($pallet->boxes()->count() === 0) {
+                    $pallet->update([
+                        'location_id' => null,
+                        'status'      => 'embarcado'
+                    ]);
+                }
+
+            } else {
+                
+                // Si se lleva la tarima entera, todas sus cajas se vinculan a la orden de inmediato
+                $pallet->boxes()->update([
+                    'picking_order_id' => $order->id,
+                ]);
+
+                $item->update([
+                    'pick_type' => 'full_pallet',
+                ]);
+            }
+
+            // 2. Marcamos el ítem como preparado (reutilizamos tu función del modelo)
+            $item->markPrepared(Auth::id());
+
+            // 3. Revisamos si con este movimiento la orden ya quedó completa al 100%
+            if ($order->items()->where('status', '!=', 'preparado')->doesntExist()) {
+                $order->complete();
+            }
+
+            DB::commit();
+            return back()->with('success', "Surtido registrado exitosamente para la tarima {$pallet->pallet_code}.");
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Error al procesar el surtido: ' . $e->getMessage());
+        }
     }
 }

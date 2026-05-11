@@ -179,6 +179,23 @@ class Pallet extends Model
             ]);
         }
     }
+
+    /**
+     * Procesa la salida física de la tarima del almacén.
+     */
+    public function dispatchPallet(): void
+    {
+        $this->update([
+            'location_id'   => null, 
+            'status'        => 'despachado', 
+            'dispatched_at' => now(), 
+        ]);
+
+        // 2. Marcamos todas sus cajas internas también como despachadas
+        $this->boxes()->update([
+            'status' => 'despachado'
+        ]);
+    }
     
     // --- Scopes ---
 

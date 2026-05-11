@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('box_code')->unique();
             $table->integer('quantity')->default(0);
             $table->integer('expected_qty')->default(0);
-            $table->enum('status', ['abierta', 'cerrada', 'en_tarima'])->default('abierta');
+            $table->enum('status', ['abierta', 'cerrada', 'en_tarima', 'despachada'])->default('abierta');
             $table->foreignId('pallet_id')->nullable()->constrained('pallets')->nullOnDelete();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->text('notes')->nullable();

@@ -34,8 +34,8 @@
                         </div>
                         <div class="text-right">
                             <p class="text-xs uppercase tracking-wider opacity-80">Contenedor</p>
-                            <p class="text-lg font-bold">{{ $pallet->container->container_number }}</p>
-                        </div>
+                            <p class="text-lg font-bold">{{ $pallet->container->container_seal_number }}</p>
+                       </div>
                     </div>
                 </div>
 

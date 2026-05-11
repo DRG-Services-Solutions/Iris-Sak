@@ -8,6 +8,7 @@ class PickingOrderItem extends Model
 {
     protected $fillable = [
         'picking_order_id', 'pallet_id', 'status',
+        'pick_type', 'container_item_id', 'quantity', // <-- Nuevos campos
         'picked_by', 'picked_at', 'notes',
     ];
 
@@ -16,6 +17,10 @@ class PickingOrderItem extends Model
     public function pickingOrder() { return $this->belongsTo(PickingOrder::class); }
     public function pallet()       { return $this->belongsTo(Pallet::class); }
     public function pickedByUser() { return $this->belongsTo(User::class, 'picked_by'); }
+    public function containerItem() 
+    { 
+        return $this->belongsTo(ContainerItem::class); 
+    }
 
     public function markPrepared(int $userId): void
     {
