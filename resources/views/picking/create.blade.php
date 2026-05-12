@@ -51,7 +51,7 @@
                             });
                         @endphp
 
-                        <div class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                        <div class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
                             @foreach($groupedPallets as $containerNumber => $pallets)
                                 {{-- Contenedor Acordeón --}}
                                 <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden" x-data="{ expanded: true }">
@@ -71,20 +71,39 @@
 
                                     {{-- Lista de Tarimas (Grid) --}}
                                     <div x-show="expanded" x-collapse x-cloak class="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             @foreach($pallets as $p)
                                                 <label class="flex items-start p-3 bg-white dark:bg-gray-700/30 rounded-lg border border-gray-200 dark:border-gray-600 cursor-pointer hover:border-orange-400 dark:hover:border-orange-500 shadow-sm transition">
-                                                    <input type="checkbox" name="pallet_ids[]" value="{{ $p->id }}" class="rounded border-gray-300 text-orange-600 focus:ring-orange-500 mt-1.5 mr-3 w-4 h-4">
-                                                    <div class="text-sm flex-1">
+                                                    <input type="checkbox" name="pallet_ids[]" value="{{ $p->id }}" class="rounded border-gray-300 text-orange-600 focus:ring-orange-500 mt-1.5 mr-3 w-4 h-4 flex-shrink-0">
+                                                    <div class="text-sm flex-1 w-full min-w-0">
                                                         <div class="flex justify-between items-start">
                                                             <p class="font-mono font-bold text-gray-900 dark:text-white">{{ $p->pallet_code }}</p>
-                                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300">
+                                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300 flex-shrink-0 ml-2">
                                                                 <i class="fas fa-map-marker-alt mr-1 text-emerald-500"></i>{{ $p->location?->code ?? 'Sin loc.' }}
                                                             </span>
                                                         </div>
                                                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                                             {{ $p->boxes->count() }} cajas · <span class="font-semibold">{{ number_format($p->boxes->sum('quantity')) }} pzas</span>
                                                         </p>
+                                                        
+                                                        {{-- SECCIÓN DE CÓDIGOS ÚNICOS --}}
+                                                        @php
+                                                            // Extrae solo los códigos de barras únicos y quita vacíos
+                                                            $uniqueCodes = $p->boxes->pluck('containerItem.barcode')->filter()->unique();
+                                                        @endphp
+                                                        @if($uniqueCodes->isNotEmpty())
+                                                            <div class="mt-2 pt-2 border-t border-gray-100 dark:border-gray-600">
+                                                                <p class="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase mb-1">Codigos incluidos:</p>
+                                                                <div class="flex flex-wrap gap-1">
+                                                                    @foreach($uniqueCodes as $code)
+                                                                        <span class="px-1.5 py-0.5 bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 rounded text-[10px] font-mono border border-indigo-100 dark:border-indigo-800/50">
+                                                                            {{ $code }}
+                                                                        </span>
+                                                                    @endforeach
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                        
                                                     </div>
                                                 </label>
                                             @endforeach
@@ -97,7 +116,7 @@
                         <div class="p-8 text-center bg-gray-50 dark:bg-gray-700/30 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-600">
                             <i class="fas fa-pallet text-4xl text-gray-300 dark:text-gray-500 mb-3"></i>
                             <p class="text-gray-500 dark:text-gray-400 font-medium">No hay tarimas disponibles para surtir.</p>
-                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Deben estar cerradas y con una localidad asignada en el almacén.</p>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Deben estar cerradas, con maquila completada y con una localidad asignada.</p>
                         </div>
                     @endif
                 </div>

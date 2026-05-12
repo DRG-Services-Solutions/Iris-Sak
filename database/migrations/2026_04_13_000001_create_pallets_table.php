@@ -23,6 +23,7 @@ return new class extends Migration
             $table->timestamp('dispatched_at')->nullable();
             $table->timestamp('next_station_movement')->nullable();
             $table->enum('station', ['rack', 'picking', 'despachada'])->nullable();
+            $table->enum('maquila_status', ['merma','faltante', 'sobrante', 'codigo', 'disponibles']);
             $table->timestamp('located_at')->nullable();
 
 

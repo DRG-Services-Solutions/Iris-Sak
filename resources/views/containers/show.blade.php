@@ -19,7 +19,6 @@
                 </div>
             </div>
             <div class="hidden md:flex items-center space-x-2">
-                <a href="{{ route('containers.inspection', $container) }}" class="px-3 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-500 transition text-sm font-medium"><i class="fas fa-tags mr-1"></i> Inspección</a>
                 <a href="{{ route('containers.packing', $container) }}" class="px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-500 transition text-sm font-medium"><i class="fas fa-box mr-1"></i> Empaque</a>
                 <a href="{{ route('containers.pallets', $container) }}" class="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition text-sm font-medium"><i class="fas fa-pallet mr-1"></i> Tarimas</a>
             </div>

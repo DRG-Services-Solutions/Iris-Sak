@@ -4,7 +4,7 @@
             <div class="flex items-center space-x-3">
                 <a href="{{ route('containers.packing', $container) }}" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition"><i class="fas fa-arrow-left text-lg"></i></a>
                 <div class="bg-gradient-to-br from-purple-600 to-purple-800 p-3 rounded-lg shadow-lg"><i class="fas fa-pallet text-white text-xl"></i></div>
-                <div><h2 class="font-bold text-2xl text-gray-800 dark:text-gray-100">Armado de Tarimas</h2><p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ $container->container_seal_number }}</p></div>
+                <div><h2 class="font-bold text-2xl text-gray-800 dark:text-gray-100">Armado de Tarimas</h2><p class="text-sm text-gray-600 dark:text-gray-400 mt-1">ID Contenedor: {{ $container->container_seal_number }}</p></div>
             </div>
             <form method="POST" action="{{ route('containers.create-pallet', $container) }}" class="inline">@csrf<button type="submit" class="px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition text-sm font-medium"><i class="fas fa-plus mr-1"></i> Nueva Tarima</button></form>
         </div>

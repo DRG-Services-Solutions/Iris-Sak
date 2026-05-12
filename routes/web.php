@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
     //ruta de reportes
     Route::prefix('reports')->name('reports.')->middleware(['auth'])->group(function () {
         Route::get('/storage-time', [ReportController::class, 'traceabilityReport'])->name('storage-time');
+        Route::get('/storage-time/pdf', [ReportController::class, 'exportStorageTimePdf'])->name('storage-time.pdf');
     });
 
     //Ruta de reource de Maquila
