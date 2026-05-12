@@ -19,7 +19,6 @@
                 ['route' => 'containers.index', 'routeIs' => 'containers.*', 'icon' => 'fa-ship',           'color' => 'text-teal-400',    'label' => 'Contenedores'],
                 ['route' => 'pallets.index',    'routeIs' => 'pallets.*',    'icon' => 'fa-box',            'color' => 'text-blue-400',    'label' => 'Tarimas'],
                 
-                // NUEVO ENLACE DE INVENTARIO
                 ['route' => 'inventory.index',  'routeIs' => 'inventory.*',  'icon' => 'fa-boxes',          'color' => 'text-cyan-400',    'label' => 'Inventario'],
                 
                 ['route' => 'warehouse.locations','routeIs' => 'warehouse.*','icon' => 'fa-warehouse',      'color' => 'text-emerald-400', 'label' => 'Localidades'],
