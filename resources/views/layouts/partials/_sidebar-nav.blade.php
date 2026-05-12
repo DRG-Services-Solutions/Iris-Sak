@@ -18,6 +18,10 @@
             'links' => [
                 ['route' => 'containers.index', 'routeIs' => 'containers.*', 'icon' => 'fa-ship',           'color' => 'text-teal-400',    'label' => 'Contenedores'],
                 ['route' => 'pallets.index',    'routeIs' => 'pallets.*',    'icon' => 'fa-box',            'color' => 'text-blue-400',    'label' => 'Tarimas'],
+                
+                // NUEVO ENLACE DE INVENTARIO
+                ['route' => 'inventory.index',  'routeIs' => 'inventory.*',  'icon' => 'fa-boxes',          'color' => 'text-cyan-400',    'label' => 'Inventario'],
+                
                 ['route' => 'warehouse.locations','routeIs' => 'warehouse.*','icon' => 'fa-warehouse',      'color' => 'text-emerald-400', 'label' => 'Localidades'],
                 ['route' => 'maquila.index',    'routeIs' => 'customs.*',    'icon' => 'fa-passport',       'color' => 'text-red-400',     'label' => 'Maquila'],
                 ['route' => 'picking.index',    'routeIs' => 'picking.*',    'icon' => 'fa-clipboard-list', 'color' => 'text-orange-400',  'label' => 'Surtido'],
@@ -34,7 +38,6 @@
             'title' => 'Administración',
             'links' => [
                 ['route' => 'users.index', 'routeIs' => 'users.*', 'icon' => 'fa-users',       'color' => 'text-violet-400',  'label' => 'Usuarios'],
-                ['route' => 'roles.index', 'routeIs' => 'roles.*', 'icon' => 'fa-user-shield',  'color' => 'text-emerald-400', 'label' => 'Roles y Permisos'],
             ]
         ],
     ];

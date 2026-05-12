@@ -210,4 +210,25 @@ class ReportController extends Controller
         if ($box->status === 'cerrada') return 'disponible_sin_tarima';
         return 'en_recepcion';
     }
+
+    public function currentInventory(Request $request)
+    {
+        $boxes = Box::with(['container', 'pallet.location', 'containerItem'])
+                    ->where('status', '!=', 'embarcado')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+        $stats = [
+            'total_cajas'        => $boxes->count(),
+            'total_piezas'       => $boxes->sum('quantity'),
+            'total_tarimas'      => $boxes->pluck('pallet_id')->filter()->unique()->count(),
+            'total_contenedores' => $boxes->pluck('container_id')->filter()->unique()->count(),
+        ];
+
+        return view('inventory.index', compact('boxes', 'stats'));
+    }
+
+
+
+    
 }
