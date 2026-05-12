@@ -4252,6 +4252,7 @@ namespace App\Models {
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property \Illuminate\Support\Carbon|null $located_at
+     * @property mixed $maquila_status
      * @property mixed $station
      * @property string|null $next_station_movement
      * @property \Illuminate\Support\Carbon|null $dispatched_at
@@ -4289,6 +4290,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereDispatchedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereNextStationMovement($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereStation($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereMaquilaStatus($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereLocatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Pallet>|Pallet whereUpdatedAt($value)

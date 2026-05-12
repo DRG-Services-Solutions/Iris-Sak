@@ -11,8 +11,8 @@
     
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            @if(session('success'))<div class="p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 text-green-800 dark:text-green-200 rounded-lg"><i class="fas fa-check-circle mr-2"></i>{{ session('success') }}</div>
-            @endif
+            @if(session('success'))<div class="p-4 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 text-green-800 dark:text-green-200 rounded-lg"><i class="fas fa-check-circle mr-2"></i>{{ session('success') }}</div>@endif
+            
             {{-- Formulario de Filtros --}}
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700" x-data="{ showFilters: {{ request()->anyFilled(['container', 'pallet', 'article', 'date_from', 'date_to']) ? 'true' : 'false' }} }">
                 <div class="px-5 py-3 flex items-center justify-between cursor-pointer bg-gray-50 dark:bg-gray-700/50 rounded-t-lg" @click="showFilters = !showFilters">
@@ -28,7 +28,6 @@
                 
                 <div x-show="showFilters" x-collapse>
                     <form method="GET" action="{{ route('maquila.index') }}" class="p-5">
-                        {{-- Mantener el filtro de estación si existe --}}
                         @if(request('station'))
                             <input type="hidden" name="station" value="{{ request('station') }}">
                         @endif
@@ -87,12 +86,10 @@
                 @php
                     $palletsInContainer = $container->pallets;
                     
-                    // Aplicar filtros de la URL
                     if ($stationFilter === 'sin_iniciar') { $palletsInContainer = $palletsInContainer->filter(fn($p) => $p->maquila_started_at === null); }
                     elseif ($stationFilter === 'completado') { $palletsInContainer = $palletsInContainer->filter(fn($p) => $p->maquila_completed_at !== null); }
                     elseif (is_numeric($stationFilter)) { $palletsInContainer = $palletsInContainer->filter(fn($p) => $p->maquila_station == $stationFilter && $p->maquila_completed_at === null); }
                     
-                    // Si después del filtro el contenedor se queda sin tarimas, lo ocultamos
                     if ($palletsInContainer->isEmpty() && $stationFilter) { continue; }
                 @endphp
                 
@@ -136,8 +133,23 @@
                                 <div class="px-5 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3 {{ $isCompleted ? 'bg-green-50/50 dark:bg-green-900/5' : '' }} hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
                                     <div class="flex items-center space-x-3 flex-1">
                                         <div>
-                                            <p class="font-mono font-bold text-sm text-gray-900 dark:text-white">{{ $pallet->pallet_code }}</p>
-                                            <p class="text-xs text-gray-500">
+                                            <div class="flex items-center space-x-2">
+                                                <p class="font-mono font-bold text-sm text-gray-900 dark:text-white">{{ $pallet->pallet_code }}</p>
+                                                
+                                                {{-- BADGE DE INCIDENCIA VISUAL --}}
+                                                @if($pallet->maquila_status && $pallet->maquila_status == 'normal')
+                                                    <span class="px-2 py-0.5 bg-green-100 text-green-700 border border-green-200 dark:bg-green-900/30 dark:border-green-800 dark:text-green-400 rounded text-[10px] font-bold uppercase shadow-sm">
+
+                                                        <i class="fas fa-exclamation-triangle mr-1"></i>{{ $pallet->maquila_status }}
+                                                    </span>
+                                                @elseif ($pallet->maquila_status !== 'normal')
+                                                    <span class="px-2 py-0.5 bg-red-100 text-red-700 border border-red-200 dark:bg-red-900/30 dark:border-red-800 dark:text-red-400 rounded text-[10px] font-bold uppercase shadow-sm">
+                                                        <i class="fas fa-exclamation-triangle mr-1"></i>{{ $pallet->maquila_status }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                            
+                                            <p class="text-xs text-gray-500 mt-1">
                                                 @if($pallet->location)
                                                     <span class="text-emerald-600 dark:text-emerald-400 font-medium mr-1"><i class="fas fa-map-marker-alt"></i> {{ $pallet->location->code }}</span> 
                                                 @else
@@ -158,11 +170,18 @@
                                     
                                     <div class="flex items-center space-x-2 flex-shrink-0">
                                         @if(!$isCompleted)
+                                            
+                                            {{-- BOTÓN PARA ABRIR MODAL DE INCIDENCIA --}}
+                                            <button type="button" title="Reportar Incidencia" 
+                                                @click="$dispatch('open-incident-modal', { id: {{ $pallet->id }}, code: '{{ $pallet->pallet_code }}', status: '{{ $pallet->maquila_status ?? 'disponibles' }}' })"
+                                                class="px-2 py-1.5 rounded-md text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition text-sm">
+                                                <i class="fas fa-flag"></i>
+                                            </button>
+
                                             <div class="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-0.5">
                                                 @foreach([1, 2, 3] as $st)
                                                     @php
                                                         $isCurrentStation = $pallet->maquila_station === $st;
-                                                        // Si el contador global de esta estación es > 0, está ocupada
                                                         $isStationOccupied = $stationCounts[$st] > 0; 
                                                         $isDisabled = $isCurrentStation || $isStationOccupied;
                                                     @endphp
@@ -187,6 +206,13 @@
                                                 </form>
                                             @endif
                                         @else
+                                            {{-- También permitimos reportar incidencia aunque esté completada por si hay ajustes post-maquila --}}
+                                            <button type="button" title="Reportar Incidencia" 
+                                                @click="$dispatch('open-incident-modal', { id: {{ $pallet->id }}, code: '{{ $pallet->pallet_code }}', status: '{{ $pallet->maquila_status ?? 'disponibles' }}' })"
+                                                class="px-2 py-1.5 rounded-md text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition text-sm">
+                                                <i class="fas fa-flag"></i>
+                                            </button>
+
                                             <a href="{{ route('maquila.print-label', $pallet) }}" target="_blank" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-xs font-medium transition shadow-sm">
                                                 <i class="fas fa-print mr-1"></i> Imprimir Etiqueta
                                             </a>
@@ -206,4 +232,71 @@
             @endforelse
         </div>
     </div>
-</x-app-layout>
+
+    {{-- ======================================================== --}}
+    {{-- MODAL DE INCIDENCIAS (GLOBAL PARA LA VISTA)              --}}
+    {{-- ======================================================== --}}
+    <div x-data="{
+            open: false,
+            palletId: null,
+            palletCode: '',
+            status: 'disponibles',
+            openModal(e) {
+                this.palletId = e.detail.id;
+                this.palletCode = e.detail.code;
+                this.status = e.detail.status || 'disponibles';
+                this.open = true;
+            }
+        }"
+        @open-incident-modal.window="openModal($event)"
+        x-show="open"
+        x-cloak
+        class="fixed inset-0 z-50 flex items-center justify-center"
+        aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        
+        {{-- Fondo oscuro --}}
+        <div x-show="open" x-transition.opacity class="fixed inset-0 bg-gray-900/75 dark:bg-gray-900/90 transition-opacity"></div>
+
+        {{-- Contenedor del Modal --}}
+        <div x-show="open" 
+             x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             @click.outside="open = false"
+             class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6 overflow-hidden mx-4">
+            
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white" id="modal-title">
+                    <i class="fas fa-flag text-red-500 mr-2"></i> Reportar Incidencia
+                </h3>
+                <button @click="open = false" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                Actualizando estatus para la tarima: <span class="font-mono font-bold text-gray-800 dark:text-gray-200" x-text="palletCode"></span>
+            </p>
+
+            <form x-bind:action="'{{ url('maquila/status') }}/' + palletId" method="POST">
+                @csrf
+                @method('PATCH')
+                
+                <div class="mb-5">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Tipo de Incidencia</label>
+                    <select name="maquila_status" x-model="status" required class="w-full border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-sm focus:ring-pink-500 focus:border-pink-500 dark:text-white py-2.5">
+                        <option value="disponibles">Sin incidencias (Disponibles)</option>
+                        <option value="merma">Merma (Daño)</option>
+                        <option value="faltante">Faltante físico</option>
+                        <option value="sobrante">Sobrante físico</option>
+                        <option value="codigo">Error en Código</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" @click="open = false" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-500 transition shadow">Guardar Estatus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</x-app-layout>w

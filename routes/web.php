@@ -41,11 +41,12 @@ Route::middleware('auth')->group(function () {
     });
 
     //Ruta de reource de Maquila
-    Route::resource('maquila', MaquilaController::class);
     Route::post('/maquila/{pallet}/move', [MaquilaController::class, 'moveToStation'])->name('maquila.move');
     Route::post('/maquila/{pallet}/complete', [MaquilaController::class, 'complete'])->name('maquila.complete');
     Route::get('/maquila/logs', [MaquilaController::class, 'logs'])->name('maquila.logs');
     Route::get('/maquila/{pallet}/print-label', [MaquilaController::class, 'printLabel'])->name('maquila.print-label');
+    Route::patch('/maquila/status/{pallet}', [MaquilaController::class, 'updateStatus'])->name('maquila.update-status');
+    Route::resource('maquila', MaquilaController::class);
 
     //Ruta de resource de Pallets
     Route::resource('pallets', PalletController::class);

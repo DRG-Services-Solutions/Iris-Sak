@@ -24,7 +24,8 @@ class Pallet extends Model
         'maquila_started_at',
         'maquila_completed_at',
         'located_at', 
-        'dispatched_at'
+        'dispatched_at',
+        'maquila_status',
         
     ];
 
