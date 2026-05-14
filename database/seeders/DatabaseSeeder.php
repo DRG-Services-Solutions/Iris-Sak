@@ -35,5 +35,14 @@ class DatabaseSeeder extends Seeder
         
         $superAdmin->assignRole($roleSuperAdmin);
 
+        $supervisor = User::factory()->create([
+            'name' => 'Supervisor',
+            'email' => 'supervisionalmacen1@saklogistiks.com',
+            'password' => bcrypt('Sak#2026!'), 
+            'tenant_id' => null,
+        ]);
+
+        )
+
     }  
 }
