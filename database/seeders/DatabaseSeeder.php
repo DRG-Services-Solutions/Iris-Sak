@@ -35,6 +35,9 @@ class DatabaseSeeder extends Seeder
         
         $superAdmin->assignRole($roleSuperAdmin);
 
+        // --- FASE 1: EL SUPER ADMIN (Global) ---
+
+
         $supervisor = User::factory()->create([
             'name' => 'Supervisor',
             'email' => 'supervisionalmacen1@saklogistiks.com',
@@ -42,7 +45,15 @@ class DatabaseSeeder extends Seeder
             'tenant_id' => null,
         ]);
 
-        )
+        $roleSupervisor = Role::create([
+            'name' => 'Supervisor', 
+            'tenant_id' => null
+        ]);
+        
+        $supervisor->assignRole($roleSupervisor);
+
+
+        
 
     }  
 }
