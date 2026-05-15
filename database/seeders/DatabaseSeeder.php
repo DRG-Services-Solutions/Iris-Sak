@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // --- FASE 1: EL SUPER ADMIN (Global) ---
+        /**
         
         $superAdmin = User::factory()->create([
             'name' => 'Super Admin',
@@ -35,7 +36,7 @@ class DatabaseSeeder extends Seeder
         
         $superAdmin->assignRole($roleSuperAdmin);
 
-        // --- FASE 1: EL SUPER ADMIN (Global) ---
+        // --- FASE 2: EL SUPERVISOR (Global) ---
 
 
         $supervisor = User::factory()->create([
@@ -51,6 +52,25 @@ class DatabaseSeeder extends Seeder
         ]);
         
         $supervisor->assignRole($roleSupervisor);
+
+         */
+
+        // -- Fase 3: El Gerente de Almacen  de Sak Logistics-
+
+        $gerente = User::factory()->create([
+            'name' => 'Gerente',
+            'email' => 'emmanuel.d@saklogistiks.com',
+            'password' => bcrypt('Sak#2026!'), 
+            'tenant_id' => null,
+        ]);
+
+        $roleGerente = Role::create([
+            'name' => 'Gerente',
+            'tenant_id' => null
+        ]);
+
+        $gerente->assignRole($roleGerente);
+
 
 
         
