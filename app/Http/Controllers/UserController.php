@@ -17,21 +17,27 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
+        $search = $request->input('search');
 
-        if ($user->hasRole('Super Admin')) {
-            // ¡Asegúrate de tener ->with('roles') aquí!
-            $users = User::with('roles')->paginate(10); 
-        } else {
-            // ¡Y aquí también!
-            $users = User::where('tenant_id', $user->tenant_id)
-                         ->with('roles')
-                         ->paginate(10);
+        $query = User::with(['roles', 'tenant']);
+
+        if (!$user->hasRole('Super Admin')) {
+            $query->where('tenant_id', $user->tenant_id);
         }
 
-        return view('users.index', compact('users'));
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+
+        return view('users.index', compact('users', 'search'));
     }
 
     /**
@@ -112,9 +118,25 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $tenants = Tenant::where('is_active', true)->get();
+        $currentUser = auth()->user();
+
+        // Los admins de tenant solo pueden editar usuarios de su propio tenant
+        if (!$currentUser->hasRole('Super Admin') && $user->tenant_id !== $currentUser->tenant_id) {
+            abort(403, 'No tienes permiso para editar este usuario.');
+        }
+
+        if ($currentUser->hasRole('Super Admin')) {
+            $tenants = Tenant::where('is_active', true)->get();
+            $roles = Role::whereNull('tenant_id')->orWhere('tenant_id', $user->tenant_id)->get();
+        } else {
+            $tenants = [];
+            $roles = Role::where('tenant_id', $currentUser->tenant_id)->get();
+        }
+
+        // Obtener el rol actual del usuario
+        $currentRole = $user->roles->first()?->name;
         
-        return view('users.edit', compact('user', 'tenants'));
+        return view('users.edit', compact('user', 'tenants', 'roles', 'currentRole'));
     }
 
     /**
@@ -122,17 +144,33 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
+        $currentUser = auth()->user();
+
+        // Los admins de tenant solo pueden actualizar usuarios de su propio tenant
+        if (!$currentUser->hasRole('Super Admin') && $user->tenant_id !== $currentUser->tenant_id) {
+            abort(403, 'No tienes permiso para actualizar este usuario.');
+        }
+
         $data = [
             'name' => $request->name,
             'email' => $request->email,
-            'tenant_id' => $request->tenant_id,
         ];
+
+        // Solo Super Admin puede cambiar el tenant
+        if ($currentUser->hasRole('Super Admin') && $request->has('tenant_id')) {
+            $data['tenant_id'] = $request->tenant_id;
+        }
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
 
         $user->update($data);
+
+        // Sincronizar rol si fue enviado
+        if ($request->filled('role')) {
+            $user->syncRoles([$request->role]);
+        }
 
         return redirect()->route('users.index')
                          ->with('success', '¡Usuario actualizado exitosamente!');
@@ -152,5 +190,31 @@ class UserController extends Controller
 
         return redirect()->route('users.index')
                          ->with('success', '¡Usuario eliminado exitosamente!');
+    }
+
+    /**
+     * Toggle the active/inactive status of a user.
+     */
+    public function toggleStatus(User $user)
+    {
+        $currentUser = auth()->user();
+
+        // Prevent self-deactivation
+        if ($currentUser->id === $user->id) {
+            return redirect()->route('users.index')
+                             ->with('error', 'No puedes desactivar tu propia cuenta.');
+        }
+
+        // Tenant admins can only toggle users of their own tenant
+        if (!$currentUser->hasRole('Super Admin') && $user->tenant_id !== $currentUser->tenant_id) {
+            abort(403, 'No tienes permiso para modificar este usuario.');
+        }
+
+        $user->update(['is_active' => !$user->is_active]);
+
+        $statusLabel = $user->is_active ? 'activado' : 'desactivado';
+
+        return redirect()->route('users.index')
+                         ->with('success', "Usuario {$statusLabel} exitosamente.");
     }
 }

@@ -55,8 +55,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('pallets', PalletController::class);
     Route::post('/pallets/{pallet}/assign-location', [PalletController::class, 'assignToLocation'])->name('pallets.assign-location');
 
-    //Ruta de resource de Usuarios
-    Route::resource('users', UserController::class);
+    //Ruta de resource de Usuarios — Solo Super Admin, Director y Gerente
+    Route::middleware('role:Super Admin|Director|Gerente')->group(function () {
+        Route::resource('users', UserController::class);
+        Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+    });
 
     //Ruta de roles
     Route::resource('roles', RoleController::class);
@@ -169,6 +172,7 @@ Route::middleware('auth')->group(function () {
     // Tarimas (operaciones individuales)
     Route::post('/pallets/{pallet}/assign-boxes', [BoxController::class, 'assignBoxes'])->name('pallets.assign-boxes');
     Route::post('/pallets/{pallet}/assign-bulk', [BoxController::class, 'assignBulk'])->name('pallets.assign-bulk');
+    Route::post('/pallets/{pallet}/remove-bulk', [BoxController::class, 'removeBulk'])->name('pallets.remove-bulk');
     Route::patch('/pallets/{pallet}/close', [BoxController::class, 'closePallet'])->name('pallets.close');
     Route::get('/pallets/{pallet}', [BoxController::class, 'showPallet'])->name('pallets.show');
     Route::get('/pallets/{pallet}/print-label', [BoxController::class, 'printLabel'])->name('containers.label-4x2');

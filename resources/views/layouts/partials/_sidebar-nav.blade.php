@@ -3,9 +3,15 @@
     Recibe $mode = 'desktop' | 'mobile'
     En desktop: los labels se ocultan cuando el sidebar está contraído
     En mobile:  siempre se muestran
+
+    Visibilidad de secciones:
+    - Todas las secciones: visibles para todos los roles autenticados
+    - Sección "Administración" (Usuarios): solo Super Admin, Director, Gerente
 --}}
 
 @php
+    $canManageUsers = auth()->check() && auth()->user()->hasAnyRole(['Super Admin', 'Director', 'Gerente']);
+
     $sections = [
         [
             'title' => null,
@@ -18,9 +24,7 @@
             'links' => [
                 ['route' => 'containers.index', 'routeIs' => 'containers.*', 'icon' => 'fa-ship',           'color' => 'text-teal-400',    'label' => 'Contenedores'],
                 ['route' => 'pallets.index',    'routeIs' => 'pallets.*',    'icon' => 'fa-box',            'color' => 'text-blue-400',    'label' => 'Tarimas'],
-                
                 ['route' => 'inventory.index',  'routeIs' => 'inventory.*',  'icon' => 'fa-boxes',          'color' => 'text-cyan-400',    'label' => 'Inventario'],
-                
                 ['route' => 'warehouse.locations','routeIs' => 'warehouse.*','icon' => 'fa-warehouse',      'color' => 'text-emerald-400', 'label' => 'Localidades'],
                 ['route' => 'maquila.index',    'routeIs' => 'customs.*',    'icon' => 'fa-passport',       'color' => 'text-red-400',     'label' => 'Maquila'],
                 ['route' => 'picking.index',    'routeIs' => 'picking.*',    'icon' => 'fa-clipboard-list', 'color' => 'text-orange-400',  'label' => 'Surtido'],
@@ -33,13 +37,17 @@
                 ['route' => 'reports.storage-time', 'routeIs' => 'reports.*', 'icon' => 'fa-chart-line', 'color' => 'text-pink-400', 'label' => 'Lead Time (Almacenaje)'],
             ]
         ],
-        [
+    ];
+
+    // Sección Administración: solo para Super Admin, Director y Gerente
+    if ($canManageUsers) {
+        $sections[] = [
             'title' => 'Administración',
             'links' => [
-                ['route' => 'users.index', 'routeIs' => 'users.*', 'icon' => 'fa-users',       'color' => 'text-violet-400',  'label' => 'Usuarios'],
+                ['route' => 'users.index', 'routeIs' => 'users.*', 'icon' => 'fa-users', 'color' => 'text-violet-400', 'label' => 'Usuarios'],
             ]
-        ],
-    ];
+        ];
+    }
 
     $isDesktop = ($mode ?? 'desktop') === 'desktop';
 @endphp

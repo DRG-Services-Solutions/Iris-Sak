@@ -132,14 +132,11 @@ class MaquilaController extends Controller
     public function updateStatus(Request $request, Pallet $pallet)
     {
         $validated = $request->validate([
-            'maquila_status' => 'required|in:merma,faltante,sobrante,codigo,disponibles'
+            'maquila_status' => 'required|in:normal,merma,faltante,sobrante,codigo,disponibles'
         ]);
 
-        // Opcional: Si es "disponibles", puedes guardarlo como null para limpiar la base de datos
-        $statusToSave = $validated['maquila_status'] === 'disponibles' ? null : $validated['maquila_status'];
-
         $pallet->update([
-            'maquila_status' => $statusToSave
+            'maquila_status' => $validated['maquila_status']
         ]);
 
         return back()->with('success', "Incidencia actualizada para la tarima {$pallet->pallet_code}.");

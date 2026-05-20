@@ -12,7 +12,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -30,6 +30,7 @@ class UpdateUserRequest extends FormRequest
             ],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'tenant_id' => ['nullable', 'exists:tenants,id'],
+            'role' => ['nullable', 'exists:roles,name'],
         ];
     }
 }

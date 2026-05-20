@@ -132,26 +132,87 @@
                     <div x-show="expanded" x-collapse x-cloak>
                         <div class="px-6 py-3">
                             @if($pallet->boxes->count())
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                                    @foreach($pallet->boxes->sortBy('box_code') as $box)
-                                        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
-                                            <div>
-                                                <p class="font-mono font-bold text-sm text-gray-900 dark:text-white">
-                                                    {{ $box->containerItem?->barcode ?? 'Sin código' }}
-                                                    <span class="ml-1 px-1 py-0.5 rounded text-[10px] font-semibold {{ $box->source === 'contenedor' ? 'bg-teal-100 text-teal-700' : 'bg-indigo-100 text-indigo-700' }}">{{ $box->source === 'contenedor' ? 'ORI' : 'REE' }}</span>
-                                                </p>
-                                                <p class="text-xs text-gray-500 truncate max-w-[200px]">{{ $box->containerItem?->product_description ?? '' }}</p>
-                                                <p class="text-xs text-indigo-600 font-medium">{{ $box->quantity }} pzas</p>
+                                {{-- Batch remove form wrapper with Alpine state --}}
+                                <div x-data="{
+                                        selected: [],
+                                        get allIds() { return {{ json_encode($pallet->boxes->pluck('id')->values()) }}; },
+                                        get allSelected() { return this.selected.length === this.allIds.length && this.allIds.length > 0; },
+                                        toggleAll() { this.selected = this.allSelected ? [] : [...this.allIds]; }
+                                     }">
+
+                                    {{-- Toolbar: select-all + remove selected button --}}
+                                    @if($pallet->status === 'abierta')
+                                    <div class="flex items-center justify-between mb-3 p-2 bg-gray-50 dark:bg-gray-700/60 rounded-lg border border-gray-200 dark:border-gray-600">
+                                        <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700 dark:text-gray-300 select-none">
+                                            <input type="checkbox"
+                                                   :checked="allSelected"
+                                                   @change="toggleAll()"
+                                                   class="w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer">
+                                            <span x-text="selected.length > 0 ? selected.length + ' seleccionada(s)' : 'Seleccionar todo'"></span>
+                                        </label>
+
+                                        <form method="POST" action="{{ route('pallets.remove-bulk', $pallet) }}"
+                                              x-show="selected.length > 0"
+                                              x-cloak
+                                              @submit.prevent="if(confirm('¿Retirar ' + selected.length + ' caja(s) de la tarima?')) $el.submit()">
+                                            @csrf
+                                            <template x-for="id in selected" :key="id">
+                                                <input type="hidden" name="box_ids[]" :value="id">
+                                            </template>
+                                            <button type="submit"
+                                                    class="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg transition shadow-sm">
+                                                <i class="fas fa-times-circle"></i>
+                                                <span x-text="'Retirar ' + selected.length + ' caja(s)'"></span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    @endif
+
+                                    {{-- Boxes grid --}}
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                        @foreach($pallet->boxes->sortBy('box_code') as $box)
+                                            <div class="flex items-start gap-2 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600
+                                                        transition-colors"
+                                                 :class="selected.includes({{ $box->id }}) ? 'ring-2 ring-red-400 border-red-400 bg-red-50 dark:bg-red-900/20' : ''">
+
+                                                {{-- Checkbox (only on open pallets) --}}
+                                                @if($pallet->status === 'abierta')
+                                                <input type="checkbox"
+                                                       :value="{{ $box->id }}"
+                                                       x-model="selected"
+                                                       class="mt-1 w-4 h-4 rounded border-gray-300 text-red-600 focus:ring-red-500 cursor-pointer flex-shrink-0">
+                                                @endif
+
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="font-mono font-bold text-sm text-gray-900 dark:text-white">
+                                                        {{ $box->containerItem?->barcode ?? 'Sin código' }}
+                                                        <span class="ml-1 px-1 py-0.5 rounded text-[10px] font-semibold {{ $box->source === 'contenedor' ? 'bg-teal-100 text-teal-700' : 'bg-indigo-100 text-indigo-700' }}">
+                                                            {{ $box->source === 'contenedor' ? 'ORI' : 'REE' }}
+                                                        </span>
+                                                    </p>
+                                                    <p class="text-xs text-gray-500 truncate max-w-[180px]">{{ $box->containerItem?->product_description ?? '' }}</p>
+                                                    <p class="text-xs text-indigo-600 font-medium">{{ $box->quantity }} pzas</p>
+                                                </div>
+
+                                                {{-- Single remove button --}}
+                                                @if($pallet->status === 'abierta')
+                                                <form method="POST" action="{{ route('boxes.remove', $box) }}" class="flex-shrink-0">
+                                                    @csrf @method('PATCH')
+                                                    <button type="submit"
+                                                            title="Retirar esta caja"
+                                                            class="text-red-400 hover:text-red-600 transition mt-0.5">
+                                                        <i class="fas fa-times-circle text-lg"></i>
+                                                    </button>
+                                                </form>
+                                                @endif
                                             </div>
-                                            @if($pallet->status === 'abierta')<form method="POST" action="{{ route('boxes.remove', $box) }}" class="ml-2">@csrf @method('PATCH')<button type="submit" class="text-red-400 hover:text-red-600"><i class="fas fa-times-circle text-lg"></i></button></form>@endif
-                                        </div>
-                                    @endforeach
+                                        @endforeach
+                                    </div>
                                 </div>
                             @else
                                 <p class="text-sm text-gray-400 text-center py-4">Sin cajas asignadas.</p>
                             @endif
                         </div>
-                        
                     </div>
                 </div>
             @empty

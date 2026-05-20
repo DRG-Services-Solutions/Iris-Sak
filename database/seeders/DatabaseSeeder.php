@@ -19,8 +19,14 @@ class DatabaseSeeder extends Seeder
         // 1. Limpiar la caché de Spatie Permissions (Súper importante cuando hacemos seeds)
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+        // --- Roles y Permisos base del sistema ---
+        $this->call([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+        ]);
+
         // --- FASE 1: EL SUPER ADMIN (Global) ---
-        /**
+        /*
         
         $superAdmin = User::factory()->create([
             'name' => 'Super Admin',
@@ -55,22 +61,24 @@ class DatabaseSeeder extends Seeder
 
          */
 
-        // -- Fase 3: El Gerente de Almacen  de Sak Logistics-
+        //**  -- Fase 3: El Gerente de Almacen  de Sak Logistics- */
 
-        $gerente = User::factory()->create([
+    
+
+         $gerente = User::factory()->create([
             'name' => 'Gerente',
             'email' => 'emmanuel.d@saklogistiks.com',
             'password' => bcrypt('Sak#2026!'), 
             'tenant_id' => null,
         ]);
 
-        $roleGerente = Role::create([
+        $roleGerente = Role::firstOrCreate([
             'name' => 'Gerente',
-            'tenant_id' => null
+            'tenant_id' => null,
         ]);
 
         $gerente->assignRole($roleGerente);
-
+        
 
 
         

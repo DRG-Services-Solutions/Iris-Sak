@@ -21,7 +21,7 @@ class User extends Authenticatable
         'email',
         'password',
         'tenant_id',
-
+        'is_active',
     ];
 
     protected $hidden = [
@@ -37,6 +37,16 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->hasRole('admin');
+    }
+
+    public function isActive(): bool
+    {
+        return (bool) $this->is_active;
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 
     public function tenant()

@@ -182,6 +182,28 @@ class BoxController extends Controller
         return back()->with('success', "Caja {$box->box_code} retirada de {$palletCode}.");
     }
 
+    /**
+     * Retira múltiples cajas de una tarima en un solo request.
+     */
+    public function removeBulk(Request $request, Pallet $pallet)
+    {
+        $validated = $request->validate([
+            'box_ids'   => 'required|array|min:1',
+            'box_ids.*' => 'exists:boxes,id',
+        ]);
+
+        $removed = 0;
+        foreach ($validated['box_ids'] as $boxId) {
+            $box = Box::find($boxId);
+            if ($box && $box->pallet_id === $pallet->id) {
+                $box->removeFromPallet();
+                $removed++;
+            }
+        }
+
+        return back()->with('success', "{$removed} caja(s) retirada(s) de {$pallet->pallet_code}.");
+    }
+
     public function closePallet(Pallet $pallet)
     {
         if ($pallet->boxes()->count() === 0) {
